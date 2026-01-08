@@ -118,7 +118,7 @@
 
                     {{-- Image --}}
                     @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                        <img src="{{ asset('storage/' . $file) }}" height="100" class="border rounded">
+                        <img src="{{ asset('public/storage/' . $file) }}" height="100" class="border rounded">
                     @else
                         <div class="attachment-file border rounded p-2"
                             style="width:160px; height:100px; display:flex; align-items:center; justify-content:center;">

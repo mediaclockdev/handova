@@ -218,7 +218,7 @@
                                         <div class="mb-2 preview-image existing-image"
                                             data-index="{{ $index }}">
                                             <div class="position-relative">
-                                                <img src="{{ asset('storage/' . $image) }}" alt="Floor Plan"
+                                                <img src="{{ asset('public/storage/' . $image) }}" alt="Floor Plan"
                                                     class="img-fluid img-thumbnail m-2" style="height: 80px;">
                                                 <button type="button" class="remove-image-btn close-btn"
                                                     title="Remove" data-index="{{ $index }}">

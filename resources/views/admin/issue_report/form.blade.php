@@ -81,7 +81,7 @@
                 @php $images = json_decode($issueReport->image, true); @endphp
                 @foreach ($images as $img)
                     <div class="position-relative image-wrapper" style="display: inline-block;">
-                        <img src="{{ asset('storage/' . $img) }}" width="80" class="img-thumbnail">
+                        <img src="{{ asset('public/storage/' . $img) }}" width="80" class="img-thumbnail">
 
                         <button type="button" class="close-btn remove-image-btn" data-image="{{ $img }}"
                             data-type="existing"

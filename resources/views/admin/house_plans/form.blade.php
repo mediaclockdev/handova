@@ -163,7 +163,7 @@
             @if (!empty($floorData[$key]['floor_plan']))
                 @foreach ($floorData[$key]['floor_plan'] as $image)
                     <div class="position-relative m-2 existing-image">
-                        <img src="{{ asset('storage/' . $image) }}" class="border rounded" height="100">
+                        <img src="{{ asset('public/storage/' . $image) }}" class="border rounded" height="100">
 
                         <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 close-btn"
                             data-floor="{{ $key }}" data-image="{{ $image }}">

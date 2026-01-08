@@ -90,22 +90,22 @@
                         @endphp
                         <div class="position-relative m-2 text-center">
                             @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                <img src="{{ asset('storage/' . $a1) }}" height="80" class="me-2 border rounded">
+                                <img src="{{ asset('public/storage/' . $a1) }}" height="80" class="me-2 border rounded">
                             @elseif ($extension === 'pdf')
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('public/storage/' . $a1) }}" target="_blank" class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark-pdf" style="font-size: 40px; color: red;"></i>
                                     </div>
                                 </a>
                             @elseif (in_array($extension, ['csv', 'xls', 'xlsx']))
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('public/storage/' . $a1) }}" target="_blank" class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark-spreadsheet"
                                             style="font-size: 40px; color: green;"></i>
                                     </div>
                                 </a>
                             @else
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('public/storage/' . $a1) }}" target="_blank" class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark" style="font-size: 40px; color: gray;"></i>
                                     </div>
@@ -148,7 +148,7 @@
                         @endphp
                         <div class="position-relative m-2 text-center">
                             @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                <img src="{{ asset('storage/' . $img) }}" height="80"
+                                <img src="{{ asset('public/storage/' . $img) }}" height="80"
                                     class="me-2 border rounded">
                             @elseif ($extension === 'pdf')
                                 <a href="{{ asset($img) }}" target="_blank" class="text-decoration-none">
@@ -157,7 +157,7 @@
                                     </div>
                                 </a>
                             @elseif (in_array($extension, ['csv', 'xls', 'xlsx']))
-                                <a href="{{ asset('storage/' . $img) }}" target="_blank"
+                                <a href="{{ asset('public/storage/' . $img) }}" target="_blank"
                                     class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark-spreadsheet"
@@ -165,7 +165,7 @@
                                     </div>
                                 </a>
                             @else
-                                <a href="{{ asset('storage/' . $img) }}" target="_blank"
+                                <a href="{{ asset('public/storage/' . $img) }}" target="_blank"
                                     class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark" style="font-size: 40px; color: gray;"></i>

@@ -177,9 +177,9 @@
 
                               <div class="position-relative m-2 text-center img-thumbnail">
                                   @if ($isImage)
-                                      <img src="{{ asset('storage/' . $doc) }}" height="80">
+                                      <img src="{{ asset('public/storage/' . $doc) }}" height="80">
                                   @else
-                                      <a href="{{ asset('storage/' . $doc) }}" target="_blank">
+                                      <a href="{{ asset('public/storage/' . $doc) }}" target="_blank">
                                           <i class="fa fa-file fa-3x"></i>
                                           <small class="d-block text-truncate">{{ basename($doc) }}</small>
                                       </a>
@@ -216,7 +216,7 @@
 
                           @foreach ($floorPlans as $plan)
                               <div class="position-relative m-2 img-thumbnail">
-                                  <img src="{{ asset('storage/' . $plan) }}" height="80">
+                                  <img src="{{ asset('public/storage/' . $plan) }}" height="80">
                                   <input type="hidden" name="existing_floor_plan_upload[]"
                                       value="{{ $plan }}">
                                   <button type="button" class="close-btn" onclick="removeExistingImage(this)">

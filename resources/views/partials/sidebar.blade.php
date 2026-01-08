@@ -1,7 +1,7 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <a href="/dashboard"><img src="{{ asset('images/handova.png') }}" alt="Handova Logo" class="logo"></a>
+                <a href="/dashboard"><img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo" class="logo"></a>
             </div>
 
             <nav class="nav flex-column">

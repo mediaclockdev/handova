@@ -1,0 +1,97 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SuperAdmin\AuthController as SuperAdminAuthController;
+use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SuperAdmin\ForgotPasswordController as SuperAdminForgotPasswordController;
+use App\Http\Controllers\SuperAdmin\ResetPasswordController as SuperAdminResetPasswordController;
+use Illuminate\Support\Facades\Password;
+
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
+use App\Http\Controllers\Admin\PropertiesController;
+use App\Http\Controllers\Admin\HouseOwnerController;
+use App\Http\Controllers\Admin\IssueReportController;
+use App\Http\Controllers\Admin\ServiceProviderController;
+use App\Http\Controllers\Admin\HousePlansController;
+use \App\Http\Controllers\Admin\ReportAnalyticsController;
+use \App\Http\Controllers\SuperAdmin\PlanController;
+use \App\Http\Controllers\SuperAdmin\BuildersController;
+use \App\Http\Controllers\Admin\AppliancesController;
+use \App\Http\Controllers\Admin\SubscriptionsPlanController;
+use \App\Http\Controllers\Admin\ComplianceCertificatesController;
+use \App\Http\Controllers\Admin\PageContentDetailsController;
+use \App\Http\Controllers\Admin\ProfileController;
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
+
+Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail'])->name('verify.email');
+Route::get('login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::get('signup', [AuthController::class, 'showRegister'])->name('register');
+Route::post('signup', [AuthController::class, 'register']);
+Route::get('dashboard', [AuthController::class, 'dashboard'])->middleware('auth')->name('dashboard');
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendVerificationCode'])->name('password.send-code');
+Route::get('verify-code', [ForgotPasswordController::class, 'showVerifyCodeForm'])->name('password.verify-code-form');
+Route::post('verify-code', [ForgotPasswordController::class, 'verifyCode'])->name('password.verify-code');
+Route::get('reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+Route::get('/admin/property/{id}/owners', [HouseOwnerController::class, 'getOwners']);
+Route::get('/admin/property/{id}/issues', [IssueReportController::class, 'getIssuesByProperty']);
+Route::get('/admin/property/{id}/houseplans', [HousePlansController::class, 'getHousePlansByProperty']);
+Route::get('/admin/property/{id}/certificates', [ComplianceCertificatesController::class, 'getCertificatesByProperty']);
+Route::get('/admin/filter/issues', [IssueReportController::class, 'filter']);
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('profile', ProfileController::class);
+    Route::resource('properties', PropertiesController::class);
+    Route::resource('house_owners', HouseOwnerController::class);
+    Route::resource('issue_report', IssueReportController::class);
+    Route::resource('service_provider', ServiceProviderController::class);
+    Route::resource('house_plans', HousePlansController::class);
+    Route::resource('compliance_certificates', ComplianceCertificatesController::class);
+    Route::resource('page_content', PageContentDetailsController::class);
+    Route::resource('report_analytics', ReportAnalyticsController::class);
+    Route::resource('appliances', AppliancesController::class);
+    Route::resource('subscription-plan', SubscriptionsPlanController::class);
+});
+
+Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+Route::prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::resource('plans', PlanController::class);
+    Route::resource('builders', BuildersController::class);
+    Route::get('superadmin/builders/export', [BuildersController::class, 'export'])->name('superadmin.builders.export');
+    Route::get('login', [SuperAdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [SuperAdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('logout', [SuperAdminAuthController::class, 'logout'])->name('logout');
+    Route::get('forgot-password', [SuperAdminForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [SuperAdminForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('reset-password/{token}', [SuperAdminResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [SuperAdminResetPasswordController::class, 'reset'])->name('password.update');
+    Route::middleware(['auth', 'superadmin'])->group(function () {
+        Route::get('dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+    });
+});

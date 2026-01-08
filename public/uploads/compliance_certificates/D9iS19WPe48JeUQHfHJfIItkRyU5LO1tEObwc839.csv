@@ -1,0 +1,6 @@
+Record ID,User Name,Email,Referral Number,Month/Year,Amount,Status,PayPal Account,Paid By,Paid Date,Created At
+"default-admin-2025-10","Current User","user@example.com","REF18366","2025-10","1230.00","due","user@paypal.com","N/A","N/A","10/28/2025, 11:00:00 AM"
+"user_1-2025-10","John Doe","john.doe@example.com","REF10001","2025-10","1150.00","due","john.doe@paypal.com","N/A","N/A","10/28/2025, 11:00:00 AM"
+"user_2-2025-10","Jane Doe","jane.doe@example.com","REF10002","2025-10","980.50","due","jane.doe@paypal.com","N/A","N/A","10/28/2025, 11:00:00 AM"
+"user_3-2025-10","Tim Smith","tim.smith@example.com","REF10003","2025-10","1320.75","due","tim.smith@paypal.com","N/A","N/A","10/28/2025, 11:00:00 AM"
+"user_4-2025-10","Tony Smith","tony.smith@example.com","REF10004","2025-10","850.00","due","tony.smith@paypal.com","N/A","N/A","10/28/2025, 11:00:00 AM"

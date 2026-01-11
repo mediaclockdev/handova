@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ServiceProvider;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class ServiceProviderController extends Controller
 {
@@ -14,7 +16,7 @@ class ServiceProviderController extends Controller
     public function index()
     {
         $formTitle = 'Service Providers';
-        $serviceproviders = ServiceProvider::where('user_id', auth()->id())->latest()->paginate(10);
+        $serviceproviders = User::where('role', 'service_provider')->latest()->paginate(10);
         return view('admin.service_provider.index', compact('formTitle', 'serviceproviders'));
     }
 
@@ -34,17 +36,18 @@ class ServiceProviderController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'company_name'           => 'required|string|max:255',
+            'company_name'           => 'nullable|string|max:255',
             'first_name'             => 'required|string|max:255',
             'last_name'              => 'required|string|max:255',
-            'email_address'          => 'required|email|max:255|unique:service_providers,email_address',
-            'phone_number'           => 'nullable|string|max:20',
-            'service_specialisation' => 'required|string|max:255',
-            'service_type'           => 'required|string|max:255',
+            'email'                  => 'required|email|max:255|unique:service_providers,email_address',
+            'phone'                  => 'nullable|string|max:20',
+            'service_specialisation' => 'nullable|string|max:255',
+            'service_type'           => 'nullable|string|max:255',
         ]);
-
-        $validated['user_id'] = auth()->id();
-        ServiceProvider::create($validated);
+        $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];
+        $validated['role'] = 'service_provider';
+        $validated['password'] = bcrypt('password');
+        User::create($validated);
         return redirect()->route('admin.service_provider.index')->with('success', 'Service provider created successfully.');
     }
 
@@ -61,7 +64,7 @@ class ServiceProviderController extends Controller
      */
     public function edit(string $id)
     {
-        $serviceProvider = ServiceProvider::findOrFail($id);
+        $serviceProvider = \App\Models\User::findOrFail($id);
         $formTitle = 'Update Service Provider';
         return view('admin.service_provider.edit', compact('serviceProvider', 'formTitle'));
     }
@@ -71,22 +74,22 @@ class ServiceProviderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $serviceProvider = ServiceProvider::findOrFail($id);
-
-        $validated = $request->validate([
-            'company_name'           => 'required|string|max:255',
-            'first_name'             => 'required|string|max:255',
-            'last_name'              => 'required|string|max:255',
-            'email_address'          => 'required|email|max:255|unique:service_providers,email_address,' . $serviceProvider->id,
-            'phone_number'           => 'nullable|string|max:20',
-            'service_specialisation' => 'required|string|max:255',
-            'service_type'           => 'required|string|max:255',
-        ]);
-
-        $serviceProvider->update($validated);
-        $validated['user_id'] = auth()->id();
-        return redirect()->route('admin.service_provider.index')
-            ->with('success', 'Service provider updated successfully.');
+        try {
+            $serviceProvider = User::findOrFail($id);
+            $validated = $request->validate([
+                'company_name'           => 'nullable|string|max:255',
+                'first_name'             => 'required|string|max:255',
+                'last_name'              => 'required|string|max:255',
+                'email'                  => 'required|email|max:255|unique:users,email,' . $serviceProvider->id,
+                'phone'                  => 'nullable|string|max:20',
+                'service_specialisation' => 'nullable|string|max:255',
+                'service_type'           => 'nullable|string|max:255',
+            ]);
+            $serviceProvider->update($validated);
+            return redirect()->route('admin.service_provider.index')->with('success', 'Service provider updated successfully.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->withInput()->with('error', 'Something went wrong while updating the service provider.');
+        }
     }
 
 
@@ -95,7 +98,7 @@ class ServiceProviderController extends Controller
      */
     public function destroy(string $id)
     {
-        $serviceProvider = ServiceProvider::findOrFail($id);
+        $serviceProvider = User::findOrFail($id);
         $serviceProvider->delete();
         return redirect()->route('admin.service_provider.index')->with('success', 'Service Provider deleted successfully.');
     }

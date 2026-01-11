@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', [AuthApiController::class, 'dashboard']);
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::get('/profile', [AuthApiController::class, 'getUserProfile']);
+
+    Route::post('/issue-reports/by-user', [HouseOwnerApiController::class, 'getIssuesByUser']);
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

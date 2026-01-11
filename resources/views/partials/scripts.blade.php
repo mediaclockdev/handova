@@ -5,4 +5,4 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="{{ asset('js/custom.js') }}?v={{ time() }}"></script>
+<script src="{{ asset('public/js/custom.js') }}?v={{ time() }}"></script>

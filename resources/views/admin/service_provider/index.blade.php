@@ -14,7 +14,7 @@
 
         <div class="main-content">
             <div class="content-wrapper">
-                  @include('partials.navbar')
+                @include('partials.navbar')
 
                 <div class="properties-header d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">{{ $formTitle }}</h1>
@@ -32,32 +32,37 @@
                                     <th>Email Address</th>
                                     <th>Phone Number</th>
                                     <th>Trade Type/lease Assigned</th>
-                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($serviceproviders as $serviceprovider)
-                                <tr>
-                                    <td>{{ $serviceprovider->company_name }}</td>
-                                    <td>{{ $serviceprovider->first_name }} {{$serviceprovider->last_name}}</td>
-                                    <td>{{ $serviceprovider->service_specialisation }}</td>
-                                    <td>{{ $serviceprovider->email_address }}</td>
-                                    <td>{{ $serviceprovider->phone_number }}</td>
-                                    <td>{{ $serviceprovider->service_type }}</td>
-                                    <td>{{ $serviceprovider->service_type }}</td>
-                                    <td>
-                                        <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square action-icon"></i></a>
-                                        <form action="{{ route('admin.service_provider.destroy', $serviceprovider->id) }}" method="POST" style="display:inline-block">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this property?')"><i class="bi bi-trash3 action-icon"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                {{-- @php dd($serviceprovider->first_name) @endphp --}}
+                                    <tr>
+                                        <td>{{ $serviceprovider->company_name }}</td>
+                                        <td>{{ $serviceprovider->first_name }} {{ $serviceprovider->last_name }}</td>
+                                        <td>{{ $serviceprovider->service_specialisation }}</td>
+                                        <td>{{ $serviceprovider->email }}</td>
+                                        <td>{{ $serviceprovider->phone }}</td>
+                                        <td>{{ $serviceprovider->service_type }}</td>
+                                        <td>
+                                            <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}"
+                                                class="btn btn-sm btn-warning"><i
+                                                    class="bi bi-pencil-square action-icon"></i></a>
+                                            <form
+                                                action="{{ route('admin.service_provider.destroy', $serviceprovider->id) }}"
+                                                method="POST" style="display:inline-block">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Delete this property?')"><i
+                                                        class="bi bi-trash3 action-icon"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="4">No service providers found.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="4">No service providers found.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -100,18 +105,18 @@
     @include('partials/scripts')
 </body>
 <script>
-    @if(session('success'))
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-    toastr.success("{{ session('success') }}");
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
     @endif
 
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
     @endif
 </script>
 

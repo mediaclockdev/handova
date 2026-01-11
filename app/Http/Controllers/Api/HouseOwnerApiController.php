@@ -325,40 +325,67 @@ class HouseOwnerApiController extends Controller
         }
     }
 
-    /* Request Appliance Service */
     public function requestApplianceService(Request $request)
     {
         try {
+            if ($request->input('service_provider') === '' || $request->input('service_provider') == 0) {
+                $request->merge(['service_provider' => null]);
+            }
+
             $validatedData = $request->validate([
                 'properties_id' => 'required|exists:properties,id',
-                'appliance_id' => 'required|exists:appliances,id',
-                'issue_title' => 'required|string|max:255',
+                'appliance_id'  => 'required|exists:appliances,id',
+
+                'issue_title'    => 'required|string|max:255',
                 'issue_category' => 'nullable|string|max:255',
                 'issue_location' => 'nullable|string|max:255',
                 'customer_contact' => 'nullable|string|max:50',
-                'issue_details' => 'required|string',
-                'reported_by' => 'required|exists:users,id',
+                'issue_details'  => 'required|string',
+
+                'reported_by'   => 'required|exists:users,id',
                 'reported_date' => 'required|date',
+
                 'assigned_to_service_provider' => 'nullable|in:yes,no',
-                'service_provider' => 'nullable|integer',
-                'issue_status' => 'required|string|max:255',
+
+                'service_provider' => [
+                    'nullable',
+                    'required_if:assigned_to_service_provider,yes',
+                    'exists:users,id',
+                ],
+
+                'issue_status'        => 'required|string|max:255',
                 'issue_urgency_level' => 'required|string|max:255',
+
                 'image.*' => 'nullable|file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png',
             ]);
 
-            // Generate auto Issue Number
+            if (!empty($validatedData['service_provider'])) {
+                $isServiceProvider = \App\Models\User::where('id', $validatedData['service_provider'])
+                    ->where('role', 'service_provider')
+                    ->exists();
+
+                if (!$isServiceProvider) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Selected user is not a valid service provider',
+                    ], 422);
+                }
+            }
+
+            if (($validatedData['assigned_to_service_provider'] ?? 'no') !== 'yes') {
+                $validatedData['service_provider'] = null;
+            }
+
             $lastIssueNumber = IssueReport::select('issue_number')
                 ->where('issue_number', 'LIKE', 'Issue-%')
                 ->orderByRaw('CAST(SUBSTRING(issue_number, 7) AS UNSIGNED) DESC')
                 ->first();
 
             $nextNumber = ($lastIssueNumber && preg_match('/Issue-(\d+)/', $lastIssueNumber->issue_number, $matches))
-                ? (int)$matches[1] + 1
+                ? (int) $matches[1] + 1
                 : 1;
 
             $newIssueNumber = 'Issue-' . $nextNumber;
-
-            // Upload Images
             $uploaded = [];
 
             if ($request->hasFile('image')) {
@@ -368,55 +395,43 @@ class HouseOwnerApiController extends Controller
                 }
             }
 
-            // Create Issue
             $issue = IssueReport::create([
-                'issue_number' => $newIssueNumber,
-                'properties_id' => $validatedData['properties_id'],
-                'appliance_id' => $validatedData['appliance_id'],
-                'issue_title' => $validatedData['issue_title'],
+                'issue_number'   => $newIssueNumber,
+                'properties_id'  => $validatedData['properties_id'],
+                'appliance_id'   => $validatedData['appliance_id'],
+                'issue_title'    => $validatedData['issue_title'],
                 'issue_category' => $validatedData['issue_category'] ?? null,
                 'issue_location' => $validatedData['issue_location'] ?? null,
                 'customer_contact' => $validatedData['customer_contact'] ?? null,
-                'issue_details' => $validatedData['issue_details'],
-                'reported_by' => $validatedData['reported_by'],
-                'reported_date' => $validatedData['reported_date'],
+                'issue_details'  => $validatedData['issue_details'],
+                'reported_by'    => $validatedData['reported_by'],
+                'reported_date'  => $validatedData['reported_date'],
                 'assigned_to_service_provider' => $validatedData['assigned_to_service_provider'] ?? 'no',
-                'service_provider' => $validatedData['service_provider'] ?? null,
-                'issue_status' => $validatedData['issue_status'],
+                'service_provider' => $validatedData['service_provider'],
+                'issue_status'   => $validatedData['issue_status'],
                 'issue_urgency_level' => $validatedData['issue_urgency_level'],
-                'image' => json_encode($uploaded),
+                'image'          => json_encode($uploaded),
             ]);
 
-            // Convert DB model to array and replace image with decoded JSON
             $issueArray = $issue->toArray();
-            $issueArray['image'] = $uploaded; // decoded array
+            $issueArray['image'] = $uploaded;
 
             return response()->json([
-                'status' => true,
+                'status'  => true,
                 'message' => 'Issue created successfully',
-                'data' => $issueArray
+                'data'    => $issueArray,
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation Failed in requestApplianceService', [
-                'errors' => $e->errors(),
-                'input'  => $request->all(),    // what user sent
-                'files'  => $request->file(),   // uploaded files
-            ]);
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Validation failed',
-                $e->errors(),
-                'errors' => $e->errors(),
+                'errors'  => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Exception in requestApplianceService', [
-                'error' => $e->getMessage(),
-                'input' => $request->all(),
-            ]);
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -431,7 +446,7 @@ class HouseOwnerApiController extends Controller
 
         // Fetch property
         $property = Property::find($propertyId);
-       
+
         // Fetch all house plans for this property
         $housePlans = HousePlan::where('id', $property->house_plan_id)->get();
 
@@ -1030,7 +1045,6 @@ class HouseOwnerApiController extends Controller
         ], 200);
     }
 
-
     /* Notification Read */
     public function markNotificationsAsRead(Request $request)
     {
@@ -1078,7 +1092,6 @@ class HouseOwnerApiController extends Controller
             'updated_count' => $updated
         ], 200);
     }
-
 
     public function searchAppliance(Request $request)
     {
@@ -1220,5 +1233,28 @@ class HouseOwnerApiController extends Controller
             'message' => 'Service ticket submitted successfully.',
             'data' => $ticket
         ]);
+    }
+
+    /* Service Proiver Issue Listing */
+    public function getIssuesByUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $issues = IssueReport::with([
+            'property:*',
+            'appliance:*',
+            'reporter:*'
+        ])
+            ->where('service_provider', $request->user_id)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Issue reports fetched successfully',
+            'data' => $issues
+        ], 200);
     }
 }

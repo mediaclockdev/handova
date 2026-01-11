@@ -33,7 +33,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'fcm_token',
         'device_id',
         'device_type',
-        'status'
+        'status',
+        'company_name',
+        'service_specialisation',
+        'service_type'
     ];
 
     /**

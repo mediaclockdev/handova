@@ -49,9 +49,6 @@ class IssueReportController extends Controller
         );
     }
 
-
-
-
     // IssueReportController.php
     public function getIssuesByProperty($propertyId)
     {
@@ -73,18 +70,12 @@ class IssueReportController extends Controller
         return response()->json($issues);
     }
 
-
-
     public function create()
     {
-        $properties = Property::select('id', 'property_title')
-            ->where('user_id', Auth::id())
-            ->get();
-
-        $serviceProviders = ServiceProvider::orderBy('company_name', 'asc')->get();
+        $properties = Property::select('id', 'property_title')->where('user_id', Auth::id())->get();
+        $serviceProviders = User::select('id', 'company_name')->where('role', 'service_provider')->get();
         $formTitle = 'Report Issues';
         $issueReport = new IssueReport();
-
         $lastIssueNumber = IssueReport::select('issue_number')
             ->where('issue_number', 'LIKE', 'Issue-%')
             ->orderByRaw('CAST(SUBSTRING(issue_number, 7) AS UNSIGNED) DESC')
@@ -97,17 +88,9 @@ class IssueReportController extends Controller
         }
 
         $newIssueNumber = 'Issue-' . $nextNumber;
-
         $houseOwners = User::where('role', 'house_owner')->get(['id', 'email']);
 
-        return view('admin.issue_report.create', compact(
-            'properties',
-            'formTitle',
-            'serviceProviders',
-            'issueReport',
-            'newIssueNumber',
-            'houseOwners'
-        ));
+        return view('admin.issue_report.create', compact('properties', 'formTitle', 'serviceProviders', 'issueReport', 'newIssueNumber', 'houseOwners'));
     }
 
     public function store(Request $request)
@@ -152,15 +135,13 @@ class IssueReportController extends Controller
             ->with('success', 'Issue report created successfully.');
     }
 
-
     public function edit(string $id)
     {
         $issueReport = IssueReport::findOrFail($id);
         $properties = Property::select('id', 'property_title')->get();
-        $serviceProviders = ServiceProvider::select('id', 'company_name')->get();
+        $serviceProviders = User::select('id', 'company_name')->where('role', 'service_provider')->get();
         $formTitle = 'Update Report Issues';
         $houseOwners = User::where('role', 'house_owner')->get(['id', 'email']);
-
         return view('admin.issue_report.edit', compact(
             'issueReport',
             'properties',
@@ -236,7 +217,6 @@ class IssueReportController extends Controller
             ->route('admin.issue_report.index')
             ->with('success', 'Issue report updated successfully.');
     }
-
 
     public function destroy(string $id)
     {

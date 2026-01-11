@@ -45,4 +45,9 @@ class HouseOwner extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function reportedIssues()
+    {
+        return $this->hasMany(IssueReport::class, 'reported_by');
+    }
 }

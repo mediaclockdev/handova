@@ -5,14 +5,19 @@
 <div class="profile-upload-container text-center mb-4">
     <div class="profile-pic-wrapper">
         <img id="profilePreview"
-            src="{{ isset($user->profile_picture) ? asset($user->profile_picture) : 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?semt=ais_hybrid&w=740&q=80' }}"
+            src="{{ $user->profile_picture
+                ? asset('public/' . $user->profile_picture)
+                : 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?semt=ais_hybrid&w=740&q=80' }}"
             class="profile-pic" alt="Profile Picture">
 
         <label for="profile_picture" class="profile-edit-icon">
             <i class="bi bi-pencil-fill"></i>
         </label>
 
-        <!-- NOTE: name is profile_picture to match controller -->
+        <!-- Existing image path -->
+        <input type="hidden" name="existing_profile_picture" value="{{ $user->profile_picture }}">
+
+        <!-- Upload -->
         <input type="file" id="profile_picture" name="profile_picture" class="d-none" accept="image/*"
             onchange="loadProfilePreview(event)">
     </div>
@@ -21,6 +26,7 @@
         <div class="text-danger small mt-2">{{ $message }}</div>
     @enderror
 </div>
+
 
 <div class="row g-4 mb-4">
     <div class="col-md-6">
@@ -45,16 +51,17 @@
     <div class="col-md-6">
         <label class="form-label">Email Address</label>
         <!-- NOTE: use name="email" to match controller -->
-        <input readonly type="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" name="email" class="form-control @error('email') is-invalid @enderror"
-            value="{{ old('email', $user->email ?? '') }}">
+        <input readonly type="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" name="email"
+            class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email ?? '') }}">
         @error('email')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
     <div class="col-md-6">
         <label class="form-label">Phone Number</label>
-        <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror"
-            value="{{ old('phone', $user->phone ?? $user->phone ?? '') }}">
+        <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" id="phone" name="phone"
+            class="form-control @error('phone') is-invalid @enderror"
+            value="{{ old('phone', $user->phone ?? ($user->phone ?? '')) }}">
         @error('phone')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -67,5 +74,4 @@
         img.src = URL.createObjectURL(event.target.files[0]);
         img.onload = () => URL.revokeObjectURL(img.src);
     }
-    
 </script>

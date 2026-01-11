@@ -9,6 +9,7 @@ use App\Models\Property;
 use App\Models\ServiceProvider;
 use App\Models\IssueReport;
 use \App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -67,42 +68,64 @@ class ProfileController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Use the authenticated user (or fetch by $id if you want to allow updating other users)
         $user = Auth::user();
 
         $request->validate([
             'first_name'      => 'required|string|max:255',
             'last_name'       => 'required|string|max:255',
             'email'           => 'required|email|max:255',
-            'phone'    => 'nullable|string|max:20',
-            'profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048'
+            'phone'           => 'nullable|string|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+            'existing_profile_picture' => 'nullable|string',
+            'remove_profile_picture'   => 'nullable|boolean',
         ]);
 
-        // Update user info
-        $user->name         = $request->first_name . ' ' . $request->last_name;
-        $user->first_name   = $request->first_name;
-        $user->last_name    = $request->last_name;
-        $user->email        = $request->email;
-        $user->phone = $request->phone;
+        // =============================
+        // 1️⃣ Update basic user info
+        // =============================
+        $user->name       = $request->first_name . ' ' . $request->last_name;
+        $user->first_name = $request->first_name;
+        $user->last_name  = $request->last_name;
+        $user->email      = $request->email;
+        $user->phone      = $request->phone;
 
-        // Upload Profile Picture (field name: profile_picture)
-        // if ($request->hasFile('profile_picture')) {
-        //     $path = $request->file('profile_picture')->store('profile', 'public');
-        //     $user['profile_picture'] = 'uploads/' . $path;
-        // }
+        // =============================
+        // 2️⃣ Start with existing image
+        // =============================
+        $profilePicture = $request->existing_profile_picture ?? $user->profile_picture;
 
-        if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile', 'public');
-            $user->profile_picture = 'storage/' . $path;
+        // =============================
+        // 3️⃣ Remove existing image (if requested)
+        // =============================
+        if ($request->boolean('remove_profile_picture') && $profilePicture) {
+            Storage::disk('public')->delete(str_replace('storage/', '', $profilePicture));
+            $profilePicture = null;
         }
 
+        // =============================
+        // 4️⃣ Upload new image
+        // =============================
+        if ($request->hasFile('profile_picture')) {
 
+            // Delete old image first
+            if ($profilePicture) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $profilePicture));
+            }
 
+            $path = $request->file('profile_picture')->store('profile', 'public');
+            $profilePicture = 'storage/' . $path;
+        }
+
+        // =============================
+        // 5️⃣ Save final image
+        // =============================
+        $user->profile_picture = $profilePicture;
 
         $user->save();
 
         return back()->with('success', 'Profile updated successfully!');
     }
+
 
 
 

@@ -67,4 +67,9 @@ class Property extends Model
     {
         return $this->hasMany(ApplianceFeedback::class, 'property_id');
     }
+
+    public function issueReports()
+    {
+        return $this->hasMany(IssueReport::class, 'property_id');
+    }
 }

@@ -271,7 +271,7 @@
                             {{ $users->links() }}
                         </div>
 
-                    </div>a
+                    </div>
                 </div>
                 <div id="bulk-actions" class="bg-white rounded-lg border border-neutral-200 p-4 mb-6">
                     <div class="flex justify-between items-center">

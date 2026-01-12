@@ -78,27 +78,28 @@
 
             {{-- Existing images (your Blade loop will place them here) --}}
             @if (isset($issueReport) && $issueReport->image)
-                @php $images = json_decode($issueReport->image, true); @endphp
-                @foreach ($images as $img)
-                    <div class="position-relative image-wrapper" style="display: inline-block;">
-                        <img src="{{ asset('public/storage/' . $img) }}" width="80" class="img-thumbnail">
+                @php
+                    $images = is_array($issueReport->image)
+                        ? $issueReport->image
+                        : json_decode($issueReport->image, true);
+                @endphp
 
-                        <button type="button" class="close-btn remove-image-btn" data-image="{{ $img }}"
-                            data-type="existing"
-                            style="
-                            border-radius: 50%;
-                            padding: 3px 7px;
-                            font-size: 14px;
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                        ">
-                            ×
-                        </button>
+                @if (!empty($images))
+                    @foreach ($images as $img)
+                        <div class="position-relative image-wrapper" style="display: inline-block;">
+                            <img src="{{ asset('public/storage/' . $img) }}" width="80" class="img-thumbnail">
 
-                        <input type="hidden" name="existing_images[]" value="{{ $img }}">
-                    </div>
-                @endforeach
+                            <button type="button" class="close-btn remove-image-btn" data-image="{{ $img }}"
+                                data-type="existing"
+                                style="border-radius: 50%;padding: 3px 7px;font-size: 14px;position: absolute;top: 0;right: 0;">
+                                ×
+                            </button>
+
+                            <input type="hidden" name="existing_images[]" value="{{ $img }}">
+                        </div>
+                    @endforeach
+                @endif
+
             @endif
 
         </div>
@@ -174,11 +175,22 @@
     </div>
 
     <div class="col-md-12">
-        <label>Status</label>
+        <label>Issue Status</label>
         <select name="issue_status" id="issue_status" class="form-select">
             @foreach (['open', 'completed', 'pending', 'inprogress', 'close'] as $st)
                 <option value="{{ $st }}"
                     {{ ($issueReport->issue_status ?? '') == $st ? 'selected' : '' }}>
+                    {{ ucfirst($st) }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-md-12" id="service_provider_status_wrapper" style="display:none;">
+        <label>Service Provider Status</label>
+        <select name="status" id="status" class="form-select">
+            @foreach (['accepted', 'declined'] as $st)
+                <option value="{{ $st }}" {{ ($issueReport->status ?? '') == $st ? 'selected' : '' }}>
                     {{ ucfirst($st) }}
                 </option>
             @endforeach
@@ -269,12 +281,16 @@
     document.addEventListener('DOMContentLoaded', function() {
         const assignedSelect = document.getElementById('assigned_to_service_provider_status');
         const providerWrapper = document.getElementById('service_provider_wrapper');
+        const providerStatusWrapper = document.getElementById('service_provider_status_wrapper');
+
 
         function toggleProviderWrapper() {
             if (assignedSelect.value === 'yes') {
                 providerWrapper.style.display = 'block';
+                providerStatusWrapper.style.display = 'block';
             } else {
                 providerWrapper.style.display = 'none';
+                providerStatusWrapper.style.display = 'none';
             }
         }
 

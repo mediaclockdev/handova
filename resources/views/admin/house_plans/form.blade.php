@@ -19,15 +19,23 @@
             <option value="">Select Storey</option>
             <option value="ground_floor"
                 {{ old('storey', $housePlan->storey ?? '') == 'ground_floor' ? 'selected' : '' }}>
-                Ground Floor
+                1
             </option>
             <option value="first_floor"
                 {{ old('storey', $housePlan->storey ?? '') == 'first_floor' ? 'selected' : '' }}>
-                Ground + First Floor
+                2
             </option>
             <option value="second_floor"
                 {{ old('storey', $housePlan->storey ?? '') == 'second_floor' ? 'selected' : '' }}>
-                Ground + First + Second Floor
+                3
+            </option>
+            <option value="third_floor"
+                {{ old('storey', $housePlan->storey ?? '') == 'third_floor' ? 'selected' : '' }}>
+                4
+            </option>
+            <option value="fourth_floor"
+                {{ old('storey', $housePlan->storey ?? '') == 'fourth_floor' ? 'selected' : '' }}>
+                5
             </option>
         </select>
         @error('storey')
@@ -79,9 +87,11 @@
 {{-- FLOOR DATA --}}
 @php
     $floors = [
-        'ground_floor' => 'Ground Floor',
-        'first_floor' => 'First Floor',
-        'second_floor' => 'Second Floor',
+        'ground_floor' => '1',
+        'first_floor' => '2',
+        'second_floor' => '3',
+        'third_floor' => '4',
+        'fourth_floor' => '5',
     ];
 
     $floorData = old('floor', $housePlan->floor ?? []);
@@ -223,7 +233,7 @@
         if (!storeySelect) return;
 
         const floorSections = document.querySelectorAll(".floor-section");
-        const floorOrder = ["ground_floor", "first_floor", "second_floor"];
+        const floorOrder = ["ground_floor", "first_floor", "second_floor", "third_floor", "fourth_floor"];
 
         function toggleFloors() {
             floorSections.forEach(section => {

@@ -155,29 +155,24 @@ class HouseOwnerApiController extends Controller
     public function getAppliancesByProperty(Request $request)
     {
         try {
-            // Check for bearer token
             $token = $request->bearerToken();
             if (!$token) {
                 return response()->json(['status' => false, 'message' => 'Token is required.',], 401);
             }
 
-            // Validate user from token
             if (!$request->user()) {
                 return response()->json(['status' => false, 'message' => 'Invalid or expired token.',], 401);
             }
 
-            // Validate property_id
             if (!$request->has('property_id') || empty($request->property_id)) {
                 return response()->json(['status' => false, 'message' => 'Property ID is required',], 422);
             }
 
-            // Fetch the property
             $property = Property::find($request->property_id);
             if (!$property) {
                 return response()->json(['status' => false, 'message' => 'Property not found',], 404);
             }
 
-            // Get the appliance IDs from property
             $applianceIds = $property->appliance_id;
 
             if (is_null($applianceIds)) {
@@ -187,10 +182,7 @@ class HouseOwnerApiController extends Controller
                 $applianceIds = is_array($decoded) ? $decoded : [$applianceIds];
             }
 
-            // Fetch appliances
             $appliances = Appliance::whereIn('id', $applianceIds)->get();
-
-            // Format appliances for API response
             $appliancesFormatted = $appliances->map(function ($appliance) {
                 return [
                     'id' => $appliance->id,
@@ -200,8 +192,17 @@ class HouseOwnerApiController extends Controller
                     'brand_name' => $appliance->brand_name,
                     'model' => $appliance->model,
                     'warranty_information' => $appliance->warranty_information,
-                    'manuals' => json_decode($appliance->manuals) ?: [],
-                    'appliances_images' => json_decode($appliance->appliances_images) ?: [],
+                    'manuals' => collect(
+                        is_array($appliance->manuals)
+                            ? $appliance->manuals
+                            : (json_decode($appliance->manuals, true) ?? [])
+                    )->map(fn($m) => '/public/storage/' . ltrim($m, '/'))->values(),
+
+                    'appliances_images' => collect(
+                        is_array($appliance->appliances_images)
+                            ? $appliance->appliances_images
+                            : (json_decode($appliance->appliances_images, true) ?? [])
+                    )->map(fn($i) => '/public/storage/' . ltrim($i, '/'))->values(),
                     'created_at' => $appliance->created_at,
                     'updated_at' => $appliance->updated_at,
                 ];
@@ -222,7 +223,11 @@ class HouseOwnerApiController extends Controller
                         'issue_urgency_level' => $report->issue_urgency_level,
                         'reported_date' => $report->reported_date,
                         'service_provider' => $report->service_provider,
-                        'image' => json_decode($report->image) ?: [],
+                        'image' => collect(
+                            is_array($report->image)
+                                ? $report->image
+                                : (json_decode($report->image, true) ?? [])
+                        )->map(fn($i) => '/public/storage/' . ltrim($i, '/'))->values(),
                         'property_title' => $report->property->property_title ?? null,
                     ];
                 });
@@ -250,50 +255,53 @@ class HouseOwnerApiController extends Controller
         }
     }
 
+    /* Id Wise Fetch Appliance's Data */
     public function getApplianceById(Request $request)
     {
         try {
-            // Check for bearer token
             $token = $request->bearerToken();
             if (!$token) {
                 return response()->json(['status' => false, 'message' => 'Token is required.',], 401);
             }
 
-            // Validate user from token
             if (!$request->user()) {
                 return response()->json(['status' => false, 'message' => 'Invalid or expired token.',], 401);
             }
 
-            // Validate appliance_id
             if (!$request->has('appliance_id') || empty($request->appliance_id)) {
                 return response()->json(['status' => false, 'message' => 'Appliance ID is required',], 422);
             }
 
-            // Fetch appliance
             $appliance = Appliance::find($request->appliance_id);
-
             if (!$appliance) {
                 return response()->json(['status' => false, 'message' => 'Appliance not found',], 404);
             }
 
-            // Decode manuals and images
-            $manuals = collect(json_decode($appliance->manuals, true))
-                ->map(function ($manual) {
-                    $extension = pathinfo($manual, PATHINFO_EXTENSION);
-                    return [
-                        'format' => $extension,
-                        'url' => $manual, // return DB value
-                    ];
-                })
-                ->values();
+            $manualsData = is_array($appliance->manuals) ? $appliance->manuals : json_decode($appliance->manuals, true);
+            $manuals = collect($manualsData)->map(function ($manual) {
+                return [
+                    'format' => pathinfo($manual, PATHINFO_EXTENSION),
+                    'url'    => '/public/storage/' . $manual,
+                ];
+            })->values();
 
+            $imagesRaw = $appliance->appliances_images;
 
-            $applianceImages = collect(json_decode($appliance->appliances_images, true))
-                ->map(fn($img) => $img) // return DB value only
-                ->values();
+            if (is_string($imagesRaw)) {
+                $imagesRaw = json_decode($imagesRaw, true);
+            }
 
+            if (is_array($imagesRaw) && count($imagesRaw) === 1 && is_string($imagesRaw[0])) {
+                $decoded = json_decode($imagesRaw[0], true);
+                if (is_array($decoded)) {
+                    $imagesRaw = $decoded;
+                }
+            }
 
-            // Structure data for mobile
+            $applianceImages = collect($imagesRaw)->map(function ($img) {
+                return '/public/storage/' . ltrim($img, '/');
+            })->values();
+
             $applianceData = [
                 'product' => [
                     'appliance_id' => $appliance->id,
@@ -316,7 +324,6 @@ class HouseOwnerApiController extends Controller
                 ],
             ];
 
-            // Return success response
             return response()->json(['status' => true, 'resoonse_code' => 200, 'data' => $applianceData,], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => false, 'message' => 'Validation failed', 'errors' => $e->errors(),], 422);
@@ -328,6 +335,7 @@ class HouseOwnerApiController extends Controller
     public function requestApplianceService(Request $request)
     {
         try {
+            // Normalize empty service provider
             if ($request->input('service_provider') === '' || $request->input('service_provider') == 0) {
                 $request->merge(['service_provider' => null]);
             }
@@ -335,30 +343,28 @@ class HouseOwnerApiController extends Controller
             $validatedData = $request->validate([
                 'properties_id' => 'required|exists:properties,id',
                 'appliance_id'  => 'required|exists:appliances,id',
-
                 'issue_title'    => 'required|string|max:255',
                 'issue_category' => 'nullable|string|max:255',
                 'issue_location' => 'nullable|string|max:255',
                 'customer_contact' => 'nullable|string|max:50',
                 'issue_details'  => 'required|string',
-
                 'reported_by'   => 'required|exists:users,id',
                 'reported_date' => 'required|date',
-
                 'assigned_to_service_provider' => 'nullable|in:yes,no',
-
                 'service_provider' => [
                     'nullable',
                     'required_if:assigned_to_service_provider,yes',
                     'exists:users,id',
                 ],
-
                 'issue_status'        => 'required|string|max:255',
                 'issue_urgency_level' => 'required|string|max:255',
 
-                'image.*' => 'nullable|file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png',
+                // Same as other modules
+                'image'   => 'nullable|array',
+                'image.*' => 'file|mimes:jpg,jpeg,png,pdf,csv,xlsx,xls|max:5120',
             ]);
 
+            // Validate service provider role
             if (!empty($validatedData['service_provider'])) {
                 $isServiceProvider = \App\Models\User::where('id', $validatedData['service_provider'])
                     ->where('role', 'service_provider')
@@ -376,22 +382,23 @@ class HouseOwnerApiController extends Controller
                 $validatedData['service_provider'] = null;
             }
 
-            $lastIssueNumber = IssueReport::select('issue_number')
-                ->where('issue_number', 'LIKE', 'Issue-%')
+            // Generate issue number
+            $lastIssueNumber = IssueReport::where('issue_number', 'LIKE', 'Issue-%')
                 ->orderByRaw('CAST(SUBSTRING(issue_number, 7) AS UNSIGNED) DESC')
                 ->first();
 
-            $nextNumber = ($lastIssueNumber && preg_match('/Issue-(\d+)/', $lastIssueNumber->issue_number, $matches))
-                ? (int) $matches[1] + 1
+            $nextNumber = ($lastIssueNumber && preg_match('/Issue-(\d+)/', $lastIssueNumber->issue_number, $m))
+                ? (int) $m[1] + 1
                 : 1;
 
             $newIssueNumber = 'Issue-' . $nextNumber;
-            $uploaded = [];
+
+            // tore images (same logic as Property)
+            $images = [];
 
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $file) {
-                    $path = $file->store('issue_report', 'public');
-                    $uploaded[] = 'uploads/' . $path;
+                    $images[] = $file->store('issue_reports', 'public');
                 }
             }
 
@@ -410,16 +417,17 @@ class HouseOwnerApiController extends Controller
                 'service_provider' => $validatedData['service_provider'],
                 'issue_status'   => $validatedData['issue_status'],
                 'issue_urgency_level' => $validatedData['issue_urgency_level'],
-                'image'          => json_encode($uploaded),
+                'image'          => json_encode($images),
             ]);
 
-            $issueArray = $issue->toArray();
-            $issueArray['image'] = $uploaded;
+            // Decode images for API response
+            $responseData = $issue->toArray();
+            $responseData['image'] = $images;
 
             return response()->json([
                 'status'  => true,
                 'message' => 'Issue created successfully',
-                'data'    => $issueArray,
+                'data'    => $responseData,
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -889,103 +897,91 @@ class HouseOwnerApiController extends Controller
         }
     }
 
+    /* House Plan ID wise fetched the appliances  */
     public function housePlanAmenities(Request $request)
     {
-        // Check for bearer token
         $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json(['status' => false, 'message' => 'Token is required.',], 401);
+
+        if (!$token || !$request->user()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Invalid or expired token.',
+            ], 401);
         }
 
-        // Validate user from token
-        if (!$request->user()) {
-            return response()->json(['status' => false, 'message' => 'Invalid or expired token.',], 401);
-        }
-
-        // Validate request
         $validated = $request->validate([
-            'house_plan_id' => 'required|integer',
+            'house_plan_id' => 'required|integer|exists:house_plans,id',
         ]);
 
-        $housePlanId = $validated['house_plan_id'];
+        $housePlan = HousePlan::find($validated['house_plan_id']);
 
-        // Fetch house plan
-        $housePlan = HousePlan::where('id', $housePlanId)->first();
-
-        if (!$housePlan) {
-            //return response()->json(['status' => true, 'response_code' => 200, 'message' => 'House plan not found.', 'appliances' => [],], 200);
-
+        if (!$housePlan || empty($housePlan->floor_details)) {
             return response()->json([
-                'status' => true,
+                'status'        => true,
                 'response_code' => 200,
-                'message' => 'House plan not found.',
-                'data' => [
-                    'appliances' =>  []
-                ],
-            ], 200);
+                'message'       => 'No floor details found.',
+                'data'          => []
+            ]);
         }
 
-        // Decode JSON fields
-        $housePlan->floor_plan = json_decode($housePlan->floor_plan, true);
-        $housePlan->appliance_id = json_decode($housePlan->appliance_id, true);
+        $floorDetails = $housePlan->floor_details;
+        $response     = [];
 
-        // Appliance IDs
-        $applianceIds = $housePlan->appliance_id;
+        foreach ($floorDetails as $floorName => $floorData) {
+            $applianceIds = $floorData['appliances'] ?? [];
+            if (!is_array($applianceIds)) {
+                $applianceIds = [];
+            }
+            $appliances = Appliance::whereIn('id', $applianceIds)->get();
+            $appliances->transform(function ($appliance) {
+                $imagesRaw = $appliance->appliances_images;
 
-        if (is_null($applianceIds)) {
-            $applianceIds = [];
-        } elseif (!is_array($applianceIds)) {
-            $decoded = json_decode($applianceIds, true);
-            $applianceIds = is_array($decoded) ? $decoded : [$applianceIds];
+                if (is_string($imagesRaw)) {
+                    $imagesRaw = json_decode($imagesRaw, true);
+                }
+
+                if (!is_array($imagesRaw)) {
+                    $imagesRaw = [];
+                }
+
+                $appliance->appliances_images = array_map(
+                    fn($img) => 'uploads/appliances_images/' . basename($img),
+                    $imagesRaw
+                );
+
+                $manualsRaw = $appliance->manuals;
+
+                if (is_string($manualsRaw)) {
+                    $manualsRaw = json_decode($manualsRaw, true);
+                }
+
+                if (!is_array($manualsRaw)) {
+                    $manualsRaw = [];
+                }
+
+                $appliance->manuals = array_map(
+                    fn($file) => 'uploads/manuals/' . basename($file),
+                    $manualsRaw
+                );
+
+                return $appliance;
+            });
+
+            $response[$floorName] = [
+                'bedrooms'      => $floorData['bedrooms'] ?? null,
+                'bathrooms'     => $floorData['bathrooms'] ?? null,
+                'parking'       => $floorData['parking'] ?? null,
+                'swimming_pool' => $floorData['swimming_pool'] ?? null,
+                'floor_plan'    => $floorData['floor_plan'] ?? [],
+                'appliances'    => $appliances
+            ];
         }
-
-        // Fetch related appliances
-        $appliances = Appliance::whereIn('id', $applianceIds)->get();
-
-        // Format appliances
-        $appliances->transform(function ($appliance) {
-
-            // Format images
-            $images = [];
-            if (!empty($appliance->appliances_images)) {
-                $decoded = json_decode($appliance->appliances_images, true);
-
-                if (is_array($decoded)) {
-                    $images = array_map(function ($img) {
-                        return 'uploads/appliances_images/' . basename($img);
-                    }, $decoded);
-                } else {
-                    $images[] = 'uploads/appliances_images/' . basename($appliance->appliances_images);
-                }
-            }
-
-            // Format manuals
-            $manuals = [];
-            if (!empty($appliance->manuals)) {
-                $decoded = json_decode($appliance->manuals, true);
-
-                if (is_array($decoded)) {
-                    $manuals = array_map(function ($file) {
-                        return 'uploads/manuals/' . basename($file);
-                    }, $decoded);
-                } else {
-                    $manuals[] = 'uploads/manuals/' . basename($appliance->manuals);
-                }
-            }
-
-            $appliance->appliances_images = $images;
-            $appliance->manuals = $manuals;
-
-            return $appliance;
-        });
 
         return response()->json([
-            'status' => true,
+            'status'        => true,
             'response_code' => 200,
-            'message' => 'Amenities fetched successfully.',
-            'data' => [
-                'appliances' => $appliances->isNotEmpty() ? $appliances : []
-            ],
+            'message'       => 'Amenities fetched floor-wise successfully.',
+            'data'          => $response
         ]);
     }
 
@@ -1239,22 +1235,56 @@ class HouseOwnerApiController extends Controller
     public function getIssuesByUser(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id'
+            'user_id'      => 'required|exists:users,id',
+            'issue_status' => 'nullable|string'
         ]);
 
-        $issues = IssueReport::with([
-            'property:*',
-            'appliance:*',
-            'reporter:*'
-        ])
+        $issues = IssueReport::with(['property', 'appliance', 'reporter'])
             ->where('service_provider', $request->user_id)
+            ->when($request->issue_status, function ($query) use ($request) {
+                $query->where('issue_status', $request->issue_status);
+            })
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($issue) {
+                $issue->image = $issue->image
+                    ? array_values((array) $issue->image)
+                    : [];
+                return $issue;
+            });
 
         return response()->json([
-            'status' => true,
+            'status'  => true,
             'message' => 'Issue reports fetched successfully',
-            'data' => $issues
+            'data'    => $issues
+        ], 200);
+    }
+
+
+    /* Update Issue Report By Service Provider */
+    public function updateIssueReportByServiceProvider(Request $request)
+    {
+        // Validate request
+        $validated = $request->validate([
+            'issue_report_id' => 'required|exists:issue_reports,id',
+            'status'          => 'required|in:accepted,declined',
+        ]);
+
+        // Fetch issue report
+        $issueReport = IssueReport::find($validated['issue_report_id']);
+
+        // Update status
+        $issueReport->update([
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Issue status updated successfully.',
+            'data'    => [
+                'issue_report_id' => $issueReport->id,
+                'status'          => $issueReport->status,
+            ],
         ], 200);
     }
 }

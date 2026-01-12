@@ -23,7 +23,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/all-appliance', [HouseOwnerApiController::class, 'getAppliancesByProperty']);
     Route::post('/appliance', [HouseOwnerApiController::class, 'getApplianceById']);
     Route::post('/house-plans', [HouseOwnerApiController::class, 'getHousePlanByProperty']);
-
     Route::post('/appliance-feedback', [HouseOwnerApiController::class, 'applianceFeedbackForm']);
     Route::post('/profile-update', [HouseOwnerApiController::class, 'profileUpdate']);
     Route::post('/service-history', [HouseOwnerApiController::class, 'appliancesServiceHistory']);
@@ -34,15 +33,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mark-notifications-read', [HouseOwnerApiController::class, 'markNotificationsAsRead']);
     Route::post('/search-appliance', [HouseOwnerApiController::class, 'searchAppliance']);
     Route::post('/email-us', [HouseOwnerApiController::class, 'emailUs']);
-
     Route::post('/compliance-certificate', [HouseOwnerApiController::class, 'getComplianceCertificatesByProperty']);
-
     Route::get('/dashboard', [AuthApiController::class, 'dashboard']);
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::get('/profile', [AuthApiController::class, 'getUserProfile']);
-
     Route::post('/issue-reports/by-user', [HouseOwnerApiController::class, 'getIssuesByUser']);
-
+    Route::post('/update-issue-reports-by-serviceprovider', [HouseOwnerApiController::class, 'updateIssueReportByServiceProvider']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -20,6 +20,10 @@ class Appliance extends Model
         'manuals',
         'appliances_images',
     ];
+    protected $casts = [
+        'manuals' => 'array',
+        'appliances_images' => 'array',
+    ];
 
     public function user()
     {
@@ -39,7 +43,6 @@ class Appliance extends Model
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($appliance) {
             if (empty($appliance->appliance_id)) {
                 $last = self::latest('id')->first();

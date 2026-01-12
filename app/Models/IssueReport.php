@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class IssueReport extends Model
 {
     use HasFactory;
+    const STATUS_ACCEPTED = 'accepted';
+    const STATUS_DECLINED = 'declined';
     protected $fillable = [
         'issue_number',
         'properties_id',
@@ -23,11 +25,17 @@ class IssueReport extends Model
         'service_provider',
         'issue_status',
         'issue_urgency_level',
-        'image'
+        'image',
+        'status'
     ];
 
     protected $casts = [
         'reported_date' => 'date',
+        'image' => 'array',
+    ];
+
+    protected $attributes = [
+        'status' => 'declined',
     ];
 
     public function property()

@@ -24,8 +24,6 @@ class HousePlan extends Model
         'floor_details' => 'array',
     ];
 
-
-
     public function property()
     {
         return $this->belongsTo(Property::class);

@@ -110,21 +110,24 @@ class IssueReportController extends Controller
             'issue_status'        => 'nullable|string|max:255',
             'issue_urgency_level' => 'nullable|string|max:255',
 
+            // Multiple file upload validation
             'image'               => 'nullable|array',
-            'image.*'             => 'file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png|max:5120',
+            'image.*'             => 'file|mimes:jpg,jpeg,png,pdf,csv,xlsx,xls|max:5120',
+            'status' => 'required|in:accepted,declined',
         ]);
 
-        // Remove file field
+        // Remove file field from request data
         $data = $request->except(['image']);
 
-        // Store images
+        // Store uploaded files
         if ($request->hasFile('image')) {
             $images = [];
 
             foreach ($request->file('image') as $file) {
-                $images[] = $file->store('issue_report', 'public');
+                $images[] = $file->store('issue_reports', 'public');
             }
 
+            // Store file paths as JSON (same as property)
             $data['image'] = json_encode($images);
         }
 
@@ -134,6 +137,7 @@ class IssueReportController extends Controller
             ->route('admin.issue_report.index')
             ->with('success', 'Issue report created successfully.');
     }
+
 
     public function edit(string $id)
     {
@@ -169,6 +173,7 @@ class IssueReportController extends Controller
             'service_provider'    => 'nullable|string|max:255',
             'issue_status'        => 'required|string|max:255',
             'issue_urgency_level' => 'required|string|max:255',
+            'status'              => 'required|in:accepted,declined',
 
             'image'               => 'nullable|array',
             'image.*'             => 'file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png|max:5120',

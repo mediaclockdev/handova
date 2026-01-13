@@ -72,9 +72,21 @@ class HousePlansController extends Controller
         if ($request->has('floor')) {
             foreach ($request->floor as $floorKey => $floorData) {
 
+                // Skip floor if all fields are empty
+                $hasData =
+                    !empty($floorData['bedrooms']) ||
+                    !empty($floorData['bathrooms']) ||
+                    !empty($floorData['parking']) ||
+                    !empty($floorData['swimming_pool']) ||
+                    !empty($floorData['appliances']) ||
+                    $request->hasFile("floor_plan.$floorKey");
+
+                if (!$hasData) {
+                    continue; // 🚫 Skip this floor completely
+                }
+
                 $images = [];
 
-                // Store floor plan images
                 if ($request->hasFile("floor_plan.$floorKey")) {
                     foreach ($request->file("floor_plan.$floorKey") as $file) {
                         $images[] = $file->store('house_plan', 'public');
@@ -91,6 +103,7 @@ class HousePlansController extends Controller
                 ];
             }
         }
+
 
         HousePlan::create([
             'plan_name'        => $request->plan_name,
@@ -145,28 +158,27 @@ class HousePlansController extends Controller
         $housePlan = HousePlan::findOrFail($id);
 
         $request->validate([
-            'plan_name'          => 'required|string|max:255',
-            'storey'             => 'required|string',
+            'plan_name'        => 'required|string|max:255',
+            'storey'           => 'required|string',
+            'pricing'          => 'required|string',
+            'house_area'       => 'nullable|string',
+            'suburbs'          => 'nullable|string',
+            'display_location' => 'required|string',
 
-            'pricing'            => 'required|string',
-            'house_area'         => 'nullable|string',
-            'suburbs'            => 'nullable|string',
-            'display_location'   => 'required|string',
+            'floor'                    => 'nullable|array',
+            'floor.*.bedrooms'         => 'nullable|integer',
+            'floor.*.bathrooms'        => 'nullable|integer',
+            'floor.*.parking'          => 'nullable|string',
+            'floor.*.swimming_pool'    => 'nullable|string',
 
-            'floor'                      => 'nullable|array',
-            'floor.*.bedrooms'           => 'nullable|integer',
-            'floor.*.bathrooms'          => 'nullable|integer',
-            'floor.*.parking'            => 'nullable|string',
-            'floor.*.swimming_pool'      => 'nullable|string',
+            'floor.*.appliances'       => 'nullable|array',
+            'floor.*.appliances.*'     => 'exists:appliances,id',
 
-            'floor.*.appliances'         => 'nullable|array',
-            'floor.*.appliances.*'       => 'exists:appliances,id',
+            'floor_plan'               => 'nullable|array',
+            'floor_plan.*.*'           => 'image|mimes:jpg,jpeg,png|max:2048',
 
-            'floor_plan'                 => 'nullable|array',
-            'floor_plan.*.*'             => 'image|mimes:jpg,jpeg,png|max:2048',
-
-            'existing_floor_plan'        => 'nullable|array',
-            'existing_floor_plan.*.*'    => 'nullable|string',
+            'existing_floor_plan'      => 'nullable|array',
+            'existing_floor_plan.*.*'  => 'nullable|string',
         ]);
 
         $floorDetails = [];
@@ -174,8 +186,23 @@ class HousePlansController extends Controller
         if ($request->has('floor')) {
             foreach ($request->floor as $floorKey => $floorData) {
 
-                // Existing images (already stored paths)
-                $images = $request->input("existing_floor_plan.$floorKey", []);
+                $existingImages = $request->input("existing_floor_plan.$floorKey", []);
+
+                $hasData =
+                    !empty($floorData['bedrooms']) ||
+                    !empty($floorData['bathrooms']) ||
+                    !empty($floorData['parking']) ||
+                    !empty($floorData['swimming_pool']) ||
+                    !empty($floorData['appliances']) ||
+                    !empty($existingImages) ||
+                    $request->hasFile("floor_plan.$floorKey");
+
+                // 🚫 Skip unselected / empty floors
+                if (!$hasData) {
+                    continue;
+                }
+
+                $images = $existingImages;
 
                 // Store new uploads
                 if ($request->hasFile("floor_plan.$floorKey")) {
@@ -202,10 +229,7 @@ class HousePlansController extends Controller
             'suburbs'          => $request->suburbs,
             'display_location' => $request->display_location,
             'storey'           => $request->storey,
-
-            // Casted to array in model
             'floor_details'    => $floorDetails,
-
             'user_id'          => auth()->id(),
         ]);
 

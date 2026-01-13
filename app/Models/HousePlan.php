@@ -21,6 +21,7 @@ class HousePlan extends Model
     ];
 
     protected $casts = [
+        'floor_plan' => 'array',
         'floor_details' => 'array',
     ];
 
@@ -74,5 +75,23 @@ class HousePlan extends Model
             'second_floor' => 'G + 2',
             default        => '-',
         };
+    }
+
+    public function getFloorPlanAttribute($value)
+    {
+        $floors = json_decode($value, true);
+
+        if (!is_array($floors)) return [];
+
+        foreach ($floors as $key => $floor) {
+            if (!empty($floor['floor_plan'])) {
+                $floors[$key]['floor_plan'] = array_map(
+                    fn($img) => asset('storage/' . ltrim($img, '/')),
+                    $floor['floor_plan']
+                );
+            }
+        }
+
+        return $floors;
     }
 }

@@ -451,11 +451,7 @@ class HouseOwnerApiController extends Controller
         ]);
 
         $propertyId = $validated['property_id'];
-
-        // Fetch property
         $property = Property::find($propertyId);
-
-        // Fetch all house plans for this property
         $housePlans = HousePlan::where('id', $property->house_plan_id)->get();
 
         if ($housePlans->isEmpty()) {
@@ -465,12 +461,37 @@ class HouseOwnerApiController extends Controller
             ], 404);
         }
 
-        // Decode JSON fields for each plan
         $housePlans->transform(function ($plan) {
-            $plan->floor_plan = json_decode($plan->floor_plan, true);
-            $plan->appliance_id = json_decode($plan->appliance_id, true);
+            $floors = is_array($plan->floor_details)
+                ? $plan->floor_details
+                : json_decode($plan->floor_details, true);
+
+            if (!is_array($floors)) {
+                $plan->floor_details = [];
+                return $plan;
+            }
+
+            foreach ($floors as $floorKey => $floorData) {
+
+                if (
+                    isset($floorData['floor_plan']) &&
+                    is_array($floorData['floor_plan'])
+                ) {
+                    $floors[$floorKey]['floor_plan'] = array_map(
+                        fn($img) => 'public/storage/' . ltrim($img, '/'),
+                        $floorData['floor_plan']
+                    );
+                }
+            }
+            $plan->floor_details = $floors;
+            $plan->appliance_id = is_array($plan->appliance_id)
+                ? $plan->appliance_id
+                : json_decode($plan->appliance_id, true) ?? [];
+
             return $plan;
         });
+
+
 
         // Get appliance IDs from property
         $applianceIds = $property->appliance_id;
@@ -493,10 +514,10 @@ class HouseOwnerApiController extends Controller
                 $decodedImages = json_decode($appliance->appliances_images, true);
                 if (is_array($decodedImages)) {
                     $applianceImages = array_map(function ($img) {
-                        return 'uploads/appliances_images/' . basename($img);
+                        return 'public/storage/appliances_images/' . basename($img);
                     }, $decodedImages);
                 } else {
-                    $applianceImages[] = 'uploads/appliances_images/' . basename($appliance->appliances_images);
+                    $applianceImages[] = 'public/storage/appliances_images/' . basename($appliance->appliances_images);
                 }
             }
 
@@ -506,10 +527,10 @@ class HouseOwnerApiController extends Controller
                 $decodedManuals = json_decode($appliance->manuals, true);
                 if (is_array($decodedManuals)) {
                     $manuals = array_map(function ($file) {
-                        return 'uploads/manuals/' . basename($file);
+                        return 'public/storage/manuals/' . basename($file);
                     }, $decodedManuals);
                 } else {
-                    $manuals[] = 'uploads/manuals/' . basename($appliance->manuals);
+                    $manuals[] = 'public/storage/manuals/' . basename($appliance->manuals);
                 }
             }
 
@@ -677,6 +698,7 @@ class HouseOwnerApiController extends Controller
         ], 201);
     }
 
+    /* Profile Update */
     public function profileUpdate(Request $request)
     {
         $user = auth()->user();
@@ -717,44 +739,32 @@ class HouseOwnerApiController extends Controller
     public function appliancesServiceHistory(Request $request)
     {
         try {
-            // Check for bearer token
             $token = $request->bearerToken();
             if (!$token) {
                 return response()->json(['status' => false, 'message' => 'Token is required.'], 401);
             }
 
-            // Validate user from token
             if (!$request->user()) {
                 return response()->json(['status' => false, 'message' => 'Invalid or expired token.'], 401);
             }
 
-            // Validate property_id
             if (!$request->has('property_id') || empty($request->property_id)) {
                 return response()->json(['status' => false, 'message' => 'Property ID is required'], 422);
             }
 
-            // Fetch property
             $property = Property::find($request->property_id);
             if (!$property) {
                 return response()->json(['status' => false, 'message' => 'Property not found'], 404);
             }
 
-            // Fetch issue reports for this property
             $issues = IssueReport::where('properties_id', $property->id)
                 ->latest()
                 ->get();
 
-            // Group by issue_status using ->groupBy()
             $grouped = $issues->map(function ($report) {
-                // Decode image
                 $images = json_decode($report->image, true);
-
-                // Get only the first image (or null if empty)
                 $firstImage = is_array($images) && count($images) > 0 ? $images[0] : null;
-
                 $applianceName = $report->appliance->appliance_name ?? null;
-
-                // Appliance image (stored as JSON array or single value depending on your DB)
                 $applianceImages = json_decode($report->appliance->appliances_images ?? '[]', true);
                 $applianceFirstImage = is_array($applianceImages) && count($applianceImages) > 0 ? $applianceImages[0] : null;
 
@@ -772,7 +782,6 @@ class HouseOwnerApiController extends Controller
                     'property_title' => $report->property->property_title ?? null,
                 ];
             })->groupBy('issue_status');
-
             return response()->json([
                 'status' => true,
                 'response_code' => 200,
@@ -1259,7 +1268,6 @@ class HouseOwnerApiController extends Controller
             'data'    => $issues
         ], 200);
     }
-
 
     /* Update Issue Report By Service Provider */
     public function updateIssueReportByServiceProvider(Request $request)

@@ -15,31 +15,31 @@
         <div class="main-content">
             <div class="content-wrapper">
                 <!-- Header -->
-                  @include('partials.navbar')
+                @include('partials.navbar')
 
                 <!-- Page Title and Date -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">Welcome Back {{ auth()->user()->name }}!</h1>
-                    <div class="text-muted d-none d-sm-block">April 24, 2025</div>
+                    <div class="text-muted d-none d-sm-block">{{ now()->format('F d, Y h:i A') }}</div>
                 </div>
-                
-                               <!-- Summary Cards -->
+
+                <!-- Summary Cards -->
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card summary-card p-4">
-                            <div class="h2 text-orange">{{$totalProperties}}</div>
+                            <div class="h2 text-orange">{{ $totalProperties }}</div>
                             <div>Total Properties</div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-lg-3">
+                    {{-- <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card summary-card p-4">
-                            <div class="h2 text-orange">{{$totalActiveUsersCount}}</div>
+                            <div class="h2 text-orange">{{ $totalActiveUsersCount }}</div>
                             <div>Active users</div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card summary-card p-4">
-                            <div class="h2 text-orange">{{$totalIssuesCount}}</div>
+                            <div class="h2 text-orange">{{ $totalIssuesCount }}</div>
                             <div>Open Issues</div>
                         </div>
                     </div>

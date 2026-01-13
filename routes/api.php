@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthApiController::class, 'getUserProfile']);
     Route::post('/issue-reports/by-user', [HouseOwnerApiController::class, 'getIssuesByUser']);
     Route::post('/update-issue-reports-by-serviceprovider', [HouseOwnerApiController::class, 'updateIssueReportByServiceProvider']);
+    Route::post('/service-provider/availability', [HouseOwnerApiController::class, 'updateServiceProviderAvailabilityPreferences']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -27,7 +27,7 @@
 
             <section id="signup-section">
                 <div class="text-center">
-                    <img src="{{ asset('images/handova.png') }}" alt="Handova Logo" class="logo">
+                    <img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo" class="logo">
                     <p class="brand-subtitle">SMART HANDOVERS</p>
                     <h2>Create Your Builder Account</h2>
                     <p>Join our platform to streamline your projects.</p>

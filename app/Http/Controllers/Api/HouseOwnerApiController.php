@@ -1287,4 +1287,50 @@ class HouseOwnerApiController extends Controller
             ],
         ], 200);
     }
+
+    /* Update Availability Preferences By Service Provider */
+    public function updateServiceProviderAvailabilityPreferences(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'days' => 'sometimes|array',
+            'days.*' => 'in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'time_from' => 'required_with:days|date_format:H:i',
+            'time_to' => 'required_with:days|date_format:H:i|after:time_from',
+            'availability' => 'sometimes|array'
+        ]);
+
+        $user = User::find($request->user_id);
+        if ($user->role !== 'service_provider') {
+            return response()->json([
+                'status' => true,
+                'message' => 'User is not a service provider'
+            ], 200);
+        }
+
+        if ($request->has('days')) {
+            $availabilityPreferences = [
+                'days' => $request->days,
+                'time' => [
+                    'from' => $request->time_from,
+                    'to'   => $request->time_to,
+                ]
+            ];
+        }
+
+        if ($request->has('availability')) {
+            $availabilityPreferences = $request->availability;
+        }
+
+        $user->availability_preferences = $availabilityPreferences;
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Availability preferences updated successfully',
+            'data' => [
+                'user_id' => $user->id,
+                'availability_preferences' => $user->availability_preferences
+            ]
+        ]);
+    }
 }

@@ -36,7 +36,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'status',
         'company_name',
         'service_specialisation',
-        'service_type'
+        'service_type',
+        'availability_preferences'
     ];
 
     /**
@@ -55,8 +56,9 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'email_verified_at'         => 'datetime',
+        'password'                  => 'hashed',
+        'availability_preferences'  => 'array',
     ];
 
     public function user()

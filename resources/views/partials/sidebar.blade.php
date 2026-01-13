@@ -1,7 +1,8 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <a href="/dashboard"><img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo" class="logo"></a>
+                <a href="/dashboard"><img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo"
+                        class="logo"></a>
             </div>
 
             <nav class="nav flex-column">
@@ -55,7 +56,8 @@
             <hr>
 
             <nav class="nav flex-column mt-auto">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.help.*') ? 'active' : '' }}"
+                    href="{{ route('admin.help.index') }}">
                     <i class="bi bi-question-circle"></i> Help
                 </a>
                 <form method="POST" action="{{ route('logout') }}" id="logout-form">

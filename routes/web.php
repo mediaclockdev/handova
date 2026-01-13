@@ -25,6 +25,7 @@ use \App\Http\Controllers\Admin\SubscriptionsPlanController;
 use \App\Http\Controllers\Admin\ComplianceCertificatesController;
 use \App\Http\Controllers\Admin\PageContentDetailsController;
 use \App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\HelpContentsController;
 
 
 
@@ -76,6 +77,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('report_analytics', ReportAnalyticsController::class);
     Route::resource('appliances', AppliancesController::class);
     Route::resource('subscription-plan', SubscriptionsPlanController::class);
+    Route::resource('help', HelpContentsController::class)->only(['index']);
 });
 
 Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');

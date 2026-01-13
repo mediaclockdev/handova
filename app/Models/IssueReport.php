@@ -50,7 +50,7 @@ class IssueReport extends Model
 
     public function assignedServiceProvider()
     {
-        return $this->belongsTo(ServiceProvider::class, 'service_provider');
+        return $this->belongsTo(User::class, 'service_provider');
     }
 
     public function appliance()

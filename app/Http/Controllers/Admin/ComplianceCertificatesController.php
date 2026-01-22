@@ -11,11 +11,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ComplianceCertificatesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $formTitle = 'Compliance Certificates';
-
-        // Only fetch certificates belonging to the logged-in user
         $certificates = ComplianceCertificate::where('user_id', auth()->id())
             ->latest()
             ->paginate(10);

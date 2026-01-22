@@ -24,7 +24,7 @@ $(document).ready(function () {
                 document.getElementById("preview-container");
 
             const newFiles = Array.from(event.target.files).filter((f) =>
-                f.type.startsWith("image/")
+                f.type.startsWith("image/"),
             );
 
             newFiles.forEach((file) => {
@@ -37,7 +37,7 @@ $(document).ready(function () {
                     wrapper.classList.add(
                         "position-relative",
                         "m-2",
-                        "img-thumbnail"
+                        "img-thumbnail",
                     );
 
                     const img = document.createElement("img");
@@ -125,7 +125,7 @@ function togglePasswordVisibility(inputId) {
 function toggleSuperadmminPasswordVisibility(inputId) {
     const passwordInput = document.getElementById(inputId);
     const icon = document.querySelector(
-        `#${inputId} + .cursor-pointer .input-group-text i`
+        `#${inputId} + .cursor-pointer .input-group-text i`,
     );
 
     if (passwordInput.type === "password") {
@@ -204,7 +204,7 @@ navLinks.forEach((link) => {
 function clearForm() {
     // Reset all forms safely
     $(
-        "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan, #applianceForm"
+        "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan, #applianceForm",
     ).each(function () {
         this.reset();
     });
@@ -222,3 +222,346 @@ function clearForm() {
     const appliancesPreview = document.getElementById("appliances-preview");
     if (appliancesPreview) appliancesPreview.innerHTML = "";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".suspend-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            const form = this.closest(".suspend-form");
+            Swal.fire({
+                title: "Suspend Account?",
+                text: "This user will be suspended and lose access.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, suspend",
+                cancelButtonText: "Cancel",
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll(".properties-suspend-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            const form = this.closest(".suspend-form");
+            Swal.fire({
+                title: "Update Property Status ?",
+                text: "Property Status changed as a pending.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+
+// Select all
+document.addEventListener("DOMContentLoaded", function () {
+    document
+        .getElementById("select-all")
+        ?.addEventListener("change", function () {
+            document.querySelectorAll(".row-checkbox").forEach((cb) => {
+                cb.checked = this.checked;
+            });
+            updateSelectedCount();
+        });
+
+    document.querySelectorAll(".row-checkbox").forEach((cb) => {
+        cb.addEventListener("change", updateSelectedCount);
+    });
+});
+
+function updateSelectedCount() {
+    const count = document.querySelectorAll(".row-checkbox:checked").length;
+    const counter = document.querySelector(
+        "#bulk-actions span.text-neutral-500",
+    );
+
+    if (counter) {
+        counter.innerText = count + " selected";
+    }
+}
+
+function submitBulkAction(action) {
+    const selected = Array.from(
+        document.querySelectorAll(".row-checkbox:checked"),
+    ).map((cb) => cb.value);
+
+    if (selected.length === 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "No Selection",
+            text: "Please select at least one record",
+        });
+        return;
+    }
+
+    document.getElementById("bulk-action-type").value = action;
+    document.getElementById("bulk-user-ids").value = selected.join(",");
+    document.getElementById("bulk-action-form").submit();
+}
+
+function openSendMessageModal() {
+    const checked = document.querySelectorAll(".row-checkbox:checked");
+    if (checked.length === 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "No Selection",
+            text: "Please select at least one builder",
+        });
+        return;
+    }
+    const emails = Array.from(checked).map((cb) => cb.dataset.email);
+    document.getElementById("selected-emails").value = emails.join(",");
+    document.getElementById("email-preview").value = emails.join(", ");
+    const modal = new bootstrap.Modal(
+        document.getElementById("sendMessageModal"),
+    );
+    modal.show();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".delete-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            const form = this.closest(".delete-form");
+
+            Swal.fire({
+                title: "Delete Record?",
+                text: "This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete",
+                cancelButtonText: "Cancel",
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".view-builder-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            const picture = this.dataset.picture;
+            const img = document.getElementById("picture-name");
+            img.src = picture;
+            img.alt = this.dataset.name;
+
+            document.getElementById("view-name").innerText = this.dataset.name;
+            document.getElementById("view-email").innerText =
+                this.dataset.email;
+            document.getElementById("view-phone").innerText =
+                this.dataset.phone;
+            document.getElementById("view-status").innerText =
+                this.dataset.status;
+            document.getElementById("view-created").innerText =
+                this.dataset.created;
+        });
+    });
+
+    document.querySelectorAll(".view-properties-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            // ---------- Profile Picture ----------
+            // const img = document.getElementById("picture-name");
+            // img.src = this.dataset.picture ?? "";
+            // img.alt = "Builder Profile";
+
+            // ---------- Text Fields ----------
+            document.getElementById("property_title").innerText =
+                this.dataset.propertytitle;
+            document.getElementById("description").innerText =
+                this.dataset.description;
+            document.getElementById("property_type").innerText =
+                this.dataset.propertytype;
+            document.getElementById("property_status").innerText =
+                this.dataset.propertystatus;
+            document.getElementById("address").innerText = this.dataset.address;
+            document.getElementById("house_plan_name").innerText =
+                this.dataset.houseplanname;
+            document.getElementById("build_completion_date").innerText =
+                this.dataset.buildcompletiondate;
+            document.getElementById("number_of_bedrooms").innerText =
+                this.dataset.numberofbedrooms;
+            document.getElementById("number_of_bathrooms").innerText =
+                this.dataset.numberofbathrooms;
+            document.getElementById("parking").innerText = this.dataset.parking;
+            document.getElementById("swimming_pool").innerText =
+                this.dataset.swimmingpool == 1 ? "Available" : "Not Available";
+            document.getElementById("tags").innerText = this.dataset.tags;
+            document.getElementById("internal_notes").innerText =
+                this.dataset.internalnotes;
+            document.getElementById("compliance_certificate").innerText =
+                this.dataset.compliancecertificate;
+            document.getElementById("created_at").innerText =
+                this.dataset.createdat;
+
+            const baseUrl = this.dataset.baseurl;
+
+            const floorPlans = JSON.parse(this.dataset.floorplanupload || "[]");
+            const container = document.getElementById("floor_plans_container");
+            container.innerHTML = "";
+
+            if (floorPlans.length > 0) {
+                floorPlans.forEach((path) => {
+                    const img = document.createElement("img");
+                    img.src = baseUrl + "public/storage/" + path;
+                    img.className = "rounded border h-auto w-25 object-cover";
+                    container.appendChild(img);
+                });
+            } else {
+                container.innerHTML =
+                    "<p class='text-gray-500'>No floor plans available</p>";
+            }
+        });
+    });
+
+    document.querySelectorAll(".view-houseowners-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            // ---------- Text Fields ----------
+            document.getElementById("houseownerid").innerText =
+                this.dataset.houseownerid;
+            document.getElementById("firstname").innerText =
+                this.dataset.firstname;
+            document.getElementById("lastname").innerText =
+                this.dataset.lastname;
+            document.getElementById("email").innerText = this.dataset.email;
+            document.getElementById("phonenumber").innerText =
+                this.dataset.phonenumber;
+            document.getElementById("properydetails").innerText =
+                this.dataset.properydetails;
+            document.getElementById("addressofproperty").innerText =
+                this.dataset.addressofproperty;
+            document.getElementById("tags").innerText = this.dataset.tags;
+            document.getElementById("internalnotes").innerText =
+                this.dataset.internalnotes;
+            document.getElementById("created_at").innerText =
+                this.dataset.createdat;
+
+            const baseUrl = this.dataset.baseurl;
+
+            const handoverdoc = JSON.parse(
+                this.dataset.handoverdocuments || "[]",
+            );
+            const handovercontainer =
+                document.getElementById("handoverdocuments");
+            handovercontainer.innerHTML = "";
+
+            if (handoverdoc.length > 0) {
+                handoverdoc.forEach((path) => {
+                    const img = document.createElement("img");
+                    img.src = baseUrl + "public/storage/" + path;
+                    img.className = "rounded border h-auto w-25 object-cover";
+                    handovercontainer.appendChild(img);
+                });
+            } else {
+                container.innerHTML =
+                    "<p class='text-gray-500'>No floor plans available</p>";
+            }
+
+            const floorPlans = JSON.parse(this.dataset.floorplanupload || "[]");
+            const container = document.getElementById("floorplanupload");
+            container.innerHTML = "";
+
+            if (floorPlans.length > 0) {
+                floorPlans.forEach((path) => {
+                    const img = document.createElement("img");
+                    img.src = baseUrl + "public/storage/" + path;
+                    img.className = "rounded border h-auto w-25 object-cover";
+                    container.appendChild(img);
+                });
+            } else {
+                container.innerHTML =
+                    "<p class='text-gray-500'>No floor plans available</p>";
+            }
+        });
+    });
+
+    document.querySelectorAll(".view-providers-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+            const picture = this.dataset.picture;
+            const img = document.getElementById("picture-name");
+            img.src = picture;
+            img.alt = this.dataset.name;
+
+            document.getElementById("view-name").innerText =
+                this.dataset.firstname;
+            document.getElementById("last-name").innerText =
+                this.dataset.lastname;
+            document.getElementById("view-email").innerText =
+                this.dataset.email;
+            document.getElementById("view-phone").innerText =
+                this.dataset.phone;
+            document.getElementById("servicespecialisation").innerText =
+                this.dataset.servicespecialisation;
+            document.getElementById("servicetype").innerText =
+                this.dataset.servicetype;
+            document.getElementById("view-status").innerText =
+                this.dataset.status;
+            document.getElementById("view-created").innerText =
+                this.dataset.created;
+        });
+    });
+});
+
+function submitPropertyBulkAction(action) {
+    const selected = Array.from(
+        document.querySelectorAll(".property-checkbox:checked"),
+    ).map((cb) => cb.value);
+
+    if (selected.length === 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "No Selection",
+            text: "Please select at least one property",
+        });
+        return;
+    }
+
+    document.getElementById("bulk_action").value = action;
+    document.getElementById("bulk_property_ids").value = selected.join(",");
+    document.getElementById("bulkActionForm").submit();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const selectAll = document.getElementById("select-all");
+
+    // Select all checkboxes
+    selectAll?.addEventListener("change", function () {
+        document.querySelectorAll(".property-checkbox").forEach((cb) => {
+            cb.checked = this.checked;
+        });
+        updateSelectedCount();
+    });
+
+    // Individual checkbox change
+    document.querySelectorAll(".property-checkbox").forEach((cb) => {
+        cb.addEventListener("change", updateSelectedCount);
+    });
+
+    function updateSelectedCount() {
+        const count = document.querySelectorAll(
+            ".property-checkbox:checked",
+        ).length;
+        const counter = document.querySelector(
+            "#bulk-actionss span.text-neutral-500",
+        );
+
+        if (counter) {
+            counter.innerText = `${count} selected`;
+        }
+    }
+});

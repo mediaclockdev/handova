@@ -39,16 +39,18 @@
                     <div id="page-header" class="mb-6">
                         <div class="max-w-7xl mx-auto">
                             <div class="mb-8">
-                                <h2 class="text-2xl text-neutral-900 mb-2">Builders Management</h2>
-                                <p class="text-neutral-600">View, filter, and manage all registered builders</p>
+                                <h2 class="text-2xl text-neutral-900 mb-2">Service Providers Management</h2>
+                                <p class="text-neutral-600">View, filter, and manage all registered Service Providers
+                                </p>
                             </div>
                             <div id="search-filters" class="bg-white rounded-lg border border-neutral-200 p-6 mb-6">
-                                <form method="GET" action="{{ route('superadmin.builders.index') }}">
+                                <form method="GET" action="{{ route('superadmin.providers.index') }}">
                                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
                                         {{-- Search --}}
                                         <div class="md:col-span-2">
-                                            <label class="block text-sm text-neutral-700 mb-2">Search Builders</label>
+                                            <label class="block text-sm text-neutral-700 mb-2">Search Search
+                                                Providers..</label>
                                             <input type="text" name="search" value="{{ request('search') }}"
                                                 placeholder="Search by name, email, phone..."
                                                 class="w-full px-4 py-2 border rounded-md" />
@@ -62,19 +64,6 @@
                                                 @foreach (['active', 'pending', 'suspended', 'inactive'] as $status)
                                                     <option value="{{ $status }}" @selected(request('status') == $status)>
                                                         {{ ucfirst($status) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        {{-- Specialty --}}
-                                        <div>
-                                            <label class="block text-sm text-neutral-700 mb-2">Specialty</label>
-                                            <select name="specialty" class="w-full px-3 py-2 border rounded-md">
-                                                <option value="">All Specialties</option>
-                                                @foreach (['residential', 'commercial', 'industrial', 'renovation'] as $specialty)
-                                                    <option value="{{ $specialty }}" @selected(request('specialty') == $specialty)>
-                                                        {{ ucfirst($specialty) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -96,7 +85,7 @@
                                                         </path>
                                                     </svg></i>Apply Filters
                                             </button>
-                                            <a href="{{ route('superadmin.builders.index') }}"
+                                            <a href="{{ route('superadmin.providers.index') }}"
                                                 class="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50">
                                                 <i class="mr-2" data-fa-i2svg=""><svg
                                                         class="svg-inline--fa fa-rotate-right" aria-hidden="true"
@@ -108,7 +97,7 @@
                                                         </path>
                                                     </svg></i>Reset
                                             </a>
-                                            <a href="{{ route('superadmin.builders.export', request()->query()) }}"
+                                            <a href="{{ route('superadmin.providers.export', request()->query()) }}"
                                                 class="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50">
                                                 <i class="mr-2" data-fa-i2svg=""><svg
                                                         class="svg-inline--fa fa-download" aria-hidden="true"
@@ -123,7 +112,7 @@
                                         </div>
                                 </form>
                                 <div class="space-x-2">
-                                    <a href="{{ route('superadmin.builders.create') }}"
+                                    <a href="{{ route('superadmin.providers.create') }}"
                                         class="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-800">
 
 
@@ -136,8 +125,7 @@
                                                 </path>
                                             </svg>
                                         </i>
-                                        Add Builder
-
+                                        Add Service Provider
                                     </a>
                                 </div>
                             </div>
@@ -160,11 +148,15 @@
                                         <input type="checkbox" id="select-all" class="rounded border-neutral-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Builder</th>
+                                        Service Provider</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Company Name</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Phone Number</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Projects</th>
+                                        Service Specialisation</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Service Type</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Status</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
@@ -196,10 +188,17 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm text-neutral-900">{{ $user->company_name }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="text-sm text-neutral-900">{{ $user->phone }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="text-sm text-neutral-900">0</span>
+                                            <span
+                                                class="text-sm text-neutral-900">{{ $user->service_specialisation }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm text-neutral-900">{{ $user->service_type }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
@@ -215,11 +214,14 @@
                                                 <a href="javascript:void();"
                                                     class="text-neutral-700 hover:text-neutral-900">
                                                     <button type="button"
-                                                        class="text-neutral-700 hover:text-neutral-900 view-builder-btn"
+                                                        class="text-neutral-700 hover:text-neutral-900 view-providers-btn"
                                                         data-bs-toggle="modal" data-bs-target="#viewBuilderModal"
                                                         data-picture="{{ $user->profile_picture ? asset('/public/' . $user->profile_picture) : asset('https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=123') }}"
-                                                        data-name="{{ $user->name }}"
+                                                        data-firstname="{{ $user->first_name }}"
+                                                        data-lastname="{{ $user->last_name }}"
                                                         data-email="{{ $user->email }}"
+                                                        data-servicespecialisation="{{ $user->service_specialisation }}"
+                                                        data-servicetype="{{ $user->service_type }}"
                                                         data-phone="{{ $user->phone }}"
                                                         data-status="{{ ucfirst($user->status) }}"
                                                         data-created="{{ $user->created_at->format('d M Y') }}">
@@ -236,7 +238,7 @@
                                                 </a>
 
                                                 {{-- Edit --}}
-                                                <a href="{{ route('superadmin.builders.edit', $user->id) }}"
+                                                <a href="{{ route('superadmin.providers.edit', $user->id) }}"
                                                     class="text-neutral-700 hover:text-neutral-900">
                                                     <i data-fa-i2svg=""><svg class="svg-inline--fa fa-pen-to-square"
                                                             aria-hidden="true" focusable="false" data-prefix="fas"
@@ -250,7 +252,7 @@
                                                 </a>
 
                                                 {{-- Suspend --}}
-                                                <form action="{{ route('superadmin.builders.suspend', $user->id) }}"
+                                                <form action="{{ route('superadmin.providers.suspend', $user->id) }}"
                                                     method="POST" class="suspend-form">
                                                     @csrf
                                                     @method('PATCH')
@@ -269,7 +271,7 @@
                                                     </button>
                                                 </form>
 
-                                                <form action="{{ route('superadmin.builders.destroy', $user->id) }}"
+                                                <form action="{{ route('superadmin.providers.destroy', $user->id) }}"
                                                     method="POST" class="delete-form">
                                                     @csrf
                                                     @method('DELETE')
@@ -355,7 +357,7 @@
                                     </svg></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm text-neutral-500">Total Builders</p>
+                                <p class="text-sm text-neutral-500">Total Service Providers</p>
                                 <p class="text-2xl text-neutral-900">{{ $totalUsers }}</p>
                             </div>
                         </div>
@@ -430,7 +432,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form method="POST" action="{{ route('superadmin.builders.sendMail') }}">
+                <form method="POST" action="{{ route('superadmin.providers.sendMail') }}">
                     @csrf
 
                     <div class="modal-body">
@@ -477,7 +479,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Builder Details</h5>
+                    <h5 class="modal-title">Service Providers Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -492,8 +494,13 @@
 
 
                         <div>
-                            <strong>Name:</strong>
+                            <strong>First Name:</strong>
                             <p id="view-name"></p>
+                        </div>
+
+                        <div>
+                            <strong>Last Name:</strong>
+                            <p id="last-name"></p>
                         </div>
 
                         <div>
@@ -504,6 +511,14 @@
                         <div>
                             <strong>Phone:</strong>
                             <p id="view-phone"></p>
+                        </div>
+                        <div>
+                            <strong>Service Specialisation:</strong>
+                            <p id="servicespecialisation"></p>
+                        </div>
+                        <div>
+                            <strong>Service Type:</strong>
+                            <p id="servicetype"></p>
                         </div>
 
                         <div>

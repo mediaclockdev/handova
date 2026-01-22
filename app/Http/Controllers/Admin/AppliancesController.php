@@ -5,9 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appliance;
+use Illuminate\Support\Facades\Log;
 
 class AppliancesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -48,7 +53,7 @@ class AppliancesController extends Controller
             'warranty_information' => 'nullable|string',
 
             'manuals'             => 'nullable|array',
-            'manuals.*'           => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv',
+            'manuals.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv,xls,xlsx|max:10240',
 
             'appliances_images'   => 'nullable|array',
             'appliances_images.*' => 'image|mimes:jpeg,png,jpg,gif',
@@ -114,52 +119,69 @@ class AppliancesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $appliance = Appliance::findOrFail($id);
+        try {
+            $appliance = Appliance::findOrFail($id);
 
-        $request->validate([
-            'appliance_id'         => 'required|max:255|unique:appliances,appliance_id,' . $id,
-            'appliance_name'       => 'required|string',
-            'product_details'      => 'nullable|string',
-            'brand_name'           => 'required|string',
-            'model'                => 'nullable|string',
-            'warranty_information' => 'nullable|string',
+            $request->validate([
+                'appliance_id'          => 'required|max:255|unique:appliances,appliance_id,' . $id,
+                'appliance_name'        => 'required|string',
+                'product_details'       => 'nullable|string',
+                'brand_name'            => 'required|string',
+                'model'                 => 'nullable|string',
+                'warranty_information'  => 'nullable|string',
 
-            'manuals.*'            => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv',
-            'appliances_images.*'  => 'image|mimes:jpeg,png,jpg,gif',
-        ]);
+                'manuals'               => 'nullable|array',
+                'manuals.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv,xls,xlsx|max:10240',
 
-        $data = $request->except(['manuals', 'appliances_images']);
+                'appliances_images'     => 'nullable|array',
+                'appliances_images.*'   => 'image|mimes:jpeg,png,jpg,gif',
+            ]);
 
-        /* -------- EXISTING FILES FROM FORM -------- */
-        $existingImages  = $request->input('existing_appliances_images', []);
-        $existingManuals = $request->input('existing_manuals', []);
+            $data = $request->except(['manuals', 'appliances_images']);
 
-        /* -------- NEW IMAGE UPLOADS -------- */
-        if ($request->hasFile('appliances_images')) {
-            foreach ($request->file('appliances_images') as $image) {
-                $existingImages[] = $image->store('appliances_images', 'public');
+            /* -------- EXISTING FILES -------- */
+            $existingImages  = $request->input('existing_appliances_images', []);
+            $existingManuals = $request->input('existing_manuals', []);
+
+            /* -------- NEW IMAGE UPLOADS -------- */
+            if ($request->hasFile('appliances_images')) {
+                foreach ($request->file('appliances_images') as $image) {
+                    $existingImages[] = $image->store('appliances_images', 'public');
+                }
             }
-        }
 
-        /* -------- NEW MANUAL UPLOADS -------- */
-        if ($request->hasFile('manuals')) {
-            foreach ($request->file('manuals') as $manual) {
-                $existingManuals[] = $manual->store('manuals', 'public');
+            /* -------- NEW MANUAL UPLOADS -------- */
+            if ($request->hasFile('manuals')) {
+                foreach ($request->file('manuals') as $manual) {
+                    $existingManuals[] = $manual->store('manuals', 'public');
+                }
             }
+
+            $data['appliances_images'] = json_encode($existingImages);
+            $data['manuals'] = json_encode($existingManuals);
+            $data['user_id'] = auth()->id();
+
+            $appliance->update($data);
+
+            return redirect()
+                ->route('admin.appliances.index')
+                ->with('success', 'Appliance updated successfully.');
+        } catch (\Throwable $e) {
+
+            Log::error('Appliance update failed', [
+                'appliance_id' => $id,
+                'user_id'      => auth()->id(),
+                'message'      => $e->getMessage(),
+                'file'         => $e->getFile(),
+                'line'         => $e->getLine(),
+                'trace'        => $e->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong while updating the appliance.');
         }
-
-        $data['appliances_images'] = json_encode($existingImages);
-        $data['manuals'] = json_encode($existingManuals);
-        $data['user_id'] = auth()->id();
-
-        $appliance->update($data);
-
-        return redirect()
-            ->route('admin.appliances.index')
-            ->with('success', 'Appliance updated successfully.');
     }
-
-
 
 
     /**

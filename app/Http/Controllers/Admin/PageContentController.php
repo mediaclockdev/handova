@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class PageContentDetailsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display list
      */

@@ -26,20 +26,38 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Brand</th>
-                                    <th>Manual</th>
-                                    <th>Warranty</th>
+                                    <th>Appliance Name</th>
+                                    <th>Product Details</th>
+                                    <th>Brand Name</th>
+                                    <th>Model</th>
+                                    <th>Warranty Information</th>
+                                    <th>Manuals</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($appliances as $appliance)
                                     <tr>
-                                        <td>{{ $appliance->model }}</td>
+                                        <td>{{ $appliance->appliance_name }}</td>
+                                        <td>{{ $appliance->product_details }}</td>
                                         <td>{{ $appliance->brand_name }}</td>
-                                        <td>PDF</td>
+                                        <td>{{ $appliance->model }}</td>
                                         <td>{{ $appliance->warranty_information }}</td>
+                                        @php
+                                            $manuals = json_decode($appliance->manuals, true);
+                                        @endphp
+                                        <td>
+                                            @if (!empty($manuals) && count($manuals))
+                                                @foreach ($manuals as $file)
+                                                    <a class="view_file" href="{{ asset('public/storage/' . $file) }}" target="_blank">
+                                                        View File
+                                                    </a><br>
+                                                @endforeach
+                                            @else
+                                                No File
+                                            @endif
+                                        </td>
+
                                         <td>
                                             <a href="{{ route('admin.appliances.edit', $appliance->id) }}"
                                                 class="btn btn-sm btn-warning"><i

@@ -186,12 +186,7 @@
                     </div>
                 @endforeach
             @endif
-
-
         </div>
-
-
-
     </div>
 @endforeach
 

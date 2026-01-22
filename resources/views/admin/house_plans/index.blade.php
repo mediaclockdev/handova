@@ -52,7 +52,7 @@
                                                 method="POST" style="display:inline-block">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Delete this plan?')">
+                                                    onclick="return confirm('Are you sure you want to delete this plan ?')">
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
                                             </form>

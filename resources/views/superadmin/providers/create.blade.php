@@ -23,11 +23,11 @@
 
                     {{-- Form --}}
                     <div class="card-body px-4 py-4">
-                        <form action="{{ route('superadmin.builders.store') }}" method="POST">
+                        <form action="{{ route('superadmin.providers.store') }}" method="POST">
                             @csrf
 
-                            @include('superadmin.builders.form', [
-                                'buttonText' => 'Create Builder',
+                            @include('superadmin.providers.form', [
+                                'buttonText' => 'Create Service Providers',
                             ])
                         </form>
                     </div>

@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ServiceProvider;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class BuildersController extends Controller
+class ServiceProvidersListController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +22,7 @@ class BuildersController extends Controller
     public function index(Request $request)
     {
         // Base query
-        $baseQuery = User::where('role', 'user');
+        $baseQuery = User::where('role', 'service_provider');
 
         // Counts
         $totalUsers  = (clone $baseQuery)->count();
@@ -48,7 +49,7 @@ class BuildersController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('superadmin.builders.index', compact(
+        return view('superadmin.providers.index', compact(
             'users',
             'totalUsers',
             'activeUsers',
@@ -59,10 +60,10 @@ class BuildersController extends Controller
 
     public function export(Request $request)
     {
-        $fileName = 'builders_' . now()->format('Y_m_d_His') . '.csv';
+        $fileName = 'service_providers_' . now()->format('Y_m_d_His') . '.csv';
 
         $builders = User::query()
-            ->where('role', 'user')
+            ->where('role', 'service_provider')
 
             ->when($request->search, function ($q) use ($request) {
                 $q->where(function ($query) use ($request) {
@@ -94,11 +95,13 @@ class BuildersController extends Controller
 
         $columns = [
             'ID',
-            'Name',
+            'First Name',
+            'Last Name',
             'Email',
             'Phone',
             'Status',
-            'Specialty',
+            'Service Specialisation',
+            'Service Type',
             'Joined At'
         ];
 
@@ -109,12 +112,14 @@ class BuildersController extends Controller
             foreach ($builders as $builder) {
                 fputcsv($handle, [
                     $builder->id,
-                    $builder->name,
+                    $builder->first_name,
+                    $builder->last_name,
                     $builder->email,
                     $builder->phone,
                     ucfirst($builder->status),
-                    ucfirst($builder->specialty),
-                    $builder->created_at->format('Y-m-d'),
+                    ucfirst($builder->service_specialisation),
+                    ucfirst($builder->service_type),
+                    $builder->created_at,
                 ]);
             }
 
@@ -127,7 +132,7 @@ class BuildersController extends Controller
      */
     public function create()
     {
-        return view('superadmin.builders.create');
+        return view('superadmin.providers.create');
     }
 
     /**
@@ -136,23 +141,29 @@ class BuildersController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            "company_name"  => "required|string",
             "name"  => "required|string|max:255",
             "email" => "required|email|unique:users,email",
             "phone" => "nullable|string|max:20",
             "password" => "required|min:6",
             "status" => "required|in:active,pending,blocked",
+            "service_specialisation"  => "nullable|string",
+            "service_type"  => "nullable|string",
         ]);
 
         User::create([
+            "company_name"     => $request->company_name,
             "name"     => $request->name,
             "email"    => $request->email,
             "phone"    => $request->phone,
-            "role"     => "user",
+            "role"     => "service_provider",
             "password" => bcrypt($request->password),
             "status" => $request->status,
+            "service_specialisation"  => $request->service_specialisation,
+            "service_type"  => $request->service_type,
         ]);
 
-        return redirect()->route("superadmin.builders.index")->with("success", "Builder created successfully.");
+        return redirect()->route("superadmin.providers.index")->with("success", "Builder created successfully.");
     }
 
     /**
@@ -161,7 +172,7 @@ class BuildersController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view("superadmin.builders.show", compact("user"));
+        return view("superadmin.providers.show", compact("user"));
     }
 
     /**
@@ -170,7 +181,7 @@ class BuildersController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view("superadmin.builders.edit", compact("user"));
+        return view("superadmin.providers.edit", compact("user"));
     }
 
     /**
@@ -181,10 +192,13 @@ class BuildersController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
+            "company_name"  => "required|string",
             "name"  => "required|string|max:255",
             "email" => "required|email|unique:users,email," . $user->id,
             "phone" => "nullable|string|max:20",
             "status" => "required|in:active,pending,blocked",
+            "service_specialisation"  => "nullable|string",
+            "service_type"  => "nullable|string",
         ]);
 
 
@@ -193,9 +207,11 @@ class BuildersController extends Controller
             "email" => $request->email,
             "phone" => $request->phone,
             "status" => $request->status,
+            "service_specialisation"  => $request->service_specialisation,
+            "service_type"  => $request->service_type,
         ]);
 
-        return redirect()->route("superadmin.builders.index")->with("success", "Builder updated successfully.");
+        return redirect()->route("superadmin.providers.index")->with("success", "Builder updated successfully.");
     }
 
     /**
@@ -206,7 +222,7 @@ class BuildersController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route("superadmin.builders.index")->with("success", "Builder deleted successfully.");
+        return redirect()->route("superadmin.providers.index")->with("success", "Builder deleted successfully.");
     }
 
     public function suspend($id)
@@ -218,8 +234,8 @@ class BuildersController extends Controller
         ]);
 
         return redirect()
-            ->route('superadmin.builders.index')
-            ->with('success', 'Builder account suspended successfully.');
+            ->route('superadmin.providers.index')
+            ->with('success', 'Service Provider account suspended successfully.');
     }
 
     public function bulkAction(Request $request)

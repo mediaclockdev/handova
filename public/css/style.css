@@ -305,7 +305,9 @@ body {
     border-radius: 0.75rem;
     font-weight: 600;
     box-shadow: var(--active-shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
 }
 
 .action-shortcut-btn:hover {
@@ -905,6 +907,12 @@ body .pagination_div li.page-item.active .page-link {
 
 .accordion-body-content {
     margin-bottom: 20px;
+}
+
+#propertiesTable .view_file {
+    background-color: transparent !important;
+    color: #000 !important;
+    text-decoration: underline !important;
 }
 
 /* Responsive adjustments */

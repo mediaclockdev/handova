@@ -69,7 +69,7 @@
     <div class="col-md-6">
         <label class="form-label">Manuals</label>
         <input type="file" id="fileUpload2" name="manuals[]"
-            class="form-control @error('manuals') is-invalid @enderror" multiple
+            class="form-control @error('manuals') is-invalid @enderror"
             onchange="previewFiles(event, 'manuals-preview')">
         @error('manuals')
             <div class="invalid-feedback">{{ $message }}</div>

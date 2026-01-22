@@ -15,23 +15,23 @@
 
                     <div class="card-header bg-white border-bottom px-4 py-3 superadmin_back_div">
                         <div>
-                            <a href="{{ route('superadmin.builders.index') }}" class="btn btn-dark px-4">
+                            <a href="{{ route('superadmin.providers.index') }}" class="btn btn-dark px-4">
                                 Back
                             </a>
                         </div>
                         <div>
-                            <h4 class="mb-1 fw-semibold">Edit Builder Details</h4>
+                            <h4 class="mb-1 fw-semibold">Edit Provider Details</h4>
                         </div>
                     </div>
 
                     {{-- Form --}}
                     <div class="card-body px-4 py-4">
 
-                        <form action="{{ route('superadmin.builders.update', $user->id) }}" method="POST">
+                        <form action="{{ route('superadmin.providers.update', $user->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
-                            @include('superadmin.builders.form', [
+                            @include('superadmin.providers.form', [
                                 'buttonText' => 'Update',
                                 'edit' => true,
                             ])

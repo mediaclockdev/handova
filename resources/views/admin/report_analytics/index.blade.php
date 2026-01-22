@@ -58,7 +58,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4">No Reports found.</td>
+                                        <td colspan="12" class="text-center">No Reports found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

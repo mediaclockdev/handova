@@ -35,8 +35,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="card properties-table mb-4">
                     <div class="table-responsive">
                         <table class="table table-borderless mb-0" id="certificatesTable">

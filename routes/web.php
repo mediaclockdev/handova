@@ -20,12 +20,15 @@ use App\Http\Controllers\Admin\HousePlansController;
 use \App\Http\Controllers\Admin\ReportAnalyticsController;
 use \App\Http\Controllers\SuperAdmin\PlanController;
 use \App\Http\Controllers\SuperAdmin\BuildersController;
+use \App\Http\Controllers\SuperAdmin\PropertiesListController;
 use \App\Http\Controllers\Admin\AppliancesController;
 use \App\Http\Controllers\Admin\SubscriptionsPlanController;
 use \App\Http\Controllers\Admin\ComplianceCertificatesController;
 use \App\Http\Controllers\Admin\PageContentDetailsController;
 use \App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\HelpContentsController;
+use \App\Http\Controllers\SuperAdmin\OwnersController;
+use \App\Http\Controllers\SuperAdmin\ServiceProvidersListController;
 
 
 
@@ -82,10 +85,35 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+Route::post('superadmin/builders/bulk-action', [BuildersController::class, 'bulkAction'])->name('superadmin.builders.bulkAction');
+Route::get('superadmin/builders/export', [BuildersController::class, 'export'])->name('superadmin.builders.export');
+Route::patch('superadmin/builders/{id}/suspend', [BuildersController::class, 'suspend'])->name('superadmin.builders.suspend');
+Route::post('superadmin/builders/send-mail', [BuildersController::class, 'sendMail'])->name('superadmin.builders.sendMail');
+
+Route::get('/superadmin/properties/export', [\App\Http\Controllers\SuperAdmin\PropertiesListController::class, 'export'])->name('superadmin.properties.export');
+Route::patch('superadmin/properties/{id}/suspend', [\App\Http\Controllers\SuperAdmin\PropertiesListController::class, 'suspend'])->name('superadmin.properties.suspend');
+Route::post('superadmin/properties/bulk-action', [\App\Http\Controllers\SuperAdmin\PropertiesListController::class, 'bulkAction'])->name('superadmin.properties.bulkAction');
+
+
+Route::patch('superadmin/owners/{id}/suspend', [OwnersController::class, 'suspend'])->name('superadmin.owners.suspend');
+Route::get('superadmin/owners/export', [OwnersController::class, 'export'])->name('superadmin.owners.export');
+
+
+Route::get('/superadmin/login', [SuperAdminAuthController::class, 'login'])->name('superadmin.login');
+
+Route::post('superadmin/providers/bulk-action', [ServiceProvidersListController::class, 'bulkAction'])->name('superadmin.providers.bulkAction');
+Route::get('superadmin/providers/export', [ServiceProvidersListController::class, 'export'])->name('superadmin.providers.export');
+Route::patch('superadmin/providers/{id}/suspend', [ServiceProvidersListController::class, 'suspend'])->name('superadmin.providers.suspend');
+Route::post('superadmin/providers/send-mail', [ServiceProvidersListController::class, 'sendMail'])->name('superadmin.providers.sendMail');
+
+
+
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::resource('plans', PlanController::class);
     Route::resource('builders', BuildersController::class);
-    Route::get('superadmin/builders/export', [BuildersController::class, 'export'])->name('superadmin.builders.export');
+    Route::resource('properties', PropertiesListController::class);
+    Route::resource('owners', OwnersController::class);
+    Route::resource('providers', ServiceProvidersListController::class);
     Route::get('login', [SuperAdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [SuperAdminAuthController::class, 'login'])->name('login.submit');
     Route::post('logout', [SuperAdminAuthController::class, 'logout'])->name('logout');

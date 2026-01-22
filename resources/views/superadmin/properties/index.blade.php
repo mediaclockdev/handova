@@ -39,28 +39,28 @@
                     <div id="page-header" class="mb-6">
                         <div class="max-w-7xl mx-auto">
                             <div class="mb-8">
-                                <h2 class="text-2xl text-neutral-900 mb-2">Builders Management</h2>
-                                <p class="text-neutral-600">View, filter, and manage all registered builders</p>
+                                <h2 class="text-2xl text-neutral-900 mb-2">Propeties Management</h2>
+                                <p class="text-neutral-600">View, filter, and manage all registered Properties</p>
                             </div>
-                            <div id="search-filters" class="bg-white rounded-lg border border-neutral-200 p-6 mb-6">
-                                <form method="GET" action="{{ route('superadmin.builders.index') }}">
+                            <div id="search-filtersss" class="bg-white rounded-lg border border-neutral-200 p-6 mb-6">
+                                <form method="GET" action="{{ route('superadmin.properties.index') }}">
                                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
                                         {{-- Search --}}
                                         <div class="md:col-span-2">
-                                            <label class="block text-sm text-neutral-700 mb-2">Search Builders</label>
+                                            <label class="block text-sm text-neutral-700 mb-2">Search Properties</label>
                                             <input type="text" name="search" value="{{ request('search') }}"
-                                                placeholder="Search by name, email, phone..."
+                                                placeholder="Search by property name..."
                                                 class="w-full px-4 py-2 border rounded-md" />
                                         </div>
 
                                         {{-- Status --}}
                                         <div>
-                                            <label class="block text-sm text-neutral-700 mb-2">Status</label>
-                                            <select name="status" class="w-full px-3 py-2 border rounded-md">
-                                                <option value="">All Status</option>
-                                                @foreach (['active', 'pending', 'suspended', 'inactive'] as $status)
-                                                    <option value="{{ $status }}" @selected(request('status') == $status)>
+                                            <label class="block text-sm text-neutral-700 mb-2">Property Type</label>
+                                            <select name="property_type" class="w-full px-3 py-2 border rounded-md">
+                                                <option value="">Property Type</option>
+                                                @foreach (['Apartment', 'House'] as $status)
+                                                    <option value="{{ $status }}" @selected(request('property_type') == $status)>
                                                         {{ ucfirst($status) }}
                                                     </option>
                                                 @endforeach
@@ -69,11 +69,11 @@
 
                                         {{-- Specialty --}}
                                         <div>
-                                            <label class="block text-sm text-neutral-700 mb-2">Specialty</label>
-                                            <select name="specialty" class="w-full px-3 py-2 border rounded-md">
-                                                <option value="">All Specialties</option>
-                                                @foreach (['residential', 'commercial', 'industrial', 'renovation'] as $specialty)
-                                                    <option value="{{ $specialty }}" @selected(request('specialty') == $specialty)>
+                                            <label class="block text-sm text-neutral-700 mb-2">Property Status</label>
+                                            <select name="property_status" class="w-full px-3 py-2 border rounded-md">
+                                                <option value="">All Property Status</option>
+                                                @foreach (['available', 'pending', 'sold'] as $specialty)
+                                                    <option value="{{ $specialty }}" @selected(request('property_status') == $specialty)>
                                                         {{ ucfirst($specialty) }}
                                                     </option>
                                                 @endforeach
@@ -86,43 +86,49 @@
                                         <div class="flex space-x-2">
                                             <button
                                                 class="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-800">
-                                                <i class="mr-2" data-fa-i2svg=""><svg class="svg-inline--fa fa-filter"
-                                                        aria-hidden="true" focusable="false" data-prefix="fas"
-                                                        data-icon="filter" role="img"
-                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
-                                                        data-fa-i2svg="">
+                                                <i class="mr-2" data-fa-i2svg="">
+                                                    <svg class="svg-inline--fa fa-filter" aria-hidden="true"
+                                                        focusable="false" data-prefix="fas" data-icon="filter"
+                                                        role="img" xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 512 512" data-fa-i2svg="">
                                                         <path fill="currentColor"
                                                             d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z">
                                                         </path>
-                                                    </svg></i>Apply Filters
+                                                    </svg>
+                                                </i>
+                                                Apply Filters
                                             </button>
-                                            <a href="{{ route('superadmin.builders.index') }}"
+                                            <a href="{{ route('superadmin.properties.index') }}"
                                                 class="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50">
-                                                <i class="mr-2" data-fa-i2svg=""><svg
-                                                        class="svg-inline--fa fa-rotate-right" aria-hidden="true"
+                                                <i class="mr-2" data-fa-i2svg="">
+                                                    <svg class="svg-inline--fa fa-rotate-right" aria-hidden="true"
                                                         focusable="false" data-prefix="fas" data-icon="rotate-right"
                                                         role="img" xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 512 512" data-fa-i2svg="">
                                                         <path fill="currentColor"
                                                             d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z">
                                                         </path>
-                                                    </svg></i>Reset
+                                                    </svg>
+                                                </i>
+                                                Reset
                                             </a>
-                                            <a href="{{ route('superadmin.builders.export', request()->query()) }}"
+                                            <a href="{{ route('superadmin.properties.export', request()->query()) }}"
                                                 class="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50">
-                                                <i class="mr-2" data-fa-i2svg=""><svg
-                                                        class="svg-inline--fa fa-download" aria-hidden="true"
+                                                <i class="mr-2" data-fa-i2svg="">
+                                                    <svg class="svg-inline--fa fa-download" aria-hidden="true"
                                                         focusable="false" data-prefix="fas" data-icon="download"
                                                         role="img" xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 512 512" data-fa-i2svg="">
                                                         <path fill="currentColor"
                                                             d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
                                                         </path>
-                                                    </svg></i>Export
+                                                    </svg>
+                                                </i>
+                                                Export
                                             </a>
                                         </div>
                                 </form>
-                                <div class="space-x-2">
+                                {{-- <div class="space-x-2">
                                     <a href="{{ route('superadmin.builders.create') }}"
                                         class="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-800">
 
@@ -136,21 +142,21 @@
                                                 </path>
                                             </svg>
                                         </i>
-                                        Add Builder
-
+                                        Add Property
                                     </a>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="builders-table" class="bg-white rounded-lg border border-neutral-200 overflow-hidden mb-8">
-                    <form id="bulk-action-form" method="POST"
-                        action="{{ route('superadmin.builders.bulkAction') }}">
+                    <form id="bulkActionForm" method="POST"
+                        action="{{ route('superadmin.properties.bulkAction') }}">
                         @csrf
-                        <input type="hidden" name="action" id="bulk-action-type">
-                        <input type="hidden" name="user_ids" id="bulk-user-ids">
+                        <input type="hidden" name="action" id="bulk_action">
+                        <input type="hidden" name="property_ids" id="bulk_property_ids">
                     </form>
+
 
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -160,53 +166,56 @@
                                         <input type="checkbox" id="select-all" class="rounded border-neutral-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Builder</th>
+                                        Propery Title</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Phone Number</th>
+                                        Property Type</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Projects</th>
+                                        Address</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Status</th>
+                                        No. Of Bedroom</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
-                                        Joined</th>
+                                        No. Of Bathroom</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Property Status</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Created At</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-neutral-200">
-                                @foreach ($users as $user)
+                                @foreach ($properties as $propertie)
                                     <tr class="hover:bg-neutral-50">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="checkbox" class="row-checkbox rounded border-neutral-300"
-                                                value="{{ $user->id }}" data-email="{{ $user->email }}">
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <img src="{{ $user->profile_picture
-                                                    ? asset('public/' . $user->profile_picture)
-                                                    : 'https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=' . $user->id }}"
-                                                    alt="Builder" class="w-10 h-10 rounded-full object-cover">
+                                            <input type="checkbox" class="property-checkbox"
+                                                value="{{ $propertie->id }}">
 
-                                                <div class="ml-4">
-                                                    <div class="text-sm text-neutral-900">{{ $user->name }}
-                                                    </div>
-                                                    <div class="text-sm text-neutral-500">{{ $user->email }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="text-sm text-neutral-900">{{ $user->phone }}</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="text-sm text-neutral-900">0</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="px-2 py-1 bg-neutral-100 text-neutral-800 text-xs rounded-full text-capitalize">{{ $user->status }}</span>
+                                                class="text-sm text-neutral-900">{{ $propertie->property_title }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="text-sm text-neutral-900">{{ $user->created_at }}</span>
+                                            <span
+                                                class="text-sm text-neutral-900 text-capitalize">{{ $propertie->property_type }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm text-neutral-900">{{ $propertie->address }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="text-sm text-neutral-900">{{ $propertie->number_of_bedrooms }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="text-sm text-neutral-900">{{ $propertie->number_of_bathrooms }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="text-sm text-neutral-900 text-capitalize">{{ $propertie->property_status }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm text-neutral-900">{{ $propertie->created_at }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex space-x-2">
@@ -215,14 +224,26 @@
                                                 <a href="javascript:void();"
                                                     class="text-neutral-700 hover:text-neutral-900">
                                                     <button type="button"
-                                                        class="text-neutral-700 hover:text-neutral-900 view-builder-btn"
+                                                        class="text-neutral-700 hover:text-neutral-900 view-properties-btn"
                                                         data-bs-toggle="modal" data-bs-target="#viewBuilderModal"
-                                                        data-picture="{{ $user->profile_picture ? asset('/public/' . $user->profile_picture) : asset('https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=123') }}"
-                                                        data-name="{{ $user->name }}"
-                                                        data-email="{{ $user->email }}"
-                                                        data-phone="{{ $user->phone }}"
-                                                        data-status="{{ ucfirst($user->status) }}"
-                                                        data-created="{{ $user->created_at->format('d M Y') }}">
+                                                        {{-- data-picture="{{ $user->profile_picture ? asset('/public/' . $user->profile_picture) : asset('https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=123') }}" --}}
+                                                        data-propertytitle="{{ $propertie->property_title }}"
+                                                        data-description="{{ $propertie->description }}"
+                                                        data-propertytype="{{ $propertie->property_type }}"
+                                                        data-propertystatus="{{ ucfirst($propertie->property_status) }}"
+                                                        data-address="{{ ucfirst($propertie->address) }}"
+                                                        data-houseplanname="{{ ucfirst($propertie->house_plan_name) }}"
+                                                        data-buildcompletiondate="{{ ucfirst($propertie->build_completion_date) }}"
+                                                        data-numberofbedrooms="{{ $propertie->number_of_bedrooms }}"
+                                                        data-numberofbathrooms="{{ $propertie->number_of_bathrooms }}"
+                                                        data-parking="{{ $propertie->parking }}"
+                                                        data-swimmingpool="{{ $propertie->swimming_pool }}"
+                                                        data-tags="{{ $propertie->tags }}"
+                                                        data-internalnotes="{{ $propertie->internal_notes }}"
+                                                        data-compliancecertificate="{{ $propertie->compliance_certificate }}"
+                                                        data-baseurl="{{ asset('') }}"
+                                                        data-floorplanupload='@json(json_decode($propertie->floor_plan_upload))'
+                                                        data-createdat="{{ $propertie->created_at->format('d M Y') }}">
                                                         <i data-fa-i2svg=""><svg class="svg-inline--fa fa-eye"
                                                                 aria-hidden="true" focusable="false"
                                                                 data-prefix="fas" data-icon="eye" role="img"
@@ -236,7 +257,7 @@
                                                 </a>
 
                                                 {{-- Edit --}}
-                                                <a href="{{ route('superadmin.builders.edit', $user->id) }}"
+                                                <a href="{{ route('superadmin.properties.edit', $propertie->id) }}"
                                                     class="text-neutral-700 hover:text-neutral-900">
                                                     <i data-fa-i2svg=""><svg class="svg-inline--fa fa-pen-to-square"
                                                             aria-hidden="true" focusable="false" data-prefix="fas"
@@ -250,13 +271,14 @@
                                                 </a>
 
                                                 {{-- Suspend --}}
-                                                <form action="{{ route('superadmin.builders.suspend', $user->id) }}"
+                                                <form
+                                                    action="{{ route('superadmin.properties.suspend', $propertie->id) }}"
                                                     method="POST" class="suspend-form">
                                                     @csrf
                                                     @method('PATCH')
 
                                                     <button type="button"
-                                                        class="text-red-600 hover:text-red-800 suspend-btn">
+                                                        class="text-red-600 hover:text-red-800 properties-suspend-btn">
                                                         <i data-fa-i2svg=""><svg class="svg-inline--fa fa-ban"
                                                                 aria-hidden="true" focusable="false"
                                                                 data-prefix="fas" data-icon="ban" role="img"
@@ -269,7 +291,8 @@
                                                     </button>
                                                 </form>
 
-                                                <form action="{{ route('superadmin.builders.destroy', $user->id) }}"
+                                                <form
+                                                    action="{{ route('superadmin.properties.destroy', $propertie->id) }}"
                                                     method="POST" class="delete-form">
                                                     @csrf
                                                     @method('DELETE')
@@ -284,8 +307,6 @@
                                                         </svg>
                                                     </button>
                                                 </form>
-
-
                                             </div>
                                         </td>
                                     </tr>
@@ -293,16 +314,17 @@
                             </tbody>
                         </table>
                         <div class="mt-6">
-                            {{ $users->links() }}
+                            {{ $properties->links() }}
                         </div>
 
                     </div>
                 </div>
-                <div id="bulk-actions" class="bg-white rounded-lg border border-neutral-200 p-4 mb-6">
+
+                <div id="bulk-actionss" class="bg-white rounded-lg border border-neutral-200 p-4 mb-6">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center space-x-4">
                             <span class="text-sm text-neutral-600">Bulk Actions:</span>
-                            <button onclick="submitBulkAction('active')"
+                            <button onclick="submitPropertyBulkAction('available')"
                                 class="px-3 py-2 bg-neutral-600 text-white text-sm rounded-md hover:bg-neutral-700">
                                 <i class="mr-2" data-fa-i2svg=""><svg class="svg-inline--fa fa-check"
                                         aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check"
@@ -311,9 +333,9 @@
                                         <path fill="currentColor"
                                             d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z">
                                         </path>
-                                    </svg></i>Activate Selected
+                                    </svg></i> Available Selected
                             </button>
-                            <button onclick="submitBulkAction('suspended')"
+                            <button onclick="submitPropertyBulkAction('sold')"
                                 class="px-3 py-2 bg-neutral-600 text-white text-sm rounded-md hover:bg-neutral-700">
                                 <i class="mr-2" data-fa-i2svg=""><svg class="svg-inline--fa fa-ban"
                                         aria-hidden="true" focusable="false" data-prefix="fas" data-icon="ban"
@@ -322,25 +344,13 @@
                                         <path fill="currentColor"
                                             d="M367.2 412.5L99.5 144.8C77.1 176.1 64 214.5 64 256c0 106 86 192 192 192c41.5 0 79.9-13.1 111.2-35.5zm45.3-45.3C434.9 335.9 448 297.5 448 256c0-106-86-192-192-192c-41.5 0-79.9 13.1-111.2 35.5L412.5 367.2zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z">
                                         </path>
-                                    </svg></i>Suspend Selected
+                                    </svg></i>Sold Selected
                             </button>
-                            <button onclick="openSendMessageModal()"
-                                class="px-3 py-2 border border-neutral-300 text-neutral-700 text-sm rounded-md hover:bg-neutral-50">
-                                <i class="mr-2" data-fa-i2svg=""><svg class="svg-inline--fa fa-envelope"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="envelope"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z">
-                                        </path>
-                                    </svg></i>Send Message
-                            </button>
-
-
                         </div>
                         <span class="text-sm text-neutral-500">0 selected</span>
                     </div>
                 </div>
+
                 <div id="stats-overview" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white rounded-lg border border-neutral-200 p-6">
                         <div class="flex items-center">
@@ -355,8 +365,8 @@
                                     </svg></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm text-neutral-500">Total Builders</p>
-                                <p class="text-2xl text-neutral-900">{{ $totalUsers }}</p>
+                                <p class="text-sm text-neutral-500">Total Propties</p>
+                                <p class="text-2xl text-neutral-900">{{ $totalProperties }}</p>
                             </div>
                         </div>
                     </div>
@@ -373,8 +383,8 @@
                                     </svg></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm text-neutral-500">Active</p>
-                                <p class="text-2xl text-neutral-900">{{ $activeUsers }}</p>
+                                <p class="text-sm text-neutral-500">Available</p>
+                                <p class="text-2xl text-neutral-900">{{ $availableProperties }}</p>
                             </div>
                         </div>
                     </div>
@@ -392,7 +402,7 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm text-neutral-500">Pending</p>
-                                <p class="text-2xl text-neutral-900">{{ $pendingUsers }}</p>
+                                <p class="text-2xl text-neutral-900">{{ $pendingProperties }}</p>
                             </div>
                         </div>
                     </div>
@@ -409,8 +419,8 @@
                                     </svg></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm text-neutral-500">Suspended</p>
-                                <p class="text-2xl text-neutral-900">{{ $blockedUsers }}</p>
+                                <p class="text-sm text-neutral-500">Sold</p>
+                                <p class="text-2xl text-neutral-900">{{ $soldProperties }}</p>
                             </div>
                         </div>
                     </div>
@@ -421,99 +431,98 @@
     </div>
 
 
-    <div class="modal fade" id="sendMessageModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Send Message</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form method="POST" action="{{ route('superadmin.builders.sendMail') }}">
-                    @csrf
-
-                    <div class="modal-body">
-
-                        <input type="hidden" name="emails" id="selected-emails">
-
-                        <div class="mb-3">
-                            <label class="form-label">To</label>
-                            <textarea id="email-preview" class="form-control px-2 py-2" rows="2" readonly></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Subject</label>
-                            <input type="text" name="subject" class="form-control px-2 py-2" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Message</label>
-                            <textarea name="message" class="form-control px-2 py-2" rows="4" required></textarea>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button"
-                            class="px-3 py-2 bg-neutral-600 text-white text-sm rounded-md hover:bg-neutral-700"
-                            data-bs-dismiss="modal">
-                            Cancel
-                        </button>
-
-                        <button type="submit"
-                            class="px-3 py-2 bg-neutral-600 text-white text-sm rounded-md hover:bg-neutral-700">
-                            Send
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="viewBuilderModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Builder Details</h5>
+                    <h5 class="modal-title">Properties Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="grid grid-cols-2 gap-4 text-sm">
 
-                        <div>
-                            <strong>Profile Picture:</strong>
-                            <img id="picture-name" src="" alt="Builder Profile"
-                                class="rounded-full border mt-2">
-                        </div>
 
 
                         <div>
-                            <strong>Name:</strong>
-                            <p id="view-name"></p>
+                            <strong>Property Title:</strong>
+                            <p id="property_title"></p>
                         </div>
 
                         <div>
-                            <strong>Email:</strong>
-                            <p id="view-email"></p>
+                            <strong>Description:</strong>
+                            <p id="description"></p>
                         </div>
 
                         <div>
-                            <strong>Phone:</strong>
-                            <p id="view-phone"></p>
+                            <strong>Property Type:</strong>
+                            <p id="property_type"></p>
                         </div>
 
                         <div>
-                            <strong>Status:</strong>
-                            <p id="view-status"></p>
+                            <strong>Property Status:</strong>
+                            <p id="property_status"></p>
                         </div>
 
                         <div>
-                            <strong>Joined At:</strong>
-                            <p id="view-created"></p>
+                            <strong>Address:</strong>
+                            <p id="address"></p>
+                        </div>
+
+                        <div>
+                            <strong>House Plan Name:</strong>
+                            <p id="house_plan_name"></p>
+                        </div>
+
+                        <div>
+                            <strong>Build Completion Date:</strong>
+                            <p id="build_completion_date"></p>
+                        </div>
+
+                        <div>
+                            <strong>No. of Bedrooms:</strong>
+                            <p id="number_of_bedrooms"></p>
+                        </div>
+
+                        <div>
+                            <strong>No. of Bathrooms:</strong>
+                            <p id="number_of_bathrooms"></p>
+                        </div>
+
+                        <div>
+                            <strong>Parking:</strong>
+                            <p id="parking"></p>
+                        </div>
+
+                        <div class="col-span-2">
+                            <strong>Floor Plans:</strong>
+                            <div id="floor_plans_container" class="grid grid-cols-3 gap-3 mt-2 flex"></div>
+                        </div>
+
+                        <div>
+                            <strong>Swimming Pool:</strong>
+                            <p id="swimming_pool"></p>
+                        </div>
+
+                        <div>
+                            <strong>Tags:</strong>
+                            <p id="tags"></p>
+                        </div>
+
+                        <div>
+                            <strong>Internale Notes:</strong>
+                            <p id="internal_notes"></p>
+                        </div>
+
+                        <div>
+                            <strong>Compliance Certificates:</strong>
+                            <p id="compliance_certificate"></p>
+                        </div>
+
+                        <div>
+                            <strong>Created At:</strong>
+                            <p id="created_at"></p>
                         </div>
 
                     </div>

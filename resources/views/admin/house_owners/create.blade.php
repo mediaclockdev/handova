@@ -14,8 +14,9 @@
 
         <div class="main-content">
             <div class="content-wrapper">
-                 @include('partials.navbar')
-                <form id="houseOwnerForm" action="{{ route('admin.house_owners.store') }}" method="POST" enctype="multipart/form-data">
+                @include('partials.navbar')
+                <form id="houseOwnerForm" action="{{ route('admin.house_owners.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
 
                     @include('admin.house_owners.form', ['owner' => null])
@@ -23,7 +24,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <button type="button" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
                         <button type="submit" class="btn btn-add-property">
-                            Add Tenant
+                            Add House Owner
                         </button>
                     </div>
                 </form>
@@ -34,18 +35,18 @@
     @include('partials/scripts')
 </body>
 <script>
-    @if(session('success'))
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-    toastr.success("{{ session('success') }}");
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
     @endif
 
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
     @endif
 </script>
 

@@ -308,7 +308,7 @@
                                     <label for="tagsLabels" class="form-label">Tags / Labels</label>
                                     <select class="form-select @error('tags') is-invalid @enderror" id="tags"
                                         name="tags">
-                                        <option value="">Write here</option>
+                                        <option value="">Select Tags</option>
                                         <option value="new"
                                             {{ old('tags', $property->tags ?? '') == 'new' ? 'selected' : '' }}>New
                                         </option>

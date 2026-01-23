@@ -29,6 +29,7 @@ use \App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\HelpContentsController;
 use \App\Http\Controllers\SuperAdmin\OwnersController;
 use \App\Http\Controllers\SuperAdmin\ServiceProvidersListController;
+use \App\Http\Controllers\SuperAdmin\ServiceSpecializationController;
 
 
 
@@ -107,6 +108,10 @@ Route::patch('superadmin/providers/{id}/suspend', [ServiceProvidersListControlle
 Route::post('superadmin/providers/send-mail', [ServiceProvidersListController::class, 'sendMail'])->name('superadmin.providers.sendMail');
 
 
+Route::patch('superadmin/specialization/{id}/suspend', [ServiceSpecializationController::class, 'suspend'])->name('superadmin.specialization.suspend');
+Route::post('superadmin/specialization/bulk-action', [ServiceSpecializationController::class, 'bulkAction'])->name('superadmin.specialization.bulkAction');
+Route::get('superadmin/specialization/export', [ServiceSpecializationController::class, 'export'])->name('superadmin.specialization.export');
+
 
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::resource('plans', PlanController::class);
@@ -114,6 +119,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::resource('properties', PropertiesListController::class);
     Route::resource('owners', OwnersController::class);
     Route::resource('providers', ServiceProvidersListController::class);
+    Route::resource('specialization', ServiceSpecializationController::class);
     Route::get('login', [SuperAdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [SuperAdminAuthController::class, 'login'])->name('login.submit');
     Route::post('logout', [SuperAdminAuthController::class, 'logout'])->name('logout');

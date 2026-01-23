@@ -137,8 +137,8 @@ class HouseOwnerController extends Controller
             'floor_plan_upload.*'   => 'image|mimes:jpg,jpeg,png|max:2048',
 
             'property_status'       => 'required|string|max:255',
-            'tags'                  => 'required|string',
-            'internal_notes'        => 'required|string',
+            'tags'                  => 'nullable|string',
+            'internal_notes'        => 'nullable|string',
         ]);
 
         // Remove file fields
@@ -266,8 +266,8 @@ class HouseOwnerController extends Controller
             'number_of_bathrooms'       => 'nullable|integer',
             'parking'                   => 'nullable|string|max:255',
             'property_status'           => 'required|string|max:255',
-            'tags'                      => 'required|string',
-            'internal_notes'            => 'required|string',
+            'tags'                      => 'nullable|string',
+            'internal_notes'            => 'nullable|string',
 
             'handover_documents'        => 'nullable|array',
             'handover_documents.*'      => 'file|mimes:jpg,jpeg,png,pdf,csv,doc,docx|max:2048',
@@ -300,15 +300,9 @@ class HouseOwnerController extends Controller
 
         $data['properties_id'] = (int) $data['properties_id'];
 
-        // =============================
-        // 1️⃣ Start with existing files
-        // =============================
         $handoverDocs = $request->input('existing_handover_documents', []);
         $floorPlans   = $request->input('existing_floor_plan_upload', []);
 
-        // =============================
-        // 2️⃣ Delete removed files
-        // =============================
         if ($request->filled('remove_handover_documents')) {
             foreach ($request->remove_handover_documents as $file) {
                 Storage::disk('public')->delete($file);
@@ -321,9 +315,6 @@ class HouseOwnerController extends Controller
             }
         }
 
-        // =============================
-        // 3️⃣ Upload new files
-        // =============================
         if ($request->hasFile('handover_documents')) {
             foreach ($request->file('handover_documents') as $file) {
                 $handoverDocs[] = $file->store('handover_docs', 'public');
@@ -336,9 +327,6 @@ class HouseOwnerController extends Controller
             }
         }
 
-        // =============================
-        // 4️⃣ Save JSON fields
-        // =============================
         $data['handover_documents'] = json_encode($handoverDocs);
         $data['floor_plan_upload']  = json_encode($floorPlans);
 

@@ -31,20 +31,20 @@
                                     <th>Services</th>
                                     <th>Email Address</th>
                                     <th>Phone Number</th>
-                                    <th>Trade Type/lease Assigned</th>
+
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($serviceproviders as $serviceprovider)
-                                {{-- @php dd($serviceprovider->first_name) @endphp --}}
+                                    {{-- @php dd($serviceprovider->service_specialisation) @endphp --}}
                                     <tr>
                                         <td>{{ $serviceprovider->company_name }}</td>
                                         <td>{{ $serviceprovider->first_name }} {{ $serviceprovider->last_name }}</td>
-                                        <td>{{ $serviceprovider->service_specialisation }}</td>
+                                        <td>{{ $serviceprovider->specialization->specialization }}</td>
                                         <td>{{ $serviceprovider->email }}</td>
                                         <td>{{ $serviceprovider->phone }}</td>
-                                        <td>{{ $serviceprovider->service_type }}</td>
+
                                         <td>
                                             <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}"
                                                 class="btn btn-sm btn-warning"><i
@@ -61,7 +61,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4">No service providers found.</td>
+                                        <td colspan="12" class="text-center">No service providers found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -59,6 +59,13 @@
             </li>
 
             <li class="nav-item mb-2">
+                <a href="{{ route('superadmin.specialization.index') }}"
+                    class="nav-link flex items-center px-3 py-2 text-sm text-neutral-600 bg-neutral-100 rounded-md {{ Route::is('superadmin.specialization.*') ? 'active' : '' }}">
+                    <i class="bi bi-wrench"></i>Service Specialization
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
                 <a href="{{ route('superadmin.providers.index') }}"
                     class="nav-link flex items-center px-3 py-2 text-sm text-neutral-600 bg-neutral-100 rounded-md {{ Route::is('superadmin.providers.*') ? 'active' : '' }}">
                     <i class="bi bi-tools"></i>Service Provider

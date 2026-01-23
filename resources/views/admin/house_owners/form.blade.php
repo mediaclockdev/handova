@@ -44,7 +44,7 @@
 
               </div>
               <div class="properties-header d-flex justify-content-between align-items-center mb-4">
-                  <h6 class="h5 mb-0">Properties House Owner Details</h6>
+                  <h6 class="h5 mb-0">House Owner Details</h6>
               </div>
               <div class="row g-4 mb-4">
                   <div class="col-md-6">
@@ -82,7 +82,7 @@
 
                   <div class="col-md-6">
                       <label>Phone Number <span style="color:red;">*</span></label>
-                      <input type="text" name="phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                      <input type="text" name="phone_number" maxlength="15" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                           id="phone" class="form-control @error('phone_number') is-invalid @enderror"
                           value="{{ old('phone_number', $owner->phone_number ?? '') }}">
                       @error('phone_number')
@@ -92,7 +92,7 @@
               </div>
 
               <div class="col-md-12 mb-3">
-                  <label>Address of Property <span style="color:red;">*</span></label>
+                  <label>Address<span style="color:red;">*</span></label>
                   <textarea name="address_of_property" class="form-control @error('address_of_property') is-invalid @enderror">{{ old('address_of_property', $owner->address_of_property ?? '') }}</textarea>
                   @error('address_of_property')
                       <div class="invalid-feedback">{{ $message }}</div>
@@ -240,7 +240,7 @@
 
               <div class="row g-4 mb-4">
                   <div class="col-md-6">
-                      <label>Tags/Label <span style="color:red;">*</span></label>
+                      <label>Tags/Label</label>
                       <input type="text" name="tags" class="form-control  @error('tags') is-invalid @enderror"
                           value="{{ old('tags', $owner->tags ?? '') }}">
                       @error('tags')
@@ -249,7 +249,7 @@
                   </div>
 
                   <div class="col-md-6">
-                      <label>Internal Notes <span style="color:red;">*</span></label>
+                      <label>Internal Notes</label>
                       <input type="text" name="internal_notes"
                           class="form-control @error('internal_notes') is-invalid @enderror"
                           value="{{ old('internal_notes', $owner->internal_notes ?? '') }}">

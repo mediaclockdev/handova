@@ -30,7 +30,7 @@ class AuthApiController extends Controller
             'phone.required' => 'Phone number is required.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters long.',
-            'password_confirmation.required' => 'Confirm password is required.',
+            'password_confirmation.required' => 'Confirm password is required.'
         ];
 
         // Validate request
@@ -41,6 +41,7 @@ class AuthApiController extends Controller
             'phone'      => 'required|string|max:20',
             'password'   => 'required|min:8',
             'password_confirmation' => 'required',
+            'service_specialisation' => 'nullable|exists:specializations,id',
         ], $messages);
 
         if ($validator->fails()) {
@@ -55,7 +56,7 @@ class AuthApiController extends Controller
             ], 200);
         }
 
-        // ✅ Check if password confirmation matches
+        // Check if password confirmation matches
         if ($request->password !== $request->password_confirmation) {
             return response()->json([
                 'status' => false,
@@ -65,7 +66,7 @@ class AuthApiController extends Controller
             ], 200);
         }
 
-        // ✅ Check if email already exists
+        // Check if email already exists
         $existingUser = User::where('email', $request->email)->first();
         if ($existingUser) {
             if ($existingUser->email_verified_at) {
@@ -93,7 +94,7 @@ class AuthApiController extends Controller
             }
         }
 
-        // ✅ Create new user and send verification email
+        // Create new user and send verification email
         $token = Str::random(64);
 
         $user = User::create([
@@ -105,6 +106,7 @@ class AuthApiController extends Controller
             'password' => Hash::make($request->password),
             'verification_token' => $token,
             'role' => $request->role ?? 'house_owner',
+            'service_specialisation' => $request->role === 'service_provider' ? $request->service_specialisation : null,
         ]);
 
         Mail::send('emails.verify', ['token' => $token], function ($message) use ($user) {

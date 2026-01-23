@@ -565,3 +565,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+document.getElementById("logout-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, logout",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById("logout-form").submit();
+        }
+    });
+});
+
+document.getElementById("logout-btns").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, logout",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById("logout-form").submit();
+        }
+    });
+});

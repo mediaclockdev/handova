@@ -113,7 +113,7 @@
                             <label for="assignedBuilder" class="form-label">Assigned Builder / Site Manager</label>
                             <select class="form-select @error('assigned_builder_site_manager') is-invalid @enderror"
                                 id="assigned_builder_site_manager" name="assigned_builder_site_manager">
-                                <option value="">Write here</option>
+                                <option value="">Select Assigned builder</option>
                                 <option value="1"
                                     {{ old('assigned_builder_site_manager') == '1' ? 'selected' : '' }}>Builder A
                                 </option>
@@ -134,17 +134,17 @@
                     <div class="row g-4 mb-4">
                         <div class="col-md-6">
                             <label for="numBedrooms" class="form-label">Number of Bedrooms</label>
-                            <input type="text" class="form-control @error('number_of_bedrooms') is-invalid @enderror"
-                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Write here" />
+                            <input type="number" class="form-control @error('number_of_bedrooms') is-invalid @enderror"
+                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms" />
                             @error('number_of_bedrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-6">
                             <label for="numBathrooms" class="form-label">Number of Bathrooms</label>
-                            <input type="text"
+                            <input type="number"
                                 class="form-control @error('number_of_bathrooms') is-invalid @enderror"
-                                name="number_of_bathrooms" id="numBathrooms" placeholder="Write here" />
+                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom" />
                             @error('number_of_bathrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -174,8 +174,7 @@
 
                         <div class="col-md-6">
                             <label for="swimmingPool" class="form-label">Swimming Pool </label>
-                            <select class="form-select"
-                                id="swimming_pool" name="swimming_pool">
+                            <select class="form-select" id="swimming_pool" name="swimming_pool">
                                 <option value="">Select here</option>
                                 <option value="1"
                                     {{ old('swimming_pool', $property->swimming_pool ?? '') == 1 ? 'selected' : '' }}>
@@ -260,7 +259,7 @@
                             <label for="tagsLabels" class="form-label">Tags / Labels</label>
                             <select class="form-select @error('tags') is-invalid @enderror" id="tags"
                                 name="tags">
-                                <option value="">Write here</option>
+                                <option value="">Select Tags</option>
                                 <option value="new" {{ old('tags') == 'new' ? 'selected' : '' }}>New</option>
                                 <option value="featured" {{ old('tags') == 'featured' ? 'selected' : '' }}>Featured
                                 </option>
@@ -355,15 +354,12 @@
             });
         });
     </script>
-
 </body>
 
-{{-- Include Select2 CSS --}}
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
     rel="stylesheet" />
-
-{{-- Include jQuery first, then Select2 JS --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 

@@ -54,12 +54,19 @@
     <h4 class="h4 mb-0">Service details</h4>
     <div class="col-md-6">
         <label class="form-label">Service Specialisation</label>
-        <input type="text" name="service_specialisation" class="form-control"
-            value="{{ old('service_specialisation', $serviceProvider->service_specialisation ?? '') }}">
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Service Type</label>
-        <input type="text" name="service_type" class="form-control"
-            value="{{ old('service_type', $serviceProvider->service_type ?? '') }}">
+        <select name="service_specialisation" class="form-control">
+            <option value="">Select Specialisation</option>
+
+            @foreach ($specializations as $specialization)
+                <option value="{{ $specialization->id }}"
+                    {{ old('service_specialisation', $serviceProvider->service_specialisation ?? '') == $specialization->id ? 'selected' : '' }}>
+                    {{ $specialization->specialization }}
+                </option>
+            @endforeach
+        </select>
+
+        @error('service_specialisation')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
     </div>
 </div>

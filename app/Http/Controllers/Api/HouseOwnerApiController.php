@@ -20,7 +20,8 @@ use App\Models\ServiceTicket;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ServiceTicketMail;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Specialization;
+use Illuminate\Support\Facades\Storage;
 
 class HouseOwnerApiController extends Controller
 {
@@ -704,34 +705,50 @@ class HouseOwnerApiController extends Controller
         $user = auth()->user();
 
         $request->validate([
-            'first_name' => 'nullable|string|max:50',
-            'last_name'  => 'nullable|string|max:50',
-            'profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048'
+            'first_name'       => 'nullable|string|max:50',
+            'last_name'        => 'nullable|string|max:50',
+            'profile_picture'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+            'service_specialisation' => 'nullable|exists:specializations,id',
         ]);
 
         // Update name fields
-        if ($request->first_name) {
+        if ($request->filled('first_name')) {
             $user->first_name = $request->first_name;
         }
 
-        if ($request->last_name) {
+        if ($request->filled('last_name')) {
             $user->last_name = $request->last_name;
         }
 
-        $user->name = $request->first_name . ' ' . $request->last_name;
-
-        // Image upload
-        if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile', 'public');
-            $user['profile_picture'] = 'uploads/' . $path;
+        if ($request->filled('first_name') || $request->filled('last_name')) {
+            $user->name = trim($request->first_name . ' ' . $request->last_name);
         }
 
-        $user->save();
+        if ($request->role === 'service_provider') {
+            $user->service_specialisation = $request->service_specialisation;
+        } else {
+            $user->service_specialisation = null;
+        }
 
+        $profilePicture = $user->profile_picture;
+
+        if ($request->hasFile('profile_picture')) {
+
+            if ($profilePicture) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $profilePicture));
+            }
+
+            $path = $request->file('profile_picture')->store('profile', 'public');
+            $profilePicture = 'storage/' . $path;
+        }
+
+
+        $user->profile_picture = $profilePicture;
+        $user->save();
         return response()->json([
-            'status' => true,
+            'status'  => true,
             'message' => 'Profile updated successfully',
-            'data' => $user
+            'data'    => $user,
         ]);
     }
 
@@ -1340,5 +1357,19 @@ class HouseOwnerApiController extends Controller
                 'availability_preferences' => $user->availability_preferences
             ]
         ]);
+    }
+
+    public function fetchServiceSpecialization()
+    {
+        $specializations = Specialization::where('status', 'active')
+            ->select('id', 'specialization', 'status')
+            ->orderBy('specialization', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Service specializations fetched successfully',
+            'data' => $specializations
+        ], 200);
     }
 }

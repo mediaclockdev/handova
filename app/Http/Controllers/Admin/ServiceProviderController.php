@@ -32,7 +32,10 @@ class ServiceProviderController extends Controller
     public function create()
     {
         $formTitle = 'New Service Providers';
-        return view('admin.service_provider.create', compact('formTitle'));
+        $specializations = \App\Models\Specialization::where('status', 'active')
+            ->orderBy('specialization')
+            ->get();
+        return view('admin.service_provider.create', compact('formTitle', 'specializations'));
     }
 
     /**
@@ -70,8 +73,11 @@ class ServiceProviderController extends Controller
     public function edit(string $id)
     {
         $serviceProvider = \App\Models\User::findOrFail($id);
+        $specializations = \App\Models\Specialization::where('status', 'active')
+            ->orderBy('specialization')
+            ->get();
         $formTitle = 'Update Service Provider';
-        return view('admin.service_provider.edit', compact('serviceProvider', 'formTitle'));
+        return view('admin.service_provider.edit', compact('serviceProvider', 'formTitle', 'specializations'));
     }
 
     /**

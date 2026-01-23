@@ -84,4 +84,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ServiceProvider::class);
     }
+
+    public function specialization()
+    {
+        return $this->belongsTo(Specialization::class, 'service_specialisation');
+    }
 }

@@ -112,7 +112,7 @@
                                             </a>
                                         </div>
                                 </form>
-                                <div class="space-x-2">
+                                <div class="px-0 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-800">
                                     <a href="{{ route('superadmin.specialization.create') }}"
                                         class="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-800">
 

@@ -36,12 +36,12 @@
                 <form id="signup-form" method="POST" action="{{ route('register') }}">
                     @csrf
 
-                    <div class="grid">
+                    <div class="grid mb-3">
                         <!-- FIRST NAME -->
                         <div>
-                            <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
+                            <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
                                 <span class="input-group-text border-0 rounded-start-pill">
-                                    <i class="fa-regular fa-user"></i>
+                                    <i class="fa-solid fa-user"></i>
                                 </span>
 
                                 <input type="text" id="first_name" name="first_name"
@@ -56,7 +56,7 @@
 
                         <!-- LAST NAME -->
                         <div>
-                            <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
+                            <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
                                 <span class="input-group-text border-0 rounded-start-pill">
                                     <i class="fa-solid fa-user"></i>
                                 </span>
@@ -72,73 +72,82 @@
                     </div>
 
                     <!-- EMAIL -->
-                    <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
-                        <span class="input-group-text border-0 rounded-start-pill">
-                            <i class="fa-regular fa-envelope"></i>
-                        </span>
-                        <input type="email" id="email" name="email"
-                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                            class="form-control border-0 rounded-pill @error('email') is-invalid @enderror"
-                            placeholder="Company's Email Address *" value="{{ old('email') }}">
+                    <div class="mb-3">
+                        <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
+                            <span class="input-group-text border-0 rounded-start-pill">
+                                <i class="fa-solid fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="email"
+                                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                class="form-control border-0 rounded-pill @error('email') is-invalid @enderror"
+                                placeholder="Company's Email Address *" value="{{ old('email') }}">
+                        </div>
+                        @error('email')
+                            <div class="text-danger small mb-2">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    @error('email')
-                        <div class="text-danger small mb-2">{{ $message }}</div>
-                    @enderror
+
 
                     <!-- PHONE -->
-                    <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
-                        <span class="input-group-text border-0 rounded-start-pill">
-                            <i class="fa-solid fa-phone"></i>
-                        </span>
-                        <input type="tel" id="phone" name="phone"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                            class="form-control border-0 rounded-pill @error('phone') is-invalid @enderror"
-                            placeholder="Phone Number *" value="{{ old('phone') }}">
-                    </div>
+                    <div class="mb-3">
+                        <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
+                            <span class="input-group-text border-0 rounded-start-pill">
+                                <i class="fa-solid fa-phone"></i>
+                            </span>
+                            <input type="tel" id="phone" name="phone"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                class="form-control border-0 rounded-pill @error('phone') is-invalid @enderror"
+                                placeholder="Phone Number *" value="{{ old('phone') }}">
+                        </div>
 
-                    @error('phone')
-                        <div class="text-danger small mb-2">{{ $message }}</div>
-                    @enderror
+                        @error('phone')
+                            <div class="text-danger small mb-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     <!-- PASSWORD -->
-                    <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
-                        <span class="input-group-text border-0 rounded-start-pill">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="password" id="password" name="password"
-                            class="form-control border-0 rounded-pill @error('password') is-invalid @enderror"
-                            placeholder="Password *">
-                        <span class="input-group-text border-0 rounded-end-pill cursor-pointer"
-                            onclick="togglePasswordVisibility('password', this)">
-                            <i class="bi bi-eye"></i>
-                        </span>
-                    </div>
+                    <div class="mb-3">
+                        <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
+                            <span class="input-group-text border-0 rounded-start-pill">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password"
+                                class="form-control border-0 rounded-pill @error('password') is-invalid @enderror"
+                                placeholder="Password *">
+                            <span class="input-group-text border-0 rounded-end-pill cursor-pointer"
+                                onclick="togglePasswordVisibility('password', this)">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
 
-                    @error('password')
-                        <div class="text-danger small mb-2">{{ $message }}</div>
-                    @enderror
+                        @error('password')
+                            <div class="text-danger small mb-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     <!-- CONFIRM PASSWORD -->
-                    <div class="input-group mb-3 rounded-pill border border-secondary-subtle bg-white">
-                        <span class="input-group-text border-0 rounded-start-pill">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="password" id="password_confirmation" name="password_confirmation"
-                            class="form-control border-0 rounded-pill @error('password_confirmation') is-invalid @enderror"
-                            placeholder="Confirm Password *">
-                        <span class="input-group-text border-0 rounded-end-pill cursor-pointer"
-                            onclick="togglePasswordVisibility('password_confirmation', this)">
-                            <i class="bi bi-eye"></i>
-                        </span>
+                    <div class="mb-3">
+                        <div class="input-group mb-1 rounded-pill border border-secondary-subtle bg-white">
+                            <span class="input-group-text border-0 rounded-start-pill">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                class="form-control border-0 rounded-pill @error('password_confirmation') is-invalid @enderror"
+                                placeholder="Confirm Password *">
+                            <span class="input-group-text border-0 rounded-end-pill cursor-pointer"
+                                onclick="togglePasswordVisibility('password_confirmation', this)">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+
+                        @error('password_confirmation')
+                            <div class="text-danger small mb-2">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    @error('password_confirmation')
-                        <div class="text-danger small mb-2">{{ $message }}</div>
-                    @enderror
-
                     <!-- TERMS -->
-                    <div class="terms mb-2">
+                    <div class="terms mb-0">
                         <label class="checkbox-label">
                             <input type="checkbox" name="terms" id="terms"
                                 class="@error('terms') is-invalid @enderror" {{ old('terms') ? 'checked' : '' }}>
@@ -162,7 +171,8 @@
 
                 <div class="form-group">
                     <p class="mt-6 text-center">
-                        Already have an account? <a href="{{ route('login') }}"><span class="link">Log in</span></a>
+                        Already have an account? <a href="{{ route('login') }}"><span class="link">Log
+                                in</span></a>
                     </p>
                 </div>
             </section>

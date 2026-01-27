@@ -9,6 +9,8 @@ use App\Models\Property;
 use App\Models\ServiceProvider;
 use App\Models\IssueReport;
 use \App\Models\User;
+use App\Models\HouseOwner;
+use App\Models\HousePlan;
 
 class DashboardController extends Controller
 {
@@ -25,17 +27,42 @@ class DashboardController extends Controller
     public function index()
     {
         $totalPropertiesCount = Property::count();
+        $totalProperties = Property::where('user_id', Auth::id())->count();
         $totalIssuesCount = IssueReport::count();
         $totalActiveUsersCount = User::count();
-        $totalProperties = Property::where('user_id', Auth::id())->count();
         $totalIssues = IssueReport::count();
         $totalActiveUsers = User::count();
+        $totalHouseOwners = HouseOwner::where('user_id', Auth::id())->count();
+        $totalHousePlans = HousePlan::where('user_id', Auth::id())->count();
 
         // Example Graph Data (You can replace with real DB data)
         $monthlyIssues = IssueReport::selectRaw('MONTH(created_at) as month, count(*) as total')
             ->groupBy('month')
             ->pluck('total', 'month')
             ->toArray();
+
+        $recentActivities = [
+            'Properties'    => Property::where('user_id', Auth::id())->count(),
+            'Issues' => IssueReport::join('properties', 'issue_reports.properties_id', '=', 'properties.id')->where('properties.user_id', Auth::id())->count(),
+            'House Owners'  => HouseOwner::where('user_id', Auth::id())->count(),
+            'House Plans'   => HousePlan::where('user_id', Auth::id())->count(),
+        ];
+
+        $totalActivity = array_sum($recentActivities);
+
+        $activityData = [];
+        foreach ($recentActivities as $label => $count) {
+            $activityData[] = [
+                'label' => $label,
+                'count' => $count,
+                'percentage' => $totalActivity > 0
+                    ? round(($count / $totalActivity) * 100, 1)
+                    : 0
+            ];
+        }
+        $recentIssues = IssueReport::latest()
+            ->limit(5)
+            ->get();
 
         return view('dashboard', compact(
             'totalProperties',
@@ -44,7 +71,11 @@ class DashboardController extends Controller
             'monthlyIssues',
             'totalPropertiesCount',
             'totalIssuesCount',
-            'totalActiveUsersCount'
+            'totalActiveUsersCount',
+            'totalHouseOwners',
+            'totalHousePlans',
+            'activityData',
+            'recentIssues'
         ));
     }
 

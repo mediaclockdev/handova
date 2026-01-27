@@ -707,6 +707,7 @@ class HouseOwnerApiController extends Controller
         $request->validate([
             'first_name'       => 'nullable|string|max:50',
             'last_name'        => 'nullable|string|max:50',
+            'company_name'        => 'nullable|string',
             'profile_picture'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
             'service_specialisation' => 'nullable|exists:specializations,id',
         ]);
@@ -726,8 +727,10 @@ class HouseOwnerApiController extends Controller
 
         if ($request->role === 'service_provider') {
             $user->service_specialisation = $request->service_specialisation;
+            $user->company_name = $request->company_name;
         } else {
             $user->service_specialisation = null;
+            $user->company_name = null;
         }
 
         $profilePicture = $user->profile_picture;

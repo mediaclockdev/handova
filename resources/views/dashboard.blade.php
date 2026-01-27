@@ -45,14 +45,26 @@
                     </div>
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card summary-card p-4">
+                            <div class="h2 text-orange">{{ $totalHouseOwners }}</div>
+                            <div>Total House Owners</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card summary-card p-4">
+                            <div class="h2 text-orange">{{ $totalHousePlans }}</div>
+                            <div>Total House Plans</div>
+                        </div>
+                    </div>
+                    {{-- <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card summary-card p-4">
                             <div class="h2 text-orange">0</div>
                             <div>Messages</div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <!-- Summary Cards -->
-                <div class="row g-4 mb-4">
+                {{-- <div class="row g-4 mb-4">
 
                     <!-- Bar Chart -->
                     <div class="col-12 col-lg-3">
@@ -86,92 +98,93 @@
                         </div>
                     </div>
 
-                </div>
+                </div> --}}
 
 
                 <!-- Recent Activity & Recent Issues -->
                 <div class="row g-4 mb-4">
-                    {{-- <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-6">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title mb-4">Recent Activity</h5>
+
                                 <div class="chart-container d-flex justify-content-around align-items-end">
-                                    <div class="chart-bar-wrapper">
-                                        <div class="chart-bar" style="height: 40%;"></div>
-                                        <div class="chart-bar-label">36</div>
-                                        <small class="text-muted">2.6%</small>
-                                    </div>
-                                    <div class="chart-bar-wrapper">
-                                        <div class="chart-bar" style="height: 15%;"></div>
-                                        <div class="chart-bar-label">9</div>
-                                        <small class="text-muted">5.4%</small>
-                                    </div>
-                                    <div class="chart-bar-wrapper">
-                                        <div class="chart-bar" style="height: 90%;"></div>
-                                        <div class="chart-bar-label">72</div>
-                                        <small class="text-muted">42.9%</small>
-                                    </div>
-                                    <div class="chart-bar-wrapper">
-                                        <div class="chart-bar" style="height: 60%;"></div>
-                                        <div class="chart-bar-label">51</div>
-                                        <small class="text-muted">30.4%</small>
-                                    </div>
+                                    @foreach ($activityData as $activity)
+                                        <div class="chart-bar-wrapper text-center">
+                                            <div class="chart-bar" style="height: {{ $activity['percentage'] }}%;">
+                                            </div>
+
+                                            <div class="chart-bar-label">
+                                                {{ $activity['count'] }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                {{ $activity['percentage'] }}%
+                                            </small>
+
+                                            <div class="mt-1 fw-semibold">
+                                                {{ $activity['label'] }}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-lg-6">
+                        <div class="card">
+                            <div class="card-header card-header-orange">
+                                <h5 class="card-title text-white mb-0">Recent Issues</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="text-white">
+                                            <tr>
+                                                <th>Issue</th>
+                                                <th>Location</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($recentIssues as $issue)
+                                                <tr>
+                                                    <td>{{ $issue->issue_title ?? 'N/A' }}</td>
+
+                                                    <td>{{ $issue->issue_details ?? 'N/A' }}</td>
+
+                                                    <td>
+                                                        <span
+                                                            class="badge
+                    @if ($issue->status === 'Open') bg-warning
+                    @elseif($issue->status === 'Resolved') bg-success
+                    @elseif($issue->status === 'Closed') bg-secondary
+                    @else bg-light text-dark @endif">
+                                                            {{ ucfirst($issue->status) }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted">
+                                                        No issue reports found
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
-
-                    <!--<div class="col-12 col-lg-6">-->
-                    <!--    <div class="card">-->
-                    <!--        <div class="card-header card-header-orange">-->
-                    <!--            <h5 class="card-title text-white mb-0">Recent Issues</h5>-->
-                    <!--        </div>-->
-                    <!--        <div class="card-body p-0">-->
-                    <!--            <div class="table-responsive">-->
-                    <!--                <table class="table table-hover mb-0">-->
-                    <!--                    <thead class="text-white">-->
-                    <!--                        <tr>-->
-                    <!--                            <th>Issue</th>-->
-                    <!--                            <th>Location</th>-->
-                    <!--                            <th>Status</th>-->
-                    <!--                        </tr>-->
-                    <!--                    </thead>-->
-                    <!--                    <tbody>-->
-                    <!--                        <tr>-->
-                    <!--                            <td>Issue Title</td>-->
-                    <!--                            <td>Address</td>-->
-                    <!--                            <td>Open</td>-->
-                    <!--                        </tr>-->
-                    <!--                        <tr>-->
-                    <!--                            <td>Issue Title</td>-->
-                    <!--                            <td>Address</td>-->
-                    <!--                            <td>Resolved</td>-->
-                    <!--                        </tr>-->
-                    <!--                        <tr>-->
-                    <!--                            <td>Issue Title</td>-->
-                    <!--                            <td>Address</td>-->
-                    <!--                            <td>Closed</td>-->
-                    <!--                        </tr>-->
-                    <!--                        <tr>-->
-                    <!--                            <td>Issue Title</td>-->
-                    <!--                            <td>Address</td>-->
-                    <!--                            <td>Resolved</td>-->
-                    <!--                        </tr>-->
-                    <!--                        <tr>-->
-                    <!--                            <td>Issue Title</td>-->
-                    <!--                            <td>Address</td>-->
-                    <!--                            <td>Open</td>-->
-                    <!--                        </tr>-->
-                    <!--                    </tbody>-->
-                    <!--                </table>-->
-                    <!--            </div>-->
-                    <!--        </div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
+                    </div>
                 </div>
 
                 <!-- Messages & Action Shortcuts -->
-                {{-- <div class="row g-4">
+                <div class="row g-4">
                     <div class="col-12 col-lg-6">
                         <div class="card">
                             <div class="card-body">
@@ -207,12 +220,12 @@
                                 <h5 class="card-title mb-3">Action Shortcuts</h5>
                                 <a href="{{ route('admin.properties.create') }}"><button class="btn action-shortcut-btn">Add Property</button></a>
                                 <a href="{{ route('admin.issue_report.index') }}"> <button class="btn action-shortcut-btn">View All issues</button></a>
-                                <a href="{{ route('admin.properties.create') }}"> <button class="btn action-shortcut-btn">Manage appliances</button></a>
-                                <a href="{{ route('admin.properties.create') }}"><button class="btn action-shortcut-btn">Upload certification</button></a>
+                                <a href="{{ route('admin.appliances.create') }}"> <button class="btn action-shortcut-btn">Manage appliances</button></a>
+                                <a href="{{ route('admin.compliance_certificates.create') }}"><button class="btn action-shortcut-btn">Upload certification</button></a>
                             </div>
                         </div>
                     </div>
-                </div> --}}
+                </div>
             </div>
         </div>
     </div>

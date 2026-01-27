@@ -98,10 +98,15 @@
         {{-- Existing Files --}}
         <div class="mt-3 d-flex flex-wrap" id="existingAttachmentsWrapper">
             @php
-                $existingAttachments = is_array($certificate->attachments)
-                    ? $certificate->attachments
-                    : json_decode($certificate->attachments, true) ?? [];
+                $existingAttachments = [];
+
+                if (!empty($certificate) && !empty($certificate->attachments)) {
+                    $existingAttachments = is_array($certificate->attachments)
+                        ? $certificate->attachments
+                        : json_decode($certificate->attachments, true) ?? [];
+                }
             @endphp
+
 
             @foreach ($existingAttachments as $file)
                 @php

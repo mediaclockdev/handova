@@ -51,6 +51,9 @@ class ServiceProviderController extends Controller
             'phone'                  => 'nullable|string|max:20',
             'service_specialisation' => 'nullable|string|max:255',
             'service_type'           => 'nullable|string|max:255',
+            'coverage'               => 'nullable|integer|min:1|max:1000',
+            'address'                => 'required|string|max:2000',
+
         ]);
         $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];
         $validated['role'] = 'service_provider';
@@ -95,6 +98,8 @@ class ServiceProviderController extends Controller
                 'phone'                  => 'nullable|string|max:20',
                 'service_specialisation' => 'nullable|string|max:255',
                 'service_type'           => 'nullable|string|max:255',
+                'coverage'               => 'nullable|integer|min:1|max:1000',
+                'address'                => 'required|string|max:2000',
             ]);
             $serviceProvider->update($validated);
             return redirect()->route('admin.service_provider.index')->with('success', 'Service provider updated successfully.');

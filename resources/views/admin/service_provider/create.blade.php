@@ -14,7 +14,7 @@
 
         <div class="main-content">
             <div class="content-wrapper">
-                  @include('partials.navbar')
+                @include('partials.navbar')
                 <form action="{{ route('admin.service_provider.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -32,20 +32,23 @@
         </div>
     </div>
     @include('partials/scripts')
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcZaByAZLe7qQZAYhKWtc2O9Bn22PAD2E&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </body>
 <script>
-    @if(session('success'))
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-    toastr.success("{{ session('success') }}");
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
     @endif
 
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
     @endif
 </script>
 

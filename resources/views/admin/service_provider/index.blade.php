@@ -31,7 +31,8 @@
                                     <th>Services</th>
                                     <th>Email Address</th>
                                     <th>Phone Number</th>
-
+                                    <th>Address</th>
+                                    <th>Coverage</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -44,6 +45,8 @@
                                         <td>{{ $serviceprovider->specialization->specialization }}</td>
                                         <td>{{ $serviceprovider->email }}</td>
                                         <td>{{ $serviceprovider->phone }}</td>
+                                        <td>{{ $serviceprovider->address }}</td>
+                                        <td>{{ $serviceprovider->coverage }}KM</td>
 
                                         <td>
                                             <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}"

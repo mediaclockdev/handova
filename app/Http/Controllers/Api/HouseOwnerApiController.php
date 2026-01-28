@@ -1375,4 +1375,52 @@ class HouseOwnerApiController extends Controller
             'data' => $specializations
         ], 200);
     }
+
+    public function updateServiceProvidersCoverage(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'coverage' => 'required|integer|min:1|max:100'
+            ]);
+
+            $user = User::find($request->user_id);
+            if (!$user) {
+                Log::warning('User not found', [
+                    'user_id' => $request->user_id
+                ]);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+            if ($user->role !== 'service_provider') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User is not a service provider'
+                ], 400);
+            }
+            $user->coverage = $request->coverage;
+            $user->save();
+            return response()->json([
+                'user_id' => $user->id,
+                'coverage' => $user->coverage,
+                'data' => [
+                    'status' => true,
+                    'message' => 'Coverage areas updated successfully',
+                ]
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong. Please try again later.'
+            ], 500);
+        }
+    }
 }

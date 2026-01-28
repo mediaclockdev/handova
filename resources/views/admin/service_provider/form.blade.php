@@ -48,6 +48,21 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <label for="address" class="form-label">
+                Address <span style="color:red;">*</span>
+            </label>
+
+            <input value="{{ old('address', $serviceProvider->address ?? '') }}" type="text" class="form-control @error('address') is-invalid @enderror" id="address"
+                name="address" placeholder="Start typing address..." autocomplete="off" />
+
+            @error('address')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
 </div>
 
 <div class="row g-4 mb-4">
@@ -67,6 +82,15 @@
 
         @error('service_specialisation')
             <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Coverage (KM)</label>
+        <input type="number" name="coverage" class="form-control @error('coverage') is-invalid @enderror"
+            value="{{ old('coverage', $serviceProvider->coverage ?? '') }}">
+        @error('coverage')
+            <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 </div>

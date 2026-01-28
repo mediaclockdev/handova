@@ -78,7 +78,8 @@
                         </div>
                     </div>
                 </div>
-                <form action="{{ route('admin.service_provider.update', $serviceProvider->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.service_provider.update', $serviceProvider->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     @include('admin.service_provider.form', ['serviceProvider' => $serviceProvider])
@@ -95,20 +96,23 @@
         </div>
     </div>
     @include('partials/scripts')
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcZaByAZLe7qQZAYhKWtc2O9Bn22PAD2E&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </body>
 <script>
-    @if(session('success'))
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-    toastr.success("{{ session('success') }}");
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
     @endif
 
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
     @endif
 </script>
 

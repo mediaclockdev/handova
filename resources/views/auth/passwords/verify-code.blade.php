@@ -12,7 +12,7 @@
             <div class="auth-card">
                 <div class="card-body text-center">
 
-                    <img src="{{ asset('images/handova.png') }}" alt="Handova Logo" class="logo">
+                    <img src="{{ asset('images/handova.svg') }}" alt="Handova Logo" class="logo">
 
                     <!-- Verification Code Page Content -->
                     <div id="verification-page" class="auth-page">

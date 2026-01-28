@@ -15,7 +15,7 @@
                     style="max-width: 600px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); overflow: hidden;">
                     <tr>
                         <td align="center" style="padding: 30px 0; background-color: #ffffff;">
-                            <img src="{{ asset('images/handova.png') }}" alt="Handova Logo" style="height: 60px;">
+                            <img src="{{ asset('images/handova.svg') }}" alt="Handova Logo" style="height: 60px;">
                         </td>
                     </tr>
                     <tr>

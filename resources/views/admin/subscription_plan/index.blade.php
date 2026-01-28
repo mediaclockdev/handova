@@ -290,7 +290,7 @@
   <section id="pricing" class="page-container">
     <div class="pricing-container">
       <header class="pricing-header">
-        <img src="{{ asset('images/handova.png') }}" alt="Handova Logo" class="logo">
+        <img src="{{ asset('images/handova.svg') }}" alt="Handova Logo" class="logo">
         <h1 class="main-title">Choose a subscription plan to move forward</h1>
         <div class="billing-toggle">
           <span class="toggle-label toggle-label-active" data-plan="monthly">Monthly</span>

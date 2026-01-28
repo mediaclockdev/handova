@@ -1,7 +1,7 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <a href="{{ url('/') }}"><img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo"
+                <a href="{{ url('/') }}"><img src="{{ asset('public/images/handova.svg') }}" alt="Handova Logo"
                         class="logo"></a>
             </div>
 

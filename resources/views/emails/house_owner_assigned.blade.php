@@ -17,7 +17,7 @@
                     <!-- Logo Section -->
                     <tr>
                         <td align="center" style="padding:30px 0; background-color:#ffffff;">
-                            <img src="{{ asset('images/handova.png') }}" alt="Handova Logo" style="height:60px;">
+                            <img src="{{ asset('images/handova.svg') }}" alt="Handova Logo" style="height:60px;">
                         </td>
                     </tr>
 

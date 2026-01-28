@@ -13,7 +13,7 @@
             <div class="auth-card">
                 <div class="card-body text-center">
 
-                    <img src="{{ asset('public/images/handova.png') }}" alt="Handova Logo" class="logo">
+                    <img src="{{ asset('public/images/handova.svg') }}" alt="Handova Logo" class="logo">
 
                     <div id="login-page" class="auth-page">
                         <h4 class="auth-heading">Welcome!</h4>

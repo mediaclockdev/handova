@@ -43,18 +43,22 @@ class ServiceProviderController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'company_name'           => 'nullable|string|max:255',
-            'first_name'             => 'required|string|max:255',
-            'last_name'              => 'required|string|max:255',
-            'email'                  => 'required|email|max:255|unique:service_providers,email_address',
-            'phone'                  => 'nullable|string|max:20',
-            'service_specialisation' => 'nullable|string|max:255',
-            'service_type'           => 'nullable|string|max:255',
-            'coverage'               => 'nullable|integer|min:1|max:1000',
-            'address'                => 'required|string|max:2000',
-
-        ]);
+        $validated = $request->validate(
+            [
+                'company_name'           => 'nullable|string|max:255',
+                'first_name'             => 'required|string|max:255',
+                'last_name'              => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'phone'                  => 'nullable|string|max:20',
+                'service_specialisation' => 'nullable|string|max:255',
+                'service_type'           => 'nullable|string|max:255',
+                'coverage'               => 'nullable|integer|min:1|max:1000',
+                'address'                => 'required|string|max:2000',
+            ],
+            [
+                'email.unique' => 'This email is already registered as a service provider.',
+            ]
+        );
         $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];
         $validated['role'] = 'service_provider';
         $validated['password'] = bcrypt('password');

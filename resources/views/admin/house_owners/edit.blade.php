@@ -21,7 +21,7 @@
                     @include('admin.house_owners.form', ['owner' => $owner])
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
+                        <button type="reset" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
                         <button type="submit" class="btn btn-add-property">
                             Update House Owner
                         </button>

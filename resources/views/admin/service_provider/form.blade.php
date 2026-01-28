@@ -55,8 +55,9 @@
                 Address <span style="color:red;">*</span>
             </label>
 
-            <input value="{{ old('address', $serviceProvider->address ?? '') }}" type="text" class="form-control @error('address') is-invalid @enderror" id="address"
-                name="address" placeholder="Start typing address..." autocomplete="off" />
+            <input value="{{ old('address', $serviceProvider->address ?? '') }}" type="text"
+                class="form-control @error('address') is-invalid @enderror" id="address" name="address"
+                placeholder="Start typing address..." autocomplete="off" />
 
             @error('address')
                 <div class="text-danger">{{ $message }}</div>

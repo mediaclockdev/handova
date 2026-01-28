@@ -300,7 +300,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <button type="button" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
+                        <button type="reset" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
                         <button type="submit" class="btn btn-add-property">
                             Add Property
                         </button>

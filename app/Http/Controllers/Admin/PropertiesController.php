@@ -59,7 +59,7 @@ class PropertiesController extends Controller
             'swimming_pool'        => 'nullable|boolean',
 
             'floor_plan_upload'    => 'nullable|array',
-            'floor_plan_upload.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'floor_plan_upload.*'  => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
 
             'property_status'      => 'required|string',
             'appliance_id'         => 'nullable|array',
@@ -136,7 +136,7 @@ class PropertiesController extends Controller
             'swimming_pool'        => 'nullable|boolean',
 
             'floor_plan_upload'    => 'nullable|array',
-            'floor_plan_upload.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'floor_plan_upload.*'  => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
 
             'property_status'      => 'required|string',
             'appliance_id'         => 'nullable|array',

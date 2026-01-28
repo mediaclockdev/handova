@@ -46,7 +46,7 @@
     <div class="col-md-6">
         <label class="form-label">Pricing <span style="color:red;">*</span></label>
         <input type="number" name="pricing" class="form-control @error('pricing') is-invalid @enderror"
-            value="{{ old('pricing', $housePlan->pricing ?? '') }}">
+            value="{{ old('pricing', $housePlan->pricing ?? '') }}" placeholder="$">
         @error('pricing')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -54,7 +54,7 @@
 
     <div class="col-md-6">
         <label class="form-label">House Area</label>
-        <input type="text" name="house_area" class="form-control @error('house_area') is-invalid @enderror"
+        <input type="number" name="house_area" class="form-control @error('house_area') is-invalid @enderror"
             value="{{ old('house_area', $housePlan->house_area ?? '') }}">
         @error('house_area')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -167,7 +167,7 @@
                 data-floor="{{ $key }}" multiple accept="image/*">
 
         </div>
-        <div class="d-flex flex-wrap mt-2 floor-preview" data-preview="{{ $key }}">
+        <div id="floor-previews" class="d-flex flex-wrap mt-2 floor-preview" data-preview="{{ $key }}">
 
             {{-- EXISTING FLOOR PLAN IMAGES --}}
             @if (!empty($floorData[$key]['floor_plan']))

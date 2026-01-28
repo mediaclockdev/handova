@@ -6,7 +6,7 @@
     <div class="mb-3 col-12">
         <label for="property_id" class="form-label">Select Property</label>
         <select name="property_id" id="property_id" class="form-control" required>
-            <option value="">-- Select Property --</option>
+            <option value="">Select Property</option>
             @foreach ($properties as $property)
                 <option value="{{ $property->id }}"
                     {{ old('property_id', $certificate->property_id ?? '') == $property->id ? 'selected' : '' }}>

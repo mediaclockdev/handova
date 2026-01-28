@@ -1,10 +1,12 @@
 $(document).ready(function () {
-    $("#appliance_id").select2({
-        placeholder: "Select Appliances",
-        allowClear: true,
-        width: "100%",
-        theme: "bootstrap-5",
-    });
+    if (document.getElementById("appliance_id")) {
+        $("#appliance_id").select2({
+            placeholder: "Select Appliances",
+            allowClear: true,
+            width: "100%",
+            theme: "bootstrap-5",
+        });
+    }
     // $("#propertiesTable").DataTable({
     //   pageLength: 5,
     //   lengthMenu: [5, 10, 25, 50],
@@ -17,72 +19,74 @@ $(document).ready(function () {
     //     info: "Showing _START_ to _END_ of _TOTAL_ properties",
     //   },
     // });
-    document
-        .getElementById("fileUpload")
-        .addEventListener("change", function (event) {
-            const previewContainer =
-                document.getElementById("preview-container");
+    if (document.getElementById("fileUpload")) {
+        document
+            .getElementById("fileUpload")
+            .addEventListener("change", function (event) {
+                const previewContainer =
+                    document.getElementById("preview-container");
 
-            const newFiles = Array.from(event.target.files).filter((f) =>
-                f.type.startsWith("image/"),
-            );
+                const newFiles = Array.from(event.target.files).filter((f) =>
+                    f.type.startsWith("image/"),
+                );
 
-            newFiles.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const previewBox = document.createElement("div");
-                    previewBox.classList.add("mb-2", "preview-image");
+                newFiles.forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const previewBox = document.createElement("div");
+                        previewBox.classList.add("mb-2", "preview-image");
 
-                    const wrapper = document.createElement("div");
-                    wrapper.classList.add(
-                        "position-relative",
-                        "m-2",
-                        "img-thumbnail",
-                    );
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add(
+                            "position-relative",
+                            "m-2",
+                            "img-thumbnail",
+                        );
 
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.className = "img-fluid img-thumbnail";
-                    img.style.height = "80px";
-                    //img.style.objectFit = "cover";
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.className = "img-fluid img-thumbnail";
+                        img.style.height = "80px";
+                        //img.style.objectFit = "cover";
 
-                    const closeBtn = document.createElement("button");
-                    closeBtn.type = "button";
-                    closeBtn.className = "close-btn";
-                    closeBtn.innerHTML = "&times;";
-                    closeBtn.title = "Remove";
+                        const closeBtn = document.createElement("button");
+                        closeBtn.type = "button";
+                        closeBtn.className = "close-btn";
+                        closeBtn.innerHTML = "&times;";
+                        closeBtn.title = "Remove";
 
-                    closeBtn.addEventListener("click", () => {
-                        previewBox.remove();
+                        closeBtn.addEventListener("click", () => {
+                            previewBox.remove();
 
-                        const dt = new DataTransfer();
-                        const currentFiles = Array.from(event.target.files);
+                            const dt = new DataTransfer();
+                            const currentFiles = Array.from(event.target.files);
 
-                        currentFiles.forEach((f) => {
-                            if (f.name !== file.name) dt.items.add(f);
+                            currentFiles.forEach((f) => {
+                                if (f.name !== file.name) dt.items.add(f);
+                            });
+
+                            event.target.files = dt.files;
+
+                            document.getElementById("floorPlanUpload").value =
+                                Array.from(dt.files)
+                                    .map((f) => f.name)
+                                    .join(", ");
                         });
 
-                        event.target.files = dt.files;
+                        wrapper.appendChild(img);
+                        wrapper.appendChild(closeBtn);
+                        previewBox.appendChild(wrapper);
+                        previewContainer.appendChild(previewBox);
+                    };
 
-                        document.getElementById("floorPlanUpload").value =
-                            Array.from(dt.files)
-                                .map((f) => f.name)
-                                .join(", ");
-                    });
+                    reader.readAsDataURL(file);
+                });
 
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(closeBtn);
-                    previewBox.appendChild(wrapper);
-                    previewContainer.appendChild(previewBox);
-                };
-
-                reader.readAsDataURL(file);
+                document.getElementById("floorPlanUpload").value = newFiles
+                    .map((f) => f.name)
+                    .join(", ");
             });
-
-            document.getElementById("floorPlanUpload").value = newFiles
-                .map((f) => f.name)
-                .join(", ");
-        });
+    }
 });
 
 document.querySelectorAll(".remove-image-btn").forEach((btn) => {
@@ -202,9 +206,11 @@ navLinks.forEach((link) => {
 });
 
 function clearForm() {
+    console.log("Clearing form...");
     // Reset all forms safely
     $(
-        "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan, #applianceForm",
+        "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan,#housePlans, #applianceForm",
+        "#complianceCertificateForm",
     ).each(function () {
         this.reset();
     });
@@ -221,6 +227,12 @@ function clearForm() {
 
     const appliancesPreview = document.getElementById("appliances-preview");
     if (appliancesPreview) appliancesPreview.innerHTML = "";
+
+    const floorplanPreviews = document.getElementById("floor-previews");
+    if (floorplanPreviews) floorplanPreviews.innerHTML = "";
+
+    const attachmentsPreview = document.getElementById("attachmentsPreview");
+    if (attachmentsPreview) attachmentsPreview.innerHTML = "";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -601,3 +613,80 @@ document.getElementById("logout-btns").addEventListener("click", function (e) {
         }
     });
 });
+
+document.addEventListener("input", function (e) {
+    if (!e.target.classList.contains("form-control")) return;
+
+    if (e.target.classList.contains("is-invalid")) {
+        e.target.classList.remove("is-invalid");
+
+        const errorFeedback = e.target
+            .closest(".col-md-6, .col-md-12")
+            ?.querySelector(".invalid-feedback");
+
+        if (errorFeedback) {
+            errorFeedback.remove();
+        }
+    }
+});
+
+document.addEventListener("change", function (e) {
+    if (!e.target.classList.contains("form-control")) return;
+
+    if (e.target.classList.contains("is-invalid")) {
+        e.target.classList.remove("is-invalid");
+
+        const errorFeedback = e.target
+            .closest(".col-md-6, .col-md-12")
+            ?.querySelector(".invalid-feedback");
+
+        if (errorFeedback) {
+            errorFeedback.remove();
+        }
+    }
+});
+
+document.addEventListener("input", handleValidation);
+document.addEventListener("change", handleValidation);
+
+function handleValidation(e) {
+    if (
+        !e.target.classList.contains("form-control") &&
+        !e.target.classList.contains("form-select")
+    ) {
+        return;
+    }
+
+    if (e.target.value.trim() !== "") {
+        e.target.classList.remove("is-invalid");
+
+        const errorMessage = e.target
+            .closest(".col-md-6, .col-md-12")
+            ?.querySelector(".text-danger");
+
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
+}
+
+function initAutocomplete() {
+    const input = document.getElementById("address");
+    if (!input) return;
+
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ["geocode"],
+        componentRestrictions: { country: "in" },
+    });
+
+    autocomplete.addListener("place_changed", function () {
+        const place = autocomplete.getPlace();
+
+        if (!place.geometry) {
+            console.warn("No details available for input");
+            return;
+        }
+
+        console.log("Selected Address:", place.formatted_address);
+    });
+}

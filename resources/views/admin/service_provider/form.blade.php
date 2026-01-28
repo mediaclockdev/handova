@@ -34,7 +34,7 @@
 <div class="row g-4 mb-4">
     <div class="col-md-6">
         <label class="form-label">Email Address <span style="color:red;">*</span></label>
-        <input readonly type="text" name="email" class="form-control @error('email') is-invalid @enderror"
+        <input type="text" name="email" class="form-control @error('email') is-invalid @enderror"
             value="{{ old('email', $serviceProvider->email ?? '') }}">
         @error('email')
             <div class="invalid-feedback">{{ $message }}</div>

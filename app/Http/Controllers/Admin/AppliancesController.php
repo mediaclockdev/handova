@@ -56,7 +56,7 @@ class AppliancesController extends Controller
             'manuals.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv,xls,xlsx|max:10240',
 
             'appliances_images'   => 'nullable|array',
-            'appliances_images.*' => 'image|mimes:jpeg,png,jpg,gif',
+            'appliances_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp',
         ]);
 
         $data = $request->except(['manuals', 'appliances_images']);
@@ -134,7 +134,7 @@ class AppliancesController extends Controller
                 'manuals.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv,xls,xlsx|max:10240',
 
                 'appliances_images'     => 'nullable|array',
-                'appliances_images.*'   => 'image|mimes:jpeg,png,jpg,gif',
+                'appliances_images.*'   => 'image|mimes:jpeg,png,jpg,gif,,webp',
             ]);
 
             $data = $request->except(['manuals', 'appliances_images']);

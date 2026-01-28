@@ -15,7 +15,7 @@
         <div class="main-content">
             <div class="content-wrapper">
                 @include('partials.navbar')
-                <form action="{{ route('admin.house_plans.update', $housePlan->id) }}" method="POST"
+                <form id="housePlans" action="{{ route('admin.house_plans.update', $housePlan->id) }}" method="POST"
                     enctype="multipart/form-data">
 
                     @csrf
@@ -23,7 +23,7 @@
                     @include('admin.house_plans.form', ['housePlan' => $housePlan])
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
+                        <button type="reset" class="btn btn-clear-all" onclick="clearForm()">Clear All</button>
                         <button type="submit" class="btn btn-add-property">
                             Update House Plan
                         </button>

@@ -54,7 +54,7 @@
                     </div>
 
                     <div class="row g-4 mb-4">
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <label for="address" class="form-label">
                                 Address <span style="color:red;">*</span>
                             </label>
@@ -281,7 +281,7 @@
                     </div>
 
                     <div class="row g-4 mb-5">
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <label for="complianceCertificate" class="form-label">Compliance certificate <span
                                     style="color:red;">*</span></label>
                             <select class="form-select @error('compliance_certificate') is-invalid @enderror"
@@ -311,33 +311,10 @@
     </div>
 
     @include('partials/scripts')
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcZaByAZLe7qQZAYhKWtc2O9Bn22PAD2E&libraries=places" async
-        defer></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const input = document.getElementById("address");
 
-            if (!input) return;
-
-            const autocomplete = new google.maps.places.Autocomplete(input, {
-                types: ["geocode"],
-                componentRestrictions: {
-                    country: "in"
-                } // Change country if needed
-            });
-
-            autocomplete.addListener("place_changed", function() {
-                const place = autocomplete.getPlace();
-
-                if (!place.geometry) {
-                    console.warn("No details available for input");
-                    return;
-                }
-
-                console.log("Selected Address:", place.formatted_address);
-            });
-        });
-    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcZaByAZLe7qQZAYhKWtc2O9Bn22PAD2E&libraries=places&callback=initAutocomplete"
+        async defer></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

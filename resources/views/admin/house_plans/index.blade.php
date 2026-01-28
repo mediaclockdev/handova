@@ -30,7 +30,7 @@
                                     <th>Storey</th>
                                     <th>Pricing</th>
                                     <th>House Area</th>
-                                    <th>Display Location</th>
+                                    <th>Created At</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -38,10 +38,10 @@
                                 @forelse($houseplans as $plan)
                                     <tr>
                                         <td>{{ $plan->plan_name }}</td>
-                                        <td>{{ ucfirst($plan->storey) }}</td>
-                                        <td>{{ $plan->pricing }}</td>
-                                        <td>{{ $plan->house_area }}</td>
                                         <td>{{ $plan->display_location }}</td>
+                                        <td>${{ $plan->pricing }}</td>
+                                        <td>{{ $plan->house_area }} SQ FT</td>
+                                        <td>{{ $plan->created_at }}</td>
 
                                         <td>
                                             <a href="{{ route('admin.house_plans.edit', $plan->id) }}"

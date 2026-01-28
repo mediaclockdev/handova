@@ -207,7 +207,7 @@ class OwnersController extends Controller
             'handover_documents.*'      => 'file|mimes:jpg,jpeg,png,pdf,csv,doc,docx|max:2048',
 
             'floor_plan_upload'         => 'nullable|array',
-            'floor_plan_upload.*'       => 'image|mimes:jpg,jpeg,png|max:2048',
+            'floor_plan_upload.*'       => 'image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'existing_handover_documents' => 'nullable|array',
             'existing_handover_documents.*' => 'string',

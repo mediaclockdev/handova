@@ -69,7 +69,7 @@ class HousePlansController extends Controller
             'floor.*.appliances.*'       => 'exists:appliances,id',
 
             'floor_plan'                 => 'nullable|array',
-            'floor_plan.*.*'             => 'image|mimes:jpg,jpeg,png|max:2048',
+            'floor_plan.*.*'             => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $floorDetails = [];
@@ -180,7 +180,7 @@ class HousePlansController extends Controller
             'floor.*.appliances.*'     => 'exists:appliances,id',
 
             'floor_plan'               => 'nullable|array',
-            'floor_plan.*.*'           => 'image|mimes:jpg,jpeg,png|max:2048',
+            'floor_plan.*.*'           => 'image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'existing_floor_plan'      => 'nullable|array',
             'existing_floor_plan.*.*'  => 'nullable|string',

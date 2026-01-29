@@ -75,20 +75,24 @@
                             <label class="form-label">
                                 House Plan <span class="text-danger">*</span>
                             </label>
+                            <div class="d-flex gap-2">
+                                <select name="house_plan_id"
+                                    class="form-select @error('house_plan_id') is-invalid @enderror">
 
-                            <select name="house_plan_id"
-                                class="form-select @error('house_plan_id') is-invalid @enderror">
+                                    <option value="">Select House Plan</option>
 
-                                <option value="">Select House Plan</option>
+                                    @foreach ($housePlans as $plan)
+                                        <option value="{{ $plan->id }}"
+                                            {{ old('house_plan_id') == $plan->id ? 'selected' : '' }}>
+                                            {{ $plan->plan_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                                @foreach ($housePlans as $plan)
-                                    <option value="{{ $plan->id }}"
-                                        {{ old('house_plan_id') == $plan->id ? 'selected' : '' }}>
-                                        {{ $plan->plan_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-
+                                <a href="{{ route('admin.house_plans.create') }}" class="btn btn-add-property">
+                                    Add
+                                </a>
+                            </div>
                             @error('house_plan_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -135,7 +139,8 @@
                         <div class="col-md-6">
                             <label for="numBedrooms" class="form-label">Number of Bedrooms</label>
                             <input type="number" class="form-control @error('number_of_bedrooms') is-invalid @enderror"
-                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms" step="1" min="0" />
+                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms"
+                                step="1" min="0" />
                             @error('number_of_bedrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -144,7 +149,8 @@
                             <label for="numBathrooms" class="form-label">Number of Bathrooms</label>
                             <input type="number"
                                 class="form-control @error('number_of_bathrooms') is-invalid @enderror"
-                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom" step="1" min="0" />
+                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom"
+                                step="1" min="0" />
                             @error('number_of_bathrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -237,15 +243,20 @@
                     <div class="row g-4 mb-4">
                         <div class="col-12">
                             <label for="appliance_id" class="form-label">Appliances</label>
-                            <select class="form-select select2 @error('appliance_id') is-invalid @enderror"
-                                id="appliance_id" name="appliance_id[]" multiple>
-                                @foreach ($appliances as $appliance)
-                                    <option value="{{ $appliance->id }}"
-                                        {{ collect(old('appliance_id'))->contains($appliance->id) ? 'selected' : '' }}>
-                                        {{ $appliance->brand_name }} - {{ $appliance->model }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="d-flex gap-2">
+                                <select class="form-select select2 @error('appliance_id') is-invalid @enderror"
+                                    id="appliance_id" name="appliance_id[]" multiple>
+                                    @foreach ($appliances as $appliance)
+                                        <option value="{{ $appliance->id }}"
+                                            {{ collect(old('appliance_id'))->contains($appliance->id) ? 'selected' : '' }}>
+                                            {{ $appliance->brand_name }} - {{ $appliance->model }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <a href="{{ route('admin.appliances.create') }}" class="btn btn-add-property">
+                                    Add
+                                </a>
+                            </div>
 
                             @error('appliance_id')
                                 <div class="text-danger">{{ $message }}</div>

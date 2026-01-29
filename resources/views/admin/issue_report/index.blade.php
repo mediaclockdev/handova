@@ -28,7 +28,7 @@
                         <select id="filterProperty" class="form-select">
                             <option value="">All Properties</option>
                             @foreach ($properties as $property)
-                            <option value="{{ $property->id }}">{{ $property->property_title }}</option>
+                                <option value="{{ $property->id }}">{{ $property->property_title }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -44,6 +44,7 @@
                                     <th>Issue Reported By</th>
                                     <th>Reported Date</th>
                                     <th>Assigned</th>
+                                    <th>Customer Contact</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -51,34 +52,35 @@
 
                             <tbody id="issuesTableBody">
                                 @forelse($issueReports as $issueReport)
-                                <tr>
-                                    <td>{{ $issueReport->issue_number }}</td>
-                                    <td>{{ $issueReport->issue_details }}</td>
-                                    <td>{{ $issueReport->reporter->name }}</td>
-                                    <td>{{ $issueReport->reported_date->format('F jS, Y') }}</td>
-                                    <td>{{ $issueReport->assigned_to_service_provider === 'yes' ? 'Assigned' : 'Not Assigned' }}
-                                    </td>
-                                    <td>{{ $issueReport->issue_status }}</td>
-                                    <td>
-                                        <a href="{{ route('admin.issue_report.edit', $issueReport->id) }}"
-                                            class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil-square action-icon"></i>
-                                        </a>
+                                    <tr>
+                                        <td>{{ $issueReport->issue_number }}</td>
+                                        <td>{{ $issueReport->issue_details }}</td>
+                                        <td>{{ $issueReport->reporter->name }}</td>
+                                        <td>{{ $issueReport->reported_date->format('F jS, Y') }}</td>
+                                        <td>{{ $issueReport->assigned_to_service_provider === 'yes' ? 'Assigned' : 'Not Assigned' }}
+                                        </td>
+                                        <td>{{ $issueReport->customer_contact }}</td>
+                                        <td>{{ $issueReport->issue_status }}</td>
+                                        <td>
+                                            <a href="{{ route('admin.issue_report.edit', $issueReport->id) }}"
+                                                class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil-square action-icon"></i>
+                                            </a>
 
-                                        <form action="{{ route('admin.issue_report.destroy', $issueReport->id) }}"
-                                            method="POST" style="display:inline-block">
-                                            @csrf @method('DELETE')
-                                            <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Delete this Report Issue?')">
-                                                <i class="bi bi-trash3 action-icon"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                            <form action="{{ route('admin.issue_report.destroy', $issueReport->id) }}"
+                                                method="POST" style="display:inline-block">
+                                                @csrf @method('DELETE')
+                                                <button class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Delete this Report Issue?')">
+                                                    <i class="bi bi-trash3 action-icon"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">No issue reports found.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No issue reports found.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -178,18 +180,18 @@
 
 {{-- Toastr --}}
 <script>
-    @if(session('success'))
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-    toastr.success("{{ session('success') }}");
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
     @endif
 
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
     @endif
 </script>
 

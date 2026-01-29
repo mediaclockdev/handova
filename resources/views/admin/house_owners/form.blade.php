@@ -27,16 +27,21 @@
                   <div class="mb-3">
                       <label for="properties_id" class="form-label">Select Property <span
                               style="color:red;">*</span></label>
-                      <select name="properties_id" id="properties_id"
-                          class="form-select @error('properties_id') is-invalid @enderror">
-                          <option value="">Select Property</option>
-                          @foreach ($properties as $property)
-                              <option value="{{ $property->id }}"
-                                  {{ isset($owner) && $owner->properties_id == $property->id ? 'selected' : '' }}>
-                                  {{ $property->property_title }}
-                              </option>
-                          @endforeach
-                      </select>
+                      <div class="d-flex gap-2">
+                          <select name="properties_id" id="properties_id"
+                              class="form-select @error('properties_id') is-invalid @enderror">
+                              <option value="">Select Property</option>
+                              @foreach ($properties as $property)
+                                  <option value="{{ $property->id }}"
+                                      {{ isset($owner) && $owner->properties_id == $property->id ? 'selected' : '' }}>
+                                      {{ $property->property_title }}
+                                  </option>
+                              @endforeach
+                          </select>
+                          <a href="{{ route('admin.properties.create') }}" class="btn btn-add-property">
+                              Add
+                          </a>
+                      </div>
                       @error('properties_id')
                           <div class="invalid-feedback">{{ $message }}</div>
                       @enderror

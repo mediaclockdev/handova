@@ -53,7 +53,7 @@
         @enderror
     </div>
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Customer Contact <span style="color:red;">*</span></label>
         <input type="text" name="customer_contact"
             class="form-control @error('customer_contact') is-invalid @enderror"
@@ -62,6 +62,24 @@
         @error('customer_contact')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+    </div> --}}
+
+    <div class="col-md-6 phone_number_div">
+        <div>
+            <label>Customer Contact <span style="color:red;">*</span></label>
+        </div>
+
+        <input type="tel" id="customer_contact" name="customer_contact" class="form-control"
+            value="{{ old('customer_contact', $nationalNumber) }}">
+
+        <input type="hidden" name="report_country_code" id="report_country_code"
+            value="{{ old('report_country_code', $countryCode) }}">
+        <input type="hidden" id="report_country_iso" value="{{ $countryIso }}">
+
+        @error('customer_contact')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
     </div>
 </div>
 

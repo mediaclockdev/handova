@@ -725,14 +725,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const phoneInput =
         document.querySelector("#phone") ||
         document.querySelector("#phone_number") ||
+        document.querySelector("#customer_contact") ||
         document.querySelector("#phone_number1");
     const countryInput =
         document.querySelector("#country_code") ||
         document.querySelector("#country_codes") ||
+         document.querySelector("#report_country_code") ||
         document.querySelector("#country_code1");
     const countryIsoInput =
         document.querySelector("#country_iso") ||
         document.querySelector("#country_isos") ||
+         document.querySelector("#report_country_iso") ||
         document.querySelector("#country_iso1");
 
     if (!phoneInput || !countryInput) return;

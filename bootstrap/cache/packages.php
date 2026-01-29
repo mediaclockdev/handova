@@ -1,4 +1,15 @@
 <?php return array (
+  'diglactic/laravel-breadcrumbs' => 
+  array (
+    'aliases' => 
+    array (
+      'Breadcrumbs' => 'Diglactic\\Breadcrumbs\\Breadcrumbs',
+    ),
+    'providers' => 
+    array (
+      0 => 'Diglactic\\Breadcrumbs\\ServiceProvider',
+    ),
+  ),
   'laravel/sail' => 
   array (
     'providers' => 

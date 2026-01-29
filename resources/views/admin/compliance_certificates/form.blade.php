@@ -5,15 +5,20 @@
 <div class="row g-4 mb-4">
     <div class="mb-3 col-12">
         <label for="property_id" class="form-label">Select Property</label>
-        <select name="property_id" id="property_id" class="form-control" required>
-            <option value="">Select Property</option>
-            @foreach ($properties as $property)
-                <option value="{{ $property->id }}"
-                    {{ old('property_id', $certificate->property_id ?? '') == $property->id ? 'selected' : '' }}>
-                    {{ $property->property_title }}
-                </option>
-            @endforeach
-        </select>
+        <div class="d-flex gap-2">
+            <select name="property_id" id="property_id" class="form-control" required>
+                <option value="">Select Property</option>
+                @foreach ($properties as $property)
+                    <option value="{{ $property->id }}"
+                        {{ old('property_id', $certificate->property_id ?? '') == $property->id ? 'selected' : '' }}>
+                        {{ $property->property_title }}
+                    </option>
+                @endforeach
+            </select>
+            <a href="{{ route('admin.properties.create') }}" class="btn btn-add-property">
+                Add
+            </a>
+        </div>
     </div>
 
     <div class="col-md-6">

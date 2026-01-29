@@ -88,7 +88,7 @@
     <h4 class="h4 mb-0">Service details</h4>
     <div class="col-md-6">
         <label class="form-label">Service Specialisation</label>
-        <select name="service_specialisation" class="form-control">
+        <select name="service_specialisation" class="form-select">
             <option value="">Select Specialisation</option>
 
             @foreach ($specializations as $specialization)

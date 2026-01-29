@@ -918,9 +918,9 @@ body .pagination_div li.page-item.active .page-link {
 span.select2-selection {
     border-radius: 8px !important;
     border: 1px solid #e0e0e0 !important;
-    padding: 10px 15px;
-    font-size: 1rem;
-    color: #333;
+    padding: 10px 15px !important;
+    font-size: 1rem !important;
+    color: #333 !important;
 }
 .phone_number_div .iti--allow-dropdown {
     width: 100%;

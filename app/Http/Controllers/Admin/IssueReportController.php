@@ -10,6 +10,9 @@ use App\Models\ServiceProvider;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 
 class IssueReportController extends Controller
 {
@@ -77,6 +80,9 @@ class IssueReportController extends Controller
 
     public function create()
     {
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
         $properties = Property::select('id', 'property_title')->where('user_id', Auth::id())->get();
         $serviceProviders = User::select('id', 'company_name')->where('role', 'service_provider')->get();
         $formTitle = 'Report Issues';
@@ -95,7 +101,17 @@ class IssueReportController extends Controller
         $newIssueNumber = 'Issue-' . $nextNumber;
         $houseOwners = User::where('role', 'house_owner')->get(['id', 'email']);
 
-        return view('admin.issue_report.create', compact('properties', 'formTitle', 'serviceProviders', 'issueReport', 'newIssueNumber', 'houseOwners'));
+        return view('admin.issue_report.create', compact(
+            'properties',
+            'formTitle',
+            'serviceProviders',
+            'issueReport',
+            'newIssueNumber',
+            'houseOwners',
+            'countryCode',
+            'nationalNumber',
+            'countryIso'
+        ));
     }
 
     public function store(Request $request)
@@ -106,7 +122,10 @@ class IssueReportController extends Controller
             'issue_title'         => 'required|string|max:255',
             'issue_category'      => 'nullable|string|max:255',
             'issue_location'      => 'required|string|max:255',
-            'customer_contact'    => 'required|string|max:20',
+
+            'report_country_code' => 'required|string|min:2|max:6',
+            'customer_contact'          => 'required|string|min:6|max:20',
+
             'issue_details'       => 'required|string',
             'reported_by'         => 'required|exists:users,id',
             'reported_date'       => 'nullable|date',
@@ -121,8 +140,42 @@ class IssueReportController extends Controller
             'status' => 'required|in:accepted,declined',
         ]);
 
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($request->customer_contact);
+        $countryCode = trim($request->report_country_code);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse(
+                    str_starts_with($rawPhone, '+')
+                        ? $rawPhone
+                        : $countryCode . preg_replace('/\D+/', '', $rawPhone),
+                    null
+                );
+            } else {
+                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+            $data = $request->except(['image']);
+            $data['customer_contact'] = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
+
         // Remove file field from request data
-        $data = $request->except(['image']);
+
 
         // Store uploaded files
         if ($request->hasFile('image')) {
@@ -147,16 +200,35 @@ class IssueReportController extends Controller
     public function edit(string $id)
     {
         $issueReport = IssueReport::findOrFail($id);
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
         $properties = Property::select('id', 'property_title')->get();
         $serviceProviders = User::select('id', 'company_name')->where('role', 'service_provider')->get();
         $formTitle = 'Update Report Issues';
         $houseOwners = User::where('role', 'house_owner')->get(['id', 'email']);
+
+
+
+        if (!empty($issueReport->customer_contact)) {
+            $number = $phoneUtil->parse($issueReport->customer_contact, null);
+
+            $countryCode = '+' . $number->getCountryCode();
+            $nationalNumber = $number->getNationalNumber();
+            $countryIso = strtolower(
+                $phoneUtil->getRegionCodeForNumber($number)
+            );
+        }
         return view('admin.issue_report.edit', compact(
             'issueReport',
             'properties',
             'serviceProviders',
             'formTitle',
-            'houseOwners'
+            'houseOwners',
+            'countryCode',
+            'nationalNumber',
+            'countryIso'
         ));
     }
 
@@ -170,7 +242,8 @@ class IssueReportController extends Controller
             'issue_title'         => 'required|string|max:255',
             'issue_category'      => 'nullable|string|max:255',
             'issue_location'      => 'required|string|max:255',
-            'customer_contact'    => 'required|string|max:20',
+            'report_country_code' => 'required|string|min:2|max:6',
+            'customer_contact'          => 'required|string|min:6|max:20',
             'issue_details'       => 'required|string',
             'reported_by'         => 'required|exists:users,id',
             'reported_date'       => 'required|date',
@@ -192,6 +265,40 @@ class IssueReportController extends Controller
 
         // Remove file-related fields
         $data = $request->except(['image', 'existing_images', 'remove_images']);
+
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($request->customer_contact);
+        $countryCode = trim($request->report_country_code);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse(
+                    $rawPhone,
+                    null
+                );
+            } else {
+                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+
+            // ✅ Save in SAME column used in store()
+            $data['customer_contact'] = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
+
 
         // =============================
         // 1️⃣ Start with existing images

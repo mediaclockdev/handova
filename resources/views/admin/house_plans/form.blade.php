@@ -45,8 +45,11 @@
 
     <div class="col-md-6">
         <label class="form-label">Pricing <span style="color:red;">*</span></label>
-        <input type="number" name="pricing" class="form-control @error('pricing') is-invalid @enderror"
-            value="{{ old('pricing', $housePlan->pricing ?? '') }}" placeholder="$">
+        <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" name="pricing" class="form-control @error('pricing') is-invalid @enderror"
+                value="{{ old('pricing', $housePlan->pricing ?? '') }}" placeholder="0.00" step="0.01">
+        </div>
         @error('pricing')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -76,6 +79,7 @@
         <input type="text" name="display_location"
             class="form-control @error('display_location') is-invalid @enderror"
             value="{{ old('display_location', $housePlan->display_location ?? '') }}">
+
         @error('display_location')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror

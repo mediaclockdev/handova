@@ -206,33 +206,57 @@ navLinks.forEach((link) => {
 });
 
 function clearForm() {
-    console.log("Clearing form...");
-    // Reset all forms safely
-    $(
-        "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan,#housePlans, #applianceForm",
-        "#complianceCertificateForm",
-    ).each(function () {
-        this.reset();
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to clear all entered data?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, clear it",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        $(
+            "#issueReportForm, #houseOwnerForm, #propertiesForm, #housePlan, #housePlans, #applianceForm, #complianceCertificateForm",
+            "#propertiesForms",
+        ).each(function () {
+            this.reset();
+        });
+
+        $("#propertiesForms,#propertiesForm")
+            .find("input, textarea, select")
+            .val("");
+
+        // Clear previews
+        const clearHTML = (id) => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = "";
+        };
+
+        const clearValue = (id) => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        };
+
+        clearHTML("preview-container");
+        clearHTML("floorplan-preview");
+        clearHTML("manuals-preview");
+        clearHTML("appliances-preview");
+        clearHTML("floor-previews");
+        clearHTML("attachmentsPreview");
+
+        clearValue("floorplan");
+
+        Swal.fire({
+            icon: "success",
+            title: "Cleared!",
+            text: "All form data has been cleared.",
+            timer: 1500,
+            showConfirmButton: false,
+        });
     });
-
-    // Clear previews
-    const floorPreview = document.getElementById("floorplan-preview");
-    if (floorPreview) floorPreview.innerHTML = "";
-
-    const floorInput = document.getElementById("floorplan");
-    if (floorInput) floorInput.value = "";
-
-    const manualPreview = document.getElementById("manuals-preview");
-    if (manualPreview) manualPreview.innerHTML = "";
-
-    const appliancesPreview = document.getElementById("appliances-preview");
-    if (appliancesPreview) appliancesPreview.innerHTML = "";
-
-    const floorplanPreviews = document.getElementById("floor-previews");
-    if (floorplanPreviews) floorplanPreviews.innerHTML = "";
-
-    const attachmentsPreview = document.getElementById("attachmentsPreview");
-    if (attachmentsPreview) attachmentsPreview.innerHTML = "";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -596,21 +620,28 @@ document.getElementById("logout-btn").addEventListener("click", function (e) {
     });
 });
 
-document.getElementById("logout-btns").addEventListener("click", function (e) {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    const logoutBtn = document.getElementById("logout-btns");
+    const logoutForm = document.getElementById("logout-form");
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you really want to logout?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, logout",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById("logout-form").submit();
-        }
+    if (!logoutBtn || !logoutForm) return;
+
+    logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, logout",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                logoutForm.submit();
+            }
+        });
     });
 });
 
@@ -675,8 +706,7 @@ function initAutocomplete() {
     if (!input) return;
 
     const autocomplete = new google.maps.places.Autocomplete(input, {
-        types: ["geocode"],
-        componentRestrictions: { country: "in" },
+        types: ["geocode"], // allows full address search worldwide
     });
 
     autocomplete.addListener("place_changed", function () {
@@ -690,3 +720,60 @@ function initAutocomplete() {
         console.log("Selected Address:", place.formatted_address);
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput =
+        document.querySelector("#phone") ||
+        document.querySelector("#phone_number") ||
+        document.querySelector("#phone_number1");
+    const countryInput =
+        document.querySelector("#country_code") ||
+        document.querySelector("#country_codes") ||
+        document.querySelector("#country_code1");
+    const countryIsoInput =
+        document.querySelector("#country_iso") ||
+        document.querySelector("#country_isos") ||
+        document.querySelector("#country_iso1");
+
+    if (!phoneInput || !countryInput) return;
+
+    const iti = window.intlTelInput(phoneInput, {
+        separateDialCode: true,
+        initialCountry: "au",
+    });
+
+    function syncCountryCode() {
+        const data = iti.getSelectedCountryData();
+        if (data?.dialCode) {
+            countryInput.value = "+" + data.dialCode;
+        }
+    }
+
+    if (countryIsoInput?.value) {
+        iti.setCountry(countryIsoInput.value);
+    }
+
+    syncCountryCode();
+
+    phoneInput.addEventListener("countrychange", syncCountryCode);
+    phoneInput.addEventListener("input", syncCountryCode);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const textInput = document.getElementById("floorPlanUpload");
+    const fileInput = document.getElementById("fileUpload");
+
+    if (!textInput || !fileInput) return;
+
+    textInput.addEventListener("click", function () {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", function () {
+        if (this.files.length > 0) {
+            textInput.value = Array.from(this.files)
+                .map((file) => file.name)
+                .join(", ");
+        }
+    });
+});

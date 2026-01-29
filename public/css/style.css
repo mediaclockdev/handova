@@ -922,6 +922,17 @@ span.select2-selection {
     font-size: 1rem;
     color: #333;
 }
+.phone_number_div .iti--allow-dropdown {
+    width: 100%;
+}
+
+span.input-group-text {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: #333;
+}
 
 /* Responsive adjustments */
 @media (max-width: 767.98px) {

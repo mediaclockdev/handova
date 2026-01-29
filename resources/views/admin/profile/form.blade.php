@@ -57,7 +57,7 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Phone Number</label>
         <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" id="phone" name="phone"
             class="form-control @error('phone') is-invalid @enderror"
@@ -65,6 +65,24 @@
         @error('phone')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+    </div> --}}
+
+
+    <div class="col-md-6 phone_number_div">
+        <div>
+            <label>Phone Number <span style="color:red;">*</span></label>
+        </div>
+
+        <input type="tel" id="phone_number1" name="phone_number1" class="form-control"
+            value="{{ old('phone_number1', $nationalNumber) }}">
+
+        <input type="hidden" name="country_code1" id="country_code1" value="{{ old('country_code1', $countryCode) }}">
+        <input type="hidden" id="country_iso1" value="{{ $countryIso }}">
+
+        @error('phone_number1')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
     </div>
 </div>
 

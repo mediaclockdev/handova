@@ -20,7 +20,7 @@
                     <h5 class="h5 mb-0">{{ $smallHeading }}</h5>
                 </div>
 
-                <form action="{{ route('admin.properties.update', $property) }}" method="POST"
+                <form id="propertiesForms" action="{{ route('admin.properties.update', $property) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -129,7 +129,8 @@
                         <div class="col-md-6">
                             <label for="numBedrooms" class="form-label">Number of Bedrooms</label>
                             <input type="number" class="form-control @error('number_of_bedrooms') is-invalid @enderror"
-                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms"
+                                id="number_of_bedrooms" name="number_of_bedrooms" step="1" min="0"
+                                placeholder="Add No.of Bedrooms"
                                 value="{{ old('number_of_bedrooms', $property->number_of_bedrooms) }}" />
                             @error('number_of_bedrooms')
                                 <div class="text-danger">{{ $message }}</div>
@@ -139,7 +140,8 @@
                             <label for="numBathrooms" class="form-label">Number of Bathrooms</label>
                             <input type="number"
                                 class="form-control @error('number_of_bathrooms') is-invalid @enderror"
-                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom"
+                                name="number_of_bathrooms" id="numBathrooms" step="1" min="0"
+                                placeholder="Add No.of Bathroom"
                                 value="{{ old('number_of_bathrooms', $property->number_of_bathrooms) }}" />
                             @error('number_of_bathrooms')
                                 <div class="text-danger">{{ $message }}</div>
@@ -339,7 +341,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <button type="button" class="btn btn-clear-all">Clear All</button>
+                        <button type="reset" class="btn btn-clear-all" onclick="clearForm();">Clear All</button>
                         <button type="submit" class="btn btn-add-property">
                             Update Property
                         </button>
@@ -356,13 +358,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const dateInput = document.getElementById("build_completion_date");
-
-            // Open calendar on focus
             dateInput.addEventListener("focus", function() {
                 this.showPicker();
             });
-
-            // Open calendar on click
             dateInput.addEventListener("click", function() {
                 this.showPicker();
             });

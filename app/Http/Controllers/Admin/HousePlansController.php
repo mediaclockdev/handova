@@ -109,6 +109,13 @@ class HousePlansController extends Controller
             }
         }
 
+        if ($request->pricing <= 0) {
+            return back()->withInput()->with('error', 'Pricing must be greater than zero.');
+        }
+
+        if ($request->pricing > 500000000) {
+            return back()->withInput()->with('error', 'Pricing exceeds allowed limit.');
+        }
 
         HousePlan::create([
             'plan_name'        => $request->plan_name,
@@ -225,6 +232,14 @@ class HousePlansController extends Controller
                     'floor_plan'    => $images,
                 ];
             }
+        }
+
+        if ($request->pricing <= 0) {
+            return back()->withInput()->with('error', 'Pricing must be greater than zero.');
+        }
+
+        if ($request->pricing > 5000000) {
+            return back()->withInput()->with('error', 'Pricing exceeds allowed limit.');
         }
 
         $housePlan->update([

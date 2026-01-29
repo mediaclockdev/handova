@@ -40,14 +40,32 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Phone Number</label>
         <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
             value="{{ old('phone', $serviceProvider->phone ?? '') }}">
         @error('phone')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+    </div> --}}
+
+    <div class="col-md-6 phone_number_div">
+        <div>
+            <label>Phone Number <span style="color:red;">*</span></label>
+        </div>
+
+        <input type="tel" id="phone" name="phone" class="form-control"
+            value="{{ old('phone', $nationalNumber) }}">
+
+        <input type="hidden" name="country_codes" id="country_codes" value="{{ old('country_codes', $countryCode) }}">
+        <input type="hidden" id="country_isos" value="{{ $countryIso }}">
+
+        @error('phone')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
     </div>
+
 
     <div class="row g-4 mb-4">
         <div class="col-md-12">

@@ -73,7 +73,7 @@ class HousePlan extends Model
             'ground_floor' => 'Ground Floor',
             'first_floor'  => 'G + 1',
             'second_floor' => 'G + 2',
-            default        => '-',
+            default        => '',
         };
     }
 

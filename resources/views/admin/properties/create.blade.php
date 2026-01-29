@@ -135,7 +135,7 @@
                         <div class="col-md-6">
                             <label for="numBedrooms" class="form-label">Number of Bedrooms</label>
                             <input type="number" class="form-control @error('number_of_bedrooms') is-invalid @enderror"
-                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms" />
+                                id="number_of_bedrooms" name="number_of_bedrooms" placeholder="Add No.of Bedrooms" step="1" min="0" />
                             @error('number_of_bedrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -144,7 +144,7 @@
                             <label for="numBathrooms" class="form-label">Number of Bathrooms</label>
                             <input type="number"
                                 class="form-control @error('number_of_bathrooms') is-invalid @enderror"
-                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom" />
+                                name="number_of_bathrooms" id="numBathrooms" placeholder="Add No.of Bathroom" step="1" min="0" />
                             @error('number_of_bathrooms')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror

@@ -21,3 +21,4 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+<meta name="base-url" content="{{ url('/') }}">

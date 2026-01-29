@@ -62,6 +62,9 @@
                             <input type="text" class="form-control @error('address') is-invalid @enderror"
                                 id="address" name="address" placeholder="Start typing address..."
                                 autocomplete="off" />
+                            <input type="hidden" name="latitude" id="latitude">
+                            <input type="hidden" name="longitude" id="longitude">
+
 
                             @error('address')
                                 <div class="text-danger">{{ $message }}</div>

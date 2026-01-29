@@ -26,7 +26,9 @@ class Property extends Model
         'tags',
         'internal_notes',
         'compliance_certificate',
-        'house_plan_id'
+        'house_plan_id',
+        'latitude',
+        'longitude'
     ];
 
     protected $casts = [

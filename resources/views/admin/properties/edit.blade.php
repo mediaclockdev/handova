@@ -61,6 +61,9 @@
                             <input type="text" class="form-control @error('address') is-invalid @enderror"
                                 id="address" name="address" value="{{ old('address', $property->address) }}"
                                 placeholder="Start typing address..." />
+
+                            <input type="hidden" name="latitude" id="latitude" value="">
+                            <input type="hidden" name="longitude" id="longitude" value="">
                             @error('address')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror

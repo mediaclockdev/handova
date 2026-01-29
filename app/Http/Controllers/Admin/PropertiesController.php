@@ -66,6 +66,9 @@ class PropertiesController extends Controller
             'tags'                 => 'nullable|string',
             'internal_notes'       => 'nullable|string',
             'compliance_certificate' => 'required|string',
+
+            'latitude'       => 'nullable|numeric|between:-90,90',
+            'longitude'      => 'nullable|numeric|between:-180,180',
         ]);
 
         // Remove file fields
@@ -149,6 +152,9 @@ class PropertiesController extends Controller
 
             'removed_existing_images' => 'nullable|array',
             'removed_existing_images.*' => 'string',
+
+            'latitude'       => 'nullable|numeric|between:-90,90',
+            'longitude'      => 'nullable|numeric|between:-180,180',
         ]);
 
         // Remove file-related fields

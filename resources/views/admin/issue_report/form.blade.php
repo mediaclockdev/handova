@@ -11,7 +11,8 @@
 
     <div class="col-md-6">
         <label class="form-label">Select Property <span style="color:red;">*</span></label>
-        <select name="properties_id" class="form-select  @error('properties_id') is-invalid @enderror">
+        <select id="property_select" name="properties_id"
+            class="form-select  @error('properties_id') is-invalid @enderror">
             <option value="">Select Property</option>
             @foreach ($properties as $property)
                 <option value="{{ $property->id }}"
@@ -181,15 +182,11 @@
 
     <div class="col-md-12" id="service_provider_wrapper" style="display:none;">
         <label>Service Provider</label>
-        <select name="service_provider" class="form-select">
-            <option value="">Select Options</option>
-            @foreach ($serviceProviders as $provider)
-                <option value="{{ $provider->id }}"
-                    {{ $issueReport->service_provider == $provider->id ? 'selected' : '' }}>
-                    {{ $provider->company_name }}
-                </option>
-            @endforeach
+        <select name="service_provider" id="service_provider_select" class="form-select">
+            <option value="">Select Service Provider</option>
         </select>
+        <input type="hidden" id="selected_service_provider" value="{{ $issueReport->service_provider }}">
+
     </div>
 
     <div class="col-md-12">

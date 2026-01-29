@@ -39,7 +39,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'service_type',
         'availability_preferences',
         'coverage',
-        'address'
+        'address',
+        'latitude',
+        'longitude'
     ];
 
     /**

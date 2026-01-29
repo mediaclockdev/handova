@@ -706,7 +706,7 @@ function initAutocomplete() {
     if (!input) return;
 
     const autocomplete = new google.maps.places.Autocomplete(input, {
-        types: ["geocode"], // allows full address search worldwide
+        types: ["geocode"],
     });
 
     autocomplete.addListener("place_changed", function () {
@@ -717,7 +717,11 @@ function initAutocomplete() {
             return;
         }
 
-        console.log("Selected Address:", place.formatted_address);
+        const latitude = place.geometry.location.lat();
+        const longitude = place.geometry.location.lng();
+
+        document.getElementById("latitude").value = latitude;
+        document.getElementById("longitude").value = longitude;
     });
 }
 
@@ -730,12 +734,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const countryInput =
         document.querySelector("#country_code") ||
         document.querySelector("#country_codes") ||
-         document.querySelector("#report_country_code") ||
+        document.querySelector("#report_country_code") ||
         document.querySelector("#country_code1");
     const countryIsoInput =
         document.querySelector("#country_iso") ||
         document.querySelector("#country_isos") ||
-         document.querySelector("#report_country_iso") ||
+        document.querySelector("#report_country_iso") ||
         document.querySelector("#country_iso1");
 
     if (!phoneInput || !countryInput) return;
@@ -779,4 +783,69 @@ document.addEventListener("DOMContentLoaded", function () {
                 .join(", ");
         }
     });
+});
+
+$("#assigned_to_service_provider_status").on("change", function () {
+    if ($(this).val() === "yes") {
+        $("#service_provider_wrapper").slideDown();
+    } else {
+        $("#service_provider_wrapper").slideUp();
+        $('select[name="service_provider"]').val("");
+    }
+});
+
+function loadServiceProviders(propertyId, serviceProviderSelect = null) {
+    let selectedProvider =
+        serviceProviderSelect || $("#selected_service_provider").val();
+    let baseUrl = $('meta[name="base-url"]').attr("content");
+
+    $("#service_provider_select").html('<option value="">Loading...</option>');
+
+    if (!propertyId) {
+        $("#service_provider_wrapper").hide();
+        return;
+    }
+
+    $.ajax({
+        url: baseUrl + "/admin/service-providers/by-property",
+        type: "GET",
+        data: {
+            property_id: propertyId,
+        },
+        success: function (response) {
+            let options = '<option value="">Select Service Provider</option>';
+
+            if (response.length > 0) {
+                response.forEach(function (provider) {
+                    let selected =
+                        provider.id == selectedProvider ? "selected" : "";
+
+                    options += `<option value="${provider.id}" ${selected}>
+                        ${provider.company_name} (${provider.distance.toFixed(2)} KM)
+                    </option>`;
+                });
+
+                $("#service_provider_wrapper").slideDown();
+            } else {
+                options +=
+                    '<option value="">No providers in coverage area</option>';
+                $("#service_provider_wrapper").slideDown();
+            }
+
+            $("#service_provider_select").html(options);
+        },
+    });
+}
+
+$(document).ready(function () {
+    $("#property_select").on("change", function () {
+        loadServiceProviders($(this).val());
+    });
+
+    let propertyId = $("#property_select").val();
+    let serviceProviderSelect = $("#service_provider_select").val();
+
+    if (propertyId) {
+        loadServiceProviders(propertyId, serviceProviderSelect);
+    }
 });

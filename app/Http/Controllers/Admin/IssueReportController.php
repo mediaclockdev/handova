@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use libphonenumber\PhoneNumberUtil;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\NumberParseException;
+use Illuminate\Support\Facades\DB;
 
 class IssueReportController extends Controller
 {
@@ -200,16 +201,45 @@ class IssueReportController extends Controller
     public function edit(string $id)
     {
         $issueReport = IssueReport::findOrFail($id);
+
         $phoneUtil = PhoneNumberUtil::getInstance();
         $countryCode = '';
         $nationalNumber = '';
         $countryIso = '';
+
         $properties = Property::select('id', 'property_title')->get();
-        $serviceProviders = User::select('id', 'company_name')->where('role', 'service_provider')->get();
+
+        $property = Property::findOrFail($issueReport->properties_id);
+
+        $lat = $property->latitude;
+        $lng = $property->longitude;
+
+        $distanceFormula = "(6371 * acos(
+        cos(radians($lat))
+        * cos(radians(latitude))
+        * cos(radians(longitude) - radians($lng))
+        + sin(radians($lat))
+        * sin(radians(latitude))
+    ))";
+
+        $serviceProviders = User::select(
+            'id',
+            'company_name',
+            'coverage',
+            DB::raw("$distanceFormula AS distance")
+        )
+            ->where('role', 'service_provider')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->whereNotNull('coverage')
+            ->whereRaw("$distanceFormula <= coverage") // ✅ FIX
+            ->orderBy('distance')
+            ->get();
+
         $formTitle = 'Update Report Issues';
-        $houseOwners = User::where('role', 'house_owner')->get(['id', 'email']);
 
-
+        $houseOwners = User::where('role', 'house_owner')
+            ->get(['id', 'email']);
 
         if (!empty($issueReport->customer_contact)) {
             $number = $phoneUtil->parse($issueReport->customer_contact, null);
@@ -220,6 +250,7 @@ class IssueReportController extends Controller
                 $phoneUtil->getRegionCodeForNumber($number)
             );
         }
+
         return view('admin.issue_report.edit', compact(
             'issueReport',
             'properties',
@@ -231,6 +262,7 @@ class IssueReportController extends Controller
             'countryIso'
         ));
     }
+
 
     public function update(Request $request, $id)
     {
@@ -341,5 +373,41 @@ class IssueReportController extends Controller
         $issueReport->delete();
         return redirect()->route('admin.issue_report.index')
             ->with('success', 'Issue report deleted successfully.');
+    }
+
+    public function getServiceProvidersByProperty(Request $request)
+    {
+        $property = Property::find($request->property_id);
+
+        if (!$property || !$property->latitude || !$property->longitude) {
+            return response()->json([]);
+        }
+
+        $lat = $property->latitude;
+        $lng = $property->longitude;
+
+        $distanceFormula = "(6371 * acos(
+        cos(radians($lat))
+        * cos(radians(latitude))
+        * cos(radians(longitude) - radians($lng))
+        + sin(radians($lat))
+        * sin(radians(latitude))
+    ))";
+
+        $providers = User::select(
+            'id',
+            'company_name',
+            'coverage',
+            DB::raw("$distanceFormula AS distance")
+        )
+            ->where('role', 'service_provider')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->whereNotNull('coverage')
+            ->whereRaw("$distanceFormula <= coverage") // ✅ FIX
+            ->orderBy('distance')
+            ->get();
+
+        return response()->json($providers);
     }
 }

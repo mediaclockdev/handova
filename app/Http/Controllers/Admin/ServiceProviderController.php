@@ -68,6 +68,8 @@ class ServiceProviderController extends Controller
                 'service_type'           => 'nullable|string|max:255',
                 'coverage'               => 'nullable|integer|min:1|max:1000',
                 'address'                => 'required|string|max:2000',
+                'latitude'       => 'nullable|numeric|between:-90,90',
+                'longitude'      => 'nullable|numeric|between:-180,180',
             ],
             [
                 'email.unique' => 'This email is already registered as a service provider.',
@@ -190,8 +192,10 @@ class ServiceProviderController extends Controller
                 'phone'                  => 'required|string|min:6|max:20',
                 'service_specialisation' => 'nullable|string|max:255',
                 'service_type'           => 'nullable|string|max:255',
-                'coverage'               => 'nullable|integer|min:1|max:1000',
+                'coverage'               => 'nullable|integer|min:1|max:100000',
                 'address'                => 'required|string|max:2000',
+                'latitude'       => 'nullable|numeric|between:-90,90',
+                'longitude'      => 'nullable|numeric|between:-180,180',
             ]);
 
             // ================= PHONE VALIDATION =================

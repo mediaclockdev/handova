@@ -84,6 +84,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('help', HelpContentsController::class)->only(['index']);
 });
 
+Route::get('/admin/service-providers/by-property', [IssueReportController::class, 'getServiceProvidersByProperty'])->name('admin.service.providers.by.property');
+
+
 Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
 Route::post('superadmin/builders/bulk-action', [BuildersController::class, 'bulkAction'])->name('superadmin.builders.bulkAction');

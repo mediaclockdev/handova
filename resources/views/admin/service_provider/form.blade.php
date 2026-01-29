@@ -76,7 +76,8 @@
             <input value="{{ old('address', $serviceProvider->address ?? '') }}" type="text"
                 class="form-control @error('address') is-invalid @enderror" id="address" name="address"
                 placeholder="Start typing address..." autocomplete="off" />
-
+            <input type="hidden" name="latitude" id="latitude" value="">
+            <input type="hidden" name="longitude" id="longitude" value="">
             @error('address')
                 <div class="text-danger">{{ $message }}</div>
             @enderror

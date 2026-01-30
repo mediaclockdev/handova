@@ -15,9 +15,9 @@
 
                     {{-- Header --}}
                     <div class="card-header bg-white border-bottom px-4 py-3">
-                        <h4 class="mb-1 fw-semibold">Add Builder</h4>
+                        <h4 class="mb-1 fw-semibold">Add Service Provider</h4>
                         <small class="text-muted">
-                            Manage builder account details and credentials.
+                            Manage service provider account details and credentials.
                         </small>
                     </div>
 
@@ -37,7 +37,22 @@
             </div>
         </div>
     </div>
+ @include('partials.superadminscripts')
+ <script>
+    @if (session('success'))
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success("{{ session('success') }}");
+    @endif
 
+    @if (session('error'))
+        toastr.error("{{ session('error') }}");
+    @endif
+</script>
 </body>
 
 </html>

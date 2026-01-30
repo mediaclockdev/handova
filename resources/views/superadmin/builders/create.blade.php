@@ -31,12 +31,26 @@
                             ])
                         </form>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
+    @include('partials.superadminscripts')
+    <script>
+        @if (session('success'))
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if (session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    </script>
 
 </body>
 

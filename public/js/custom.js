@@ -190,8 +190,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.addEventListener("resize", () => {
     if (window.innerWidth >= 768) {
-        sidebar.classList.remove("show");
-        sidebarBackdrop.style.display = "none";
+        if (sidebar) {
+            sidebar.classList.remove("show");
+        }
+        if (sidebarBackdrop) {
+            sidebarBackdrop.style.display = "none";
+        }
     }
 });
 
@@ -602,23 +606,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-document.getElementById("logout-btn").addEventListener("click", function (e) {
-    e.preventDefault();
+const logoutBtn = document.getElementById("logout-btn");
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you really want to logout?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, logout",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById("logout-form").submit();
-        }
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, logout",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("logout-form").submit();
+            }
+        });
     });
-});
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const logoutBtn = document.getElementById("logout-btns");

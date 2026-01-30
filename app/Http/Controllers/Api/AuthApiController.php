@@ -53,7 +53,7 @@ class AuthApiController extends Controller
                 'data' => [
                     'messages' => $messages
                 ],
-            ], 200);
+            ], 420);
         }
 
         // Check if password confirmation matches
@@ -63,7 +63,7 @@ class AuthApiController extends Controller
                 'data' => [
                     'messages' => ['Password and confirm password do not match.']
                 ],
-            ], 200);
+            ], 420);
         }
 
         // Check if email already exists
@@ -75,7 +75,7 @@ class AuthApiController extends Controller
                     'data' => [
                         'messages' => ['Email is already registered. Please login instead.']
                     ],
-                ], 200);
+                ], 420);
             } else {
                 $existingUser->verification_token = Str::random(64);
                 $existingUser->save();
@@ -90,7 +90,7 @@ class AuthApiController extends Controller
                     'data' => [
                         'messages' => ['This email is already registered but not verified. We have resent the verification link.']
                     ],
-                ], 200);
+                ], 420);
             }
         }
 

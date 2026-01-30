@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\SuperAdmin;
 
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Log;
 
 class BuildersController extends Controller
 {
@@ -127,7 +131,10 @@ class BuildersController extends Controller
      */
     public function create()
     {
-        return view('superadmin.builders.create');
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+        return view('superadmin.builders.create', compact('countryCode', 'nationalNumber', 'countryIso'));
     }
 
     /**
@@ -135,18 +142,48 @@ class BuildersController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             "name"  => "required|string|max:255",
             "email" => "required|email|unique:users,email",
-            "phone" => "nullable|string|max:20",
+            "country_codes" => "required|string|min:2|max:6",
+            "phone"         => "required|string|min:6|max:20",
             "password" => "required|min:6",
             "status" => "required|in:active,pending,blocked",
         ]);
 
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($validated['phone']);
+        $countryCode = trim($validated['country_codes']);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+
+            $formattedPhone = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
+
         User::create([
             "name"     => $request->name,
             "email"    => $request->email,
-            "phone"    => $request->phone,
+            "phone"    => $formattedPhone,
             "role"     => "user",
             "password" => bcrypt($request->password),
             "status" => $request->status,
@@ -170,7 +207,21 @@ class BuildersController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view("superadmin.builders.edit", compact("user"));
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+
+        if (!empty($user->phone)) {
+            $number = $phoneUtil->parse($user->phone, null);
+
+            $countryCode = '+' . $number->getCountryCode();
+            $nationalNumber = $number->getNationalNumber();
+            $countryIso = strtolower(
+                $phoneUtil->getRegionCodeForNumber($number)
+            );
+        }
+        return view("superadmin.builders.edit", compact("user", "countryCode", "nationalNumber", "countryIso"));
     }
 
     /**
@@ -180,23 +231,58 @@ class BuildersController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
-            "name"  => "required|string|max:255",
-            "email" => "required|email|unique:users,email," . $user->id,
-            "phone" => "nullable|string|max:20",
-            "status" => "required|in:active,pending,blocked",
+        $validated = $request->validate([
+            "name"           => "required|string|max:255",
+            "email"          => "required|email|unique:users,email," . $user->id,
+            "phone"          => "nullable|string|max:20",
+            "country_codes"  => "nullable|string|max:5",
+            "status"         => "required|in:active,pending,blocked",
         ]);
 
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($validated['phone'] ?? '');
+        $countryCode = trim($validated['country_codes'] ?? '');
+
+        try {
+            if (!empty($rawPhone)) {
+
+                if (str_starts_with($rawPhone, '+')) {
+                    $number = $phoneUtil->parse($rawPhone, null);
+                } else {
+                    $number = $phoneUtil->parse($countryCode . $rawPhone, null);
+                }
+                if (!$phoneUtil->isValidNumber($number)) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Invalid phone number for selected country.');
+                }
+
+                $formattedPhone = $phoneUtil->format(
+                    $number,
+                    PhoneNumberFormat::E164
+                );
+            } else {
+                $formattedPhone = null;
+            }
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
 
         $user->update([
-            "name"  => $request->name,
-            "email" => $request->email,
-            "phone" => $request->phone,
-            "status" => $request->status,
+            'name'   => $validated['name'],
+            'email'  => $validated['email'],
+            'phone'  => $formattedPhone,
+            'status' => $validated['status'],
         ]);
 
-        return redirect()->route("superadmin.builders.index")->with("success", "Builder updated successfully.");
+        return redirect()
+            ->route("superadmin.builders.index")
+            ->with("success", "Builder updated successfully.");
     }
+
 
     /**
      * Remove the specified resource from storage.

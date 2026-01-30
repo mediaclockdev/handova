@@ -206,8 +206,8 @@ class ServiceProviderController extends Controller
             try {
                 if (str_starts_with($rawPhone, '+')) {
                     $number = $phoneUtil->parse($rawPhone, null);
-                } else {
                     $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                    } else {
                     $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
                 }
 

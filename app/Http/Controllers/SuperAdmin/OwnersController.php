@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\SuperAdmin;
 
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -174,9 +177,24 @@ class OwnersController extends Controller
     {
         $owner = HouseOwner::findOrFail($id);
         $properties = Property::select('id', 'property_title')->get();
+        $phoneUtil = PhoneNumberUtil::getInstance();
+
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+
+        if (!empty($owner->phone_number)) {
+            $number = $phoneUtil->parse($owner->phone_number, null);
+
+            $countryCode = '+' . $number->getCountryCode();
+            $nationalNumber = $number->getNationalNumber();
+            $countryIso = strtolower(
+                $phoneUtil->getRegionCodeForNumber($number)
+            );
+        }
         $formTitle = 'Update House Owner';
         $houseOwnerId = $owner->house_owner_id;
-        return view('superadmin.owners.edit', compact('owner', 'properties', 'formTitle', 'houseOwnerId'));
+        return view('superadmin.owners.edit', compact('owner', 'properties', 'formTitle', 'houseOwnerId', 'countryCode', 'nationalNumber', 'countryIso'));
     }
 
     /**
@@ -191,7 +209,10 @@ class OwnersController extends Controller
             'first_name'                => 'required|string|max:255',
             'last_name'                 => 'required|string|max:255',
             'email_address'             => 'required|email|unique:house_owners,email_address,' . $id,
-            'phone_number'              => 'required|numeric|digits_between:8,15',
+
+            'country_code'              => 'nullable|string|max:5',
+            'phone_number'              => 'required|string|min:6|max:20',
+
             'address_of_property'       => 'required|string',
             'house_plan_name'           => 'nullable|string|max:255',
             'build_completion_date'     => 'nullable|date',
@@ -200,8 +221,8 @@ class OwnersController extends Controller
             'number_of_bathrooms'       => 'nullable|integer',
             'parking'                   => 'nullable|string|max:255',
             'property_status'           => 'required|string|max:255',
-            'tags'                      => 'required|string',
-            'internal_notes'            => 'required|string',
+            'tags'                      => 'nullable|string',
+            'internal_notes'            => 'nullable|string',
 
             'handover_documents'        => 'nullable|array',
             'handover_documents.*'      => 'file|mimes:jpg,jpeg,png,pdf,csv,doc,docx|max:2048',
@@ -233,6 +254,43 @@ class OwnersController extends Controller
         ]);
 
         $data['properties_id'] = (int) $data['properties_id'];
+
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($request->phone_number);
+        $countryCode = trim($request->country_code);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                // Already E.164
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                if (empty($countryCode)) {
+                    return back()
+                        ->withInput()
+                        ->with('error', 'Country code is required.');
+                }
+
+                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                $fullPhone  = $countryCode . $cleanPhone;
+
+                $number = $phoneUtil->parse($fullPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+
+            $data['phone_number'] = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
 
         $handoverDocs = $request->input('existing_handover_documents', []);
         $floorPlans   = $request->input('existing_floor_plan_upload', []);

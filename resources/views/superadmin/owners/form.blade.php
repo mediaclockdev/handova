@@ -53,22 +53,28 @@
 <div class="row g-4 mb-4">
     <div class="col-md-6">
         <label>Email Address <span style="color:red;">*</span></label>
-        <input type="email" name="email_address" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-            class="form-control @error('email_address') is-invalid @enderror"
+        <input type="email" name="email_address" class="form-control @error('email_address') is-invalid @enderror"
             value="{{ old('email_address', $owner->email_address ?? '') }}">
         @error('email_address')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="col-md-6">
-        <label>Phone Number <span style="color:red;">*</span></label>
-        <input type="text" name="phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            id="phone" class="form-control @error('phone_number') is-invalid @enderror"
-            value="{{ old('phone_number', $owner->phone_number ?? '') }}">
+    <div class="col-md-6 phone_number_div">
+        <div>
+            <label>Phone Number <span style="color:red;">*</span></label>
+        </div>
+
+        <input type="tel" id="phone_number" name="phone_number" class="form-control"
+            value="{{ old('phone_number', $nationalNumber) }}">
+
+        <input type="hidden" name="country_code" id="country_code" value="{{ old('country_code', $countryCode) }}">
+        <input type="hidden" id="country_iso" value="{{ $countryIso }}">
+
         @error('phone_number')
-            <div class="invalid-feedback">{{ $message }}</div>
+            <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror
+
     </div>
 </div>
 

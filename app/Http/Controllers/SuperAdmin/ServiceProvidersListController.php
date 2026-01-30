@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\SuperAdmin;
 
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -132,7 +135,10 @@ class ServiceProvidersListController extends Controller
      */
     public function create()
     {
-        return view('superadmin.providers.create');
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+        return view('superadmin.providers.create', compact('countryCode', 'nationalNumber', 'countryIso'));
     }
 
     /**
@@ -140,30 +146,62 @@ class ServiceProvidersListController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             "company_name"  => "required|string",
-            "name"  => "required|string|max:255",
-            "email" => "required|email|unique:users,email",
-            "phone" => "nullable|string|max:20",
-            "password" => "required|min:6",
-            "status" => "required|in:active,pending,blocked",
-            "service_specialisation"  => "nullable|string",
-            "service_type"  => "nullable|string",
+            "name"          => "required|string|max:255",
+            "email"         => "required|email|unique:users,email",
+            "country_codes" => "required|string|min:2|max:6",
+            "phone"         => "required|string|min:6|max:20",
+            "password"      => "required|min:6",
+            "status"        => "required|in:active,pending,blocked",
+            "service_specialisation" => "nullable|string",
+            "service_type"           => "nullable|string",
         ]);
+
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($validated['phone']);
+        $countryCode = trim($validated['country_codes']);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+
+            $formattedPhone = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
 
         User::create([
-            "company_name"     => $request->company_name,
-            "name"     => $request->name,
-            "email"    => $request->email,
-            "phone"    => $request->phone,
-            "role"     => "service_provider",
-            "password" => bcrypt($request->password),
-            "status" => $request->status,
-            "service_specialisation"  => $request->service_specialisation,
-            "service_type"  => $request->service_type,
+            "company_name" => $validated['company_name'],
+            "name"         => $validated['name'],
+            "email"        => $validated['email'],
+            "phone"        => $formattedPhone,
+            "role"         => "service_provider",
+            "password"     => bcrypt($validated['password']),
+            "status"       => $validated['status'],
+            "service_specialisation" => $validated['service_specialisation'] ?? null,
+            "service_type"           => $validated['service_type'] ?? null,
         ]);
 
-        return redirect()->route("superadmin.providers.index")->with("success", "Builder created successfully.");
+        return redirect()
+            ->route("superadmin.providers.index")
+            ->with("success", "Builder created successfully.");
     }
 
     /**
@@ -181,7 +219,20 @@ class ServiceProvidersListController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view("superadmin.providers.edit", compact("user"));
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        if (!empty($user->phone)) {
+            $number = $phoneUtil->parse($user->phone, null);
+
+            $countryCode = '+' . $number->getCountryCode();
+            $nationalNumber = $number->getNationalNumber();
+            $countryIso = strtolower(
+                $phoneUtil->getRegionCodeForNumber($number)
+            );
+        }
+        return view("superadmin.providers.edit", compact("user", "countryCode", "nationalNumber", "countryIso"));
     }
 
     /**
@@ -191,27 +242,61 @@ class ServiceProvidersListController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
-            "company_name"  => "required|string",
-            "name"  => "required|string|max:255",
-            "email" => "required|email|unique:users,email," . $user->id,
-            "phone" => "nullable|string|max:20",
-            "status" => "required|in:active,pending,blocked",
+        // ✅ STORE validated data
+        $validated = $request->validate([
+            "company_name"            => "required|string",
+            "name"                    => "required|string|max:255",
+            "email"                   => "required|email|unique:users,email," . $user->id,
+            "country_codes"           => "required|string|min:2|max:6",
+            "phone"                   => "required|string|min:6|max:20",
+            "status"                  => "required|in:active,pending,blocked",
             "service_specialisation"  => "nullable|string",
-            "service_type"  => "nullable|string",
+            "service_type"            => "nullable|string",
         ]);
 
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($validated['phone']);
+        $countryCode = trim($validated['country_codes']);
 
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                // country code like +91
+                $number = $phoneUtil->parse($countryCode . $rawPhone, null);
+            }
+
+            if (!$phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Invalid phone number for selected country.');
+            }
+
+            $formattedPhone = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Invalid phone number format.');
+        }
+
+        // ================= UPDATE USER =================
         $user->update([
-            "name"  => $request->name,
-            "email" => $request->email,
-            "phone" => $request->phone,
-            "status" => $request->status,
-            "service_specialisation"  => $request->service_specialisation,
-            "service_type"  => $request->service_type,
+            "company_name"           => $validated['company_name'],
+            "name"                   => $validated['name'],
+            "email"                  => $validated['email'],
+            "phone"                  => $formattedPhone,
+            "status"                 => $validated['status'],
+            "service_specialisation" => $validated['service_specialisation'],
+            "service_type"           => $validated['service_type'],
         ]);
 
-        return redirect()->route("superadmin.providers.index")->with("success", "Builder updated successfully.");
+        return redirect()
+            ->route("superadmin.providers.index")
+            ->with("success", "Builder updated successfully.");
     }
 
     /**

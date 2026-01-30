@@ -8,15 +8,10 @@
             <label class="form-label">
                 Name <span class="text-danger">*</span>
             </label>
-            <input
-                type="text"
-                name="name"
-                value="{{ old('name', $user->name ?? '') }}"
-                class="form-control"
-                placeholder="Full name"
-                required>
+            <input type="text" name="name" value="{{ old('name', $user->name ?? '') }}" class="form-control"
+                placeholder="Full name" required>
             @error('name')
-            <small class="text-danger">{{ $message }}</small>
+                <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
 
@@ -25,20 +20,15 @@
             <label class="form-label">
                 Email <span class="text-danger">*</span>
             </label>
-            <input
-                type="email"
-                name="email"
-                value="{{ old('email', $user->email ?? '') }}"
-                class="form-control"
-                placeholder="builder@example.com"
-                required>
+            <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" class="form-control"
+                placeholder="builder@example.com" required>
             @error('email')
-            <small class="text-danger">{{ $message }}</small>
+                <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
 
         {{-- Phone --}}
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label class="form-label">Phone</label>
             <input
                 type="text"
@@ -49,6 +39,24 @@
             @error('phone')
             <small class="text-danger">{{ $message }}</small>
             @enderror
+        </div> --}}
+
+        <div class="col-md-6 phone_number_div">
+            <div>
+                <label>Phone Number</label>
+            </div>
+
+            <input type="tel" id="phone" name="phone" class="form-control"
+                value="{{ old('phone', $nationalNumber) }}">
+
+            <input type="hidden" name="country_codes" id="country_codes"
+                value="{{ old('country_codes', $countryCode) }}">
+            <input type="hidden" id="country_isos" value="{{ $countryIso }}">
+
+            @error('phone')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+
         </div>
 
         {{-- Status --}}
@@ -59,22 +67,19 @@
 
             <select name="status" class="form-select" required>
                 <option value="">Select status</option>
-                <option value="active"
-                    {{ old('status', $user->status ?? 'active') === 'active' ? 'selected' : '' }}>
+                <option value="active" {{ old('status', $user->status ?? 'active') === 'active' ? 'selected' : '' }}>
                     Active
                 </option>
-                <option value="pending"
-                    {{ old('status', $user->status ?? '') === 'pending' ? 'selected' : '' }}>
+                <option value="pending" {{ old('status', $user->status ?? '') === 'pending' ? 'selected' : '' }}>
                     Pending
                 </option>
-                <option value="blocked"
-                    {{ old('status', $user->status ?? '') === 'blocked' ? 'selected' : '' }}>
+                <option value="blocked" {{ old('status', $user->status ?? '') === 'blocked' ? 'selected' : '' }}>
                     Blocked
                 </option>
             </select>
 
             @error('status')
-            <small class="text-danger">{{ $message }}</small>
+                <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
 
@@ -89,22 +94,18 @@
         <div class="col-md-6">
             <label class="form-label">
                 Password
-                @if(!empty($edit))
-                <small class="text-muted">(optional)</small>
+                @if (!empty($edit))
+                    <small class="text-muted">(optional)</small>
                 @else
-                <span class="text-danger">*</span>
+                    <span class="text-danger">*</span>
                 @endif
             </label>
 
-            <input
-                type="password"
-                name="password"
-                class="form-control"
-                placeholder="••••••••"
+            <input type="password" name="password" class="form-control" placeholder="••••••••"
                 {{ empty($edit) ? 'required' : '' }}>
 
             @error('password')
-            <small class="text-danger">{{ $message }}</small>
+                <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
     </div>
@@ -112,8 +113,7 @@
 
 {{-- Actions --}}
 <div class="d-flex justify-content-end gap-2 border-top pt-3">
-    <a href="{{ route('superadmin.builders.index') }}"
-        class="btn btn-light">
+    <a href="{{ route('superadmin.builders.index') }}" class="btn btn-light">
         Cancel
     </a>
 

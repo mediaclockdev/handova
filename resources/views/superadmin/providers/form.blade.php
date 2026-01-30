@@ -39,13 +39,22 @@
         </div>
 
         {{-- Phone --}}
-        <div class="col-md-6">
-            <label class="form-label">Phone</label>
-            <input type="text" name="phone" value="{{ old('phone', $user->phone ?? '') }}" class="form-control"
-                placeholder="+61 485 1515 151">
+        <div class="col-md-6 phone_number_div">
+            <div>
+                <label>Phone</label>
+            </div>
+
+            <input type="tel" id="phone" name="phone" class="form-control"
+                value="{{ old('phone', $nationalNumber) }}">
+
+            <input type="hidden" name="country_codes" id="country_codes"
+                value="{{ old('country_codes', $countryCode) }}">
+            <input type="hidden" id="country_isos" value="{{ $countryIso }}">
+
             @error('phone')
-                <small class="text-danger">{{ $message }}</small>
+                <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
+
         </div>
 
         <div class="col-md-6">

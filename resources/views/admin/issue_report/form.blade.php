@@ -204,8 +204,7 @@
     <div class="col-md-12" id="service_provider_status_wrapper" style="display:none;">
         <label>Service Provider Status</label>
         <select name="status" id="status" class="form-select">
-            <option value="">Select Status</option>
-            @foreach (['accepted', 'declined'] as $st)
+            @foreach (['pending', 'accepted', 'declined'] as $st)
                 <option value="{{ $st }}" {{ ($issueReport->status ?? '') == $st ? 'selected' : '' }}>
                     {{ ucfirst($st) }}
                 </option>

@@ -138,7 +138,7 @@ class IssueReportController extends Controller
             // Multiple file upload validation
             'image'               => 'nullable|array',
             'image.*'             => 'file|mimes:jpg,jpeg,png,pdf,csv,xlsx,xls|max:5120',
-            'status' => 'required|in:accepted,declined',
+            'status' => 'required|in:pending,accepted,declined',
         ]);
 
         // ================= PHONE VALIDATION =================
@@ -283,7 +283,7 @@ class IssueReportController extends Controller
             'service_provider'    => 'nullable|string|max:255',
             'issue_status'        => 'required|string|max:255',
             'issue_urgency_level' => 'required|string|max:255',
-            'status'              => 'required|in:accepted,declined',
+            'status'              => 'required|in:pending,accepted,declined',
 
             'image'               => 'nullable|array',
             'image.*'             => 'file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png|max:5120',

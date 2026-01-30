@@ -254,7 +254,7 @@ class HouseOwnerController extends Controller
         $countryIso = '';
 
         if (!empty($owner->phone_number)) {
-            $number = $phoneUtil->parse($owner->phone_number, null);
+            $number = $phoneUtil->parse($owner->phone_number, 'AU');
 
             $countryCode = '+' . $number->getCountryCode();
             $nationalNumber = $number->getNationalNumber();

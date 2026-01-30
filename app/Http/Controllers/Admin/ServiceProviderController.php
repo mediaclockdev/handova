@@ -152,7 +152,7 @@ class ServiceProviderController extends Controller
         $countryIso = '';
 
         if (!empty($serviceProvider->phone)) {
-            $number = $phoneUtil->parse($serviceProvider->phone, null);
+            $number = $phoneUtil->parse($serviceProvider->phone, 'AU');
 
             $countryCode = '+' . $number->getCountryCode();
             $nationalNumber = $number->getNationalNumber();

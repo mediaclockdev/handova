@@ -203,15 +203,17 @@ class ServiceProviderController extends Controller
             $rawPhone    = trim($validated['phone']);
             $countryCode = trim($validated['country_codes']);
 
+            // always define cleanPhone
+            $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
+
             try {
                 if (str_starts_with($rawPhone, '+')) {
                     $number = $phoneUtil->parse($rawPhone, null);
-                    $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
-                    } else {
+                } else {
                     $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
                 }
 
-                if (!$phoneUtil->isValidNumber($number)) {
+                if (! $phoneUtil->isValidNumber($number)) {
                     return back()
                         ->withInput()
                         ->with('error', 'Invalid phone number for selected country.');
@@ -227,6 +229,7 @@ class ServiceProviderController extends Controller
                     ->withInput()
                     ->with('error', 'Invalid phone number format.');
             }
+
 
             // ================= USER DATA =================
             $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];

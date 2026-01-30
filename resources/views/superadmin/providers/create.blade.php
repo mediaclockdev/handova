@@ -14,11 +14,15 @@
                 <div class="card shadow-sm border-0 rounded-3">
 
                     {{-- Header --}}
-                    <div class="card-header bg-white border-bottom px-4 py-3">
-                        <h4 class="mb-1 fw-semibold">Add Service Provider</h4>
-                        <small class="text-muted">
-                            Manage service provider account details and credentials.
-                        </small>
+                    <div class="card-header bg-white border-bottom px-4 py-3 superadmin_back_div">
+                        <div>
+                            <a href="{{ route('superadmin.providers.index') }}" class="btn btn-dark px-4">
+                                Back
+                            </a>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 fw-semibold">Add Service Provider</h4>
+                        </div>
                     </div>
 
                     {{-- Form --}}
@@ -37,22 +41,22 @@
             </div>
         </div>
     </div>
- @include('partials.superadminscripts')
- <script>
-    @if (session('success'))
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "5000"
-        };
-        toastr.success("{{ session('success') }}");
-    @endif
+    @include('partials.superadminscripts')
+    <script>
+        @if (session('success'))
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+            toastr.success("{{ session('success') }}");
+        @endif
 
-    @if (session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-</script>
+        @if (session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+    </script>
 </body>
 
 </html>

@@ -95,6 +95,12 @@ class AuthController extends Controller
                 ->with('error', 'Invalid email or password.');
         }
 
+        if ($user->role !== 'user') {
+            return back()
+                ->withErrors(['email' => 'You are not allowed to login from here.'])
+                ->with('error', 'You are not allowed to login from here.');
+        }
+
         if (! $user->hasVerifiedEmail()) {
             return back()
                 ->withErrors(['email' => 'Please verify your email before logging in.'])

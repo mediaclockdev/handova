@@ -62,14 +62,14 @@ class ServiceProviderController extends Controller
                 'first_name'             => 'required|string|max:255',
                 'last_name'              => 'required|string|max:255',
                 'email'                  => 'required|email|max:255|unique:users,email',
-                'country_codes'           => 'required|string|min:2|max:6',
+                'country_codes'          => 'required|string|min:2|max:6',
                 'phone'                  => 'required|string|min:6|max:20',
                 'service_specialisation' => 'nullable|string|max:255',
                 'service_type'           => 'nullable|string|max:255',
                 'coverage'               => 'nullable|integer|min:1|max:1000',
                 'address'                => 'required|string|max:2000',
-                'latitude'       => 'nullable|numeric|between:-90,90',
-                'longitude'      => 'nullable|numeric|between:-180,180',
+                'latitude'               => 'nullable|numeric|between:-90,90',
+                'longitude'              => 'nullable|numeric|between:-180,180',
             ],
             [
                 'email.unique' => 'This email is already registered as a service provider.',
@@ -83,24 +83,35 @@ class ServiceProviderController extends Controller
             $phoneUtil   = PhoneNumberUtil::getInstance();
             $rawPhone    = trim($validated['phone']);
             $countryCode = trim($validated['country_codes']);
+            $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
 
-            if (str_starts_with($rawPhone, '+')) {
-                $number = $phoneUtil->parse($rawPhone, null);
-            } else {
-                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
-                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
-            }
+            try {
+                if (str_starts_with($rawPhone, '+')) {
+                    $number = $phoneUtil->parse($rawPhone, null);
+                } else {
+                    $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+                }
 
-            if (!$phoneUtil->isValidNumber($number)) {
+                if (! $phoneUtil->isValidNumber($number)) {
+                    return back()
+                        ->withInput()
+                        ->withErrors([
+                            'phone' => 'Invalid phone number for selected country.',
+                        ]);
+                }
+
+                // overwrite phone in E.164 format
+                $validated['phone'] = $phoneUtil->format(
+                    $number,
+                    PhoneNumberFormat::E164
+                );
+            } catch (NumberParseException $e) {
                 return back()
                     ->withInput()
-                    ->with('error', 'Invalid phone number for selected country.');
+                    ->withErrors([
+                        'phone' => 'Invalid phone number format.',
+                    ]);
             }
-
-            $validated['phone'] = $phoneUtil->format(
-                $number,
-                PhoneNumberFormat::E164
-            );
 
             // ================= USER DATA =================
             $validated['name']     = $validated['first_name'] . ' ' . $validated['last_name'];
@@ -121,8 +132,6 @@ class ServiceProviderController extends Controller
                 'error'   => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
-                'trace'   => $e->getTraceAsString(),
-                'request' => $request->all(),
             ]);
 
             return back()
@@ -130,6 +139,7 @@ class ServiceProviderController extends Controller
                 ->with('error', 'Something went wrong. Please try again.');
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -180,56 +190,44 @@ class ServiceProviderController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $serviceProvider = User::findOrFail($id);
+
+        // ✅ VALIDATION (outside try/catch)
+        $validated = $request->validate([
+            'company_name'           => 'nullable|string|max:255',
+            'first_name'             => 'required|string|max:255',
+            'last_name'              => 'required|string|max:255',
+            'email'                  => 'required|email|max:255|unique:users,email,' . $serviceProvider->id,
+            'country_codes'          => 'required|string|min:2|max:6',
+            'phone'                  => 'required|string|min:6|max:20',
+            'service_specialisation' => 'nullable|string|max:255',
+            'service_type'           => 'nullable|string|max:255',
+            'coverage'               => 'nullable|integer|min:1|max:100000',
+            'address'                => 'required|string|max:2000',
+            'latitude'               => 'nullable|numeric|between:-90,90',
+            'longitude'              => 'nullable|numeric|between:-180,180',
+        ]);
+
         try {
-            $serviceProvider = User::findOrFail($id);
-
-            $validated = $request->validate([
-                'company_name'           => 'nullable|string|max:255',
-                'first_name'             => 'required|string|max:255',
-                'last_name'              => 'required|string|max:255',
-                'email'                  => 'required|email|max:255|unique:users,email,' . $serviceProvider->id,
-                'country_codes'           => 'required|string|min:2|max:6',
-                'phone'                  => 'required|string|min:6|max:20',
-                'service_specialisation' => 'nullable|string|max:255',
-                'service_type'           => 'nullable|string|max:255',
-                'coverage'               => 'nullable|integer|min:1|max:100000',
-                'address'                => 'required|string|max:2000',
-                'latitude'       => 'nullable|numeric|between:-90,90',
-                'longitude'      => 'nullable|numeric|between:-180,180',
-            ]);
-
             // ================= PHONE VALIDATION =================
             $phoneUtil   = PhoneNumberUtil::getInstance();
             $rawPhone    = trim($validated['phone']);
             $countryCode = trim($validated['country_codes']);
+            $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
 
-            // always define cleanPhone
-            $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
-
-            try {
-                if (str_starts_with($rawPhone, '+')) {
-                    $number = $phoneUtil->parse($rawPhone, null);
-                } else {
-                    $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
-                }
-
-                if (! $phoneUtil->isValidNumber($number)) {
-                    return back()
-                        ->withInput()
-                        ->with('error', 'Invalid phone number for selected country.');
-                }
-
-                // overwrite phone just like store()
-                $validated['phone'] = $phoneUtil->format(
-                    $number,
-                    PhoneNumberFormat::E164
-                );
-            } catch (NumberParseException $e) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Invalid phone number format.');
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
             }
 
+            if (! $phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['phone' => 'Invalid phone number for selected country.']);
+            }
+
+            $validated['phone'] = $phoneUtil->format($number, PhoneNumberFormat::E164);
 
             // ================= USER DATA =================
             $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];
@@ -250,6 +248,7 @@ class ServiceProviderController extends Controller
                 ->with('error', 'Something went wrong while updating the service provider.');
         }
     }
+
 
 
 

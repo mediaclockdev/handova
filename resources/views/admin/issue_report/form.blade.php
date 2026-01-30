@@ -70,7 +70,7 @@
             <label>Customer Contact <span style="color:red;">*</span></label>
         </div>
 
-        <input type="tel" id="customer_contact" name="customer_contact" class="form-control"
+        <input type="tel" id="customer_contact" name="customer_contact" class="form-control @error('customer_contact') is-invalid @enderror"
             value="{{ old('customer_contact', $nationalNumber) }}">
 
         <input type="hidden" name="report_country_code" id="report_country_code"

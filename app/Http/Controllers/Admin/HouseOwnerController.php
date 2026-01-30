@@ -124,52 +124,53 @@ class HouseOwnerController extends Controller
      */
     public function store(Request $request)
     {
+        // ================= VALIDATION (outside try) =================
+        $validated = $request->validate([
+            'house_owner_id'        => 'required|unique:house_owners,house_owner_id',
+            'properties_id'         => 'required|exists:properties,id',
+            'first_name'            => 'required|string|max:255',
+            'last_name'             => 'required|string|max:255',
+            'email_address'         => 'required|email',
+            'country_code'          => 'required|string|min:2|max:6',
+            'phone_number'          => 'required|string|min:6|max:20',
+            'address_of_property'   => 'required|string',
+            'house_plan_name'       => 'nullable|string|max:255',
+            'build_completion_date' => 'nullable|date',
+            'assigned_builder_site_manager' => 'nullable|string|max:255',
+            'number_of_bedrooms'    => 'nullable|integer',
+            'number_of_bathrooms'   => 'nullable|integer',
+            'parking'               => 'nullable|string|max:255',
+            'handover_documents'    => 'nullable|array',
+            'handover_documents.*'  => 'file|mimes:jpg,jpeg,png,pdf,csv,doc,docx|max:2048',
+            'floor_plan_upload'     => 'nullable|array',
+            'floor_plan_upload.*'   => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'property_status'       => 'required|string|max:255',
+            'tags'                  => 'nullable|string',
+            'internal_notes'        => 'nullable|string',
+        ]);
+
         try {
-
-            // ================= VALIDATION =================
-            $request->validate([
-                'house_owner_id'        => 'required|unique:house_owners,house_owner_id',
-                'properties_id'         => 'required|exists:properties,id',
-                'first_name'            => 'required|string|max:255',
-                'last_name'             => 'required|string|max:255',
-                'email_address'         => 'required|email',
-                'country_code' => 'required|string|min:2|max:6',
-
-                'phone_number'          => 'required|string|min:6|max:20',
-                'address_of_property'   => 'required|string',
-                'house_plan_name'       => 'nullable|string|max:255',
-                'build_completion_date' => 'nullable|date',
-                'assigned_builder_site_manager' => 'nullable|string|max:255',
-                'number_of_bedrooms'    => 'nullable|integer',
-                'number_of_bathrooms'   => 'nullable|integer',
-                'parking'               => 'nullable|string|max:255',
-                'handover_documents'    => 'nullable|array',
-                'handover_documents.*'  => 'file|mimes:jpg,jpeg,png,pdf,csv,doc,docx|max:2048',
-                'floor_plan_upload'     => 'nullable|array',
-                'floor_plan_upload.*'   => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-                'property_status'       => 'required|string|max:255',
-                'tags'                  => 'nullable|string',
-                'internal_notes'        => 'nullable|string',
-            ]);
-
             $data = $request->except(['handover_documents', 'floor_plan_upload']);
+
             // ================= PHONE VALIDATION =================
             $phoneUtil   = PhoneNumberUtil::getInstance();
-            $rawPhone    = trim($request->phone_number);
-            $countryCode = trim($request->country_code);
+            $rawPhone    = trim($validated['phone_number']);
+            $countryCode = trim($validated['country_code']);
+            $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
 
             try {
                 if (str_starts_with($rawPhone, '+')) {
                     $number = $phoneUtil->parse($rawPhone, null);
                 } else {
-                    $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
                     $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
                 }
 
-                if (!$phoneUtil->isValidNumber($number)) {
+                if (! $phoneUtil->isValidNumber($number)) {
                     return back()
                         ->withInput()
-                        ->with('error', 'Invalid phone number for selected country.');
+                        ->withErrors([
+                            'phone_number' => 'Invalid phone number for selected country.',
+                        ]);
                 }
 
                 $data['phone_number'] = $phoneUtil->format(
@@ -179,9 +180,10 @@ class HouseOwnerController extends Controller
             } catch (NumberParseException $e) {
                 return back()
                     ->withInput()
-                    ->with('error', 'Invalid phone number format.');
+                    ->withErrors([
+                        'phone_number' => 'Invalid phone number format.',
+                    ]);
             }
-
 
             // ================= FILE UPLOADS =================
             if ($request->hasFile('handover_documents')) {
@@ -200,37 +202,36 @@ class HouseOwnerController extends Controller
                 $data['floor_plan_upload'] = json_encode($floorPlans);
             }
 
-            $data['user_id'] = Auth::id();
-            $data['properties_id'] = (int) $data['properties_id'];
+            $data['user_id']       = Auth::id();
+            $data['properties_id'] = (int) $validated['properties_id'];
 
             $alreadyAssigned = HouseOwner::where('properties_id', $data['properties_id'])->first();
             if ($alreadyAssigned) {
-                throw new \Exception('Property already assigned');
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'properties_id' => 'This property is already assigned to another house owner.',
+                    ]);
             }
 
-            // 🔥 If you want, this will now WORK
-            // dd($data);
-
-            $houseOwner = HouseOwner::create($data);
+            HouseOwner::create($data);
 
             return redirect()
                 ->route('admin.house_owners.index')
                 ->with('success', 'House Owner added successfully.');
         } catch (\Throwable $e) {
-
             Log::error('HouseOwner store failed', [
-                'error'   => $e->getMessage(),
-                'file'    => $e->getFile(),
-                'line'    => $e->getLine(),
-                'trace'   => $e->getTraceAsString(),
-                'request' => $request->all(),
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
             ]);
 
             return back()
-                ->withErrors(['error' => 'Something went wrong. Please check logs.'])
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again.');
         }
     }
+
 
 
     /**
@@ -285,7 +286,8 @@ class HouseOwnerController extends Controller
     {
         $houseOwner = HouseOwner::findOrFail($id);
 
-        $request->validate([
+        // ================= VALIDATION =================
+        $validated = $request->validate([
             'properties_id'             => 'required|exists:properties,id',
             'first_name'                => 'required|string|max:255',
             'last_name'                 => 'required|string|max:255',
@@ -324,7 +326,7 @@ class HouseOwnerController extends Controller
             'remove_floor_plan_upload.*' => 'string',
         ]);
 
-        // Remove file fields
+        // ================= DATA PREP =================
         $data = $request->except([
             'handover_documents',
             'floor_plan_upload',
@@ -334,33 +336,35 @@ class HouseOwnerController extends Controller
             'remove_floor_plan_upload',
         ]);
 
-        $data['properties_id'] = (int) $data['properties_id'];
+        $data['properties_id'] = (int) $validated['properties_id'];
 
+        // ================= PHONE VALIDATION =================
         $phoneUtil   = PhoneNumberUtil::getInstance();
-        $rawPhone    = trim($request->phone_number);
-        $countryCode = trim($request->country_code);
+        $rawPhone    = trim($validated['phone_number']);
+        $countryCode = trim($validated['country_code'] ?? '');
+        $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
 
         try {
             if (str_starts_with($rawPhone, '+')) {
-                // Already E.164
                 $number = $phoneUtil->parse($rawPhone, null);
             } else {
                 if (empty($countryCode)) {
                     return back()
                         ->withInput()
-                        ->with('error', 'Country code is required.');
+                        ->withErrors([
+                            'country_code' => 'Country code is required.',
+                        ]);
                 }
 
-                $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
-                $fullPhone  = $countryCode . $cleanPhone;
-
-                $number = $phoneUtil->parse($fullPhone, null);
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
             }
 
-            if (!$phoneUtil->isValidNumber($number)) {
+            if (! $phoneUtil->isValidNumber($number)) {
                 return back()
                     ->withInput()
-                    ->with('error', 'Invalid phone number for selected country.');
+                    ->withErrors([
+                        'phone_number' => 'Invalid phone number for selected country.',
+                    ]);
             }
 
             $data['phone_number'] = $phoneUtil->format(
@@ -370,9 +374,12 @@ class HouseOwnerController extends Controller
         } catch (NumberParseException $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Invalid phone number format.');
+                ->withErrors([
+                    'phone_number' => 'Invalid phone number format.',
+                ]);
         }
 
+        // ================= FILE HANDLING =================
         $handoverDocs = $request->input('existing_handover_documents', []);
         $floorPlans   = $request->input('existing_floor_plan_upload', []);
 
@@ -402,15 +409,16 @@ class HouseOwnerController extends Controller
 
         $data['handover_documents'] = json_encode($handoverDocs);
         $data['floor_plan_upload']  = json_encode($floorPlans);
+        $data['user_id']            = Auth::id();
 
-        $data['user_id'] = Auth::id();
-
+        // ================= UPDATE =================
         $houseOwner->update($data);
 
         return redirect()
             ->route('admin.house_owners.index')
             ->with('success', 'House Owner updated successfully.');
     }
+
 
 
     /**

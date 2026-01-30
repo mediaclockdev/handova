@@ -100,68 +100,62 @@ class ProfileController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $user = Auth::user();
+
+        // ================= VALIDATION (outside try) =================
+        $validated = $request->validate([
+            'first_name'      => 'required|string|max:255',
+            'last_name'       => 'required|string|max:255',
+            'email'           => 'required|email|max:255',
+            'country_code1'   => 'required|string|min:2|max:6',
+            'phone_number1'   => 'required|string|min:6|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+            'existing_profile_picture' => 'nullable|string',
+            'remove_profile_picture'   => 'nullable|boolean',
+        ]);
+
         try {
-            $user = Auth::user();
-
-            $request->validate([
-                'first_name'      => 'required|string|max:255',
-                'last_name'       => 'required|string|max:255',
-                'email'           => 'required|email|max:255',
-                'country_code1'   => 'required|string|min:2|max:6',
-                'phone_number1'   => 'required|string|min:6|max:20',
-                'profile_picture' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
-                'existing_profile_picture' => 'nullable|string',
-                'remove_profile_picture'   => 'nullable|boolean',
-            ]);
-
-
             // ================= PHONE VALIDATION =================
             $phoneUtil   = PhoneNumberUtil::getInstance();
-            $rawPhone    = trim($request->phone_number1);
-            $countryCode = trim($request->country_code1);
-
+            $rawPhone    = trim($validated['phone_number1']);
+            $countryCode = trim($validated['country_code1']);
+            $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
 
             try {
                 if (str_starts_with($rawPhone, '+')) {
                     $number = $phoneUtil->parse($rawPhone, null);
                 } else {
-                    $cleanPhone = preg_replace('/\D+/', '', $rawPhone);
                     $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
                 }
 
-                if (!$phoneUtil->isValidNumber($number)) {
-                    Log::warning('Invalid phone number', [
-                        'user_id' => $user->id,
-                        'phone'   => $rawPhone,
-                        'country' => $countryCode,
-                    ]);
-
+                if (! $phoneUtil->isValidNumber($number)) {
                     return back()
                         ->withInput()
-                        ->with('error', 'Invalid phone number for selected country.');
+                        ->withErrors([
+                            'phone_number1' => 'Invalid phone number for selected country.',
+                        ]);
                 }
 
-                $formattedPhone = $phoneUtil->format($number, PhoneNumberFormat::E164);
+                $formattedPhone = $phoneUtil->format(
+                    $number,
+                    PhoneNumberFormat::E164
+                );
             } catch (NumberParseException $e) {
-                Log::error('Phone number parsing failed', [
-                    'user_id' => $user->id,
-                    'phone'   => $rawPhone,
-                    'error'   => $e->getMessage(),
-                ]);
-
                 return back()
                     ->withInput()
-                    ->with('error', 'Invalid phone number format.');
+                    ->withErrors([
+                        'phone_number1' => 'Invalid phone number format.',
+                    ]);
             }
 
             // ================= USER UPDATE =================
-            $user->name       = $request->first_name . ' ' . $request->last_name;
-            $user->first_name = $request->first_name;
-            $user->last_name  = $request->last_name;
-            $user->email      = $request->email;
+            $user->name       = $validated['first_name'] . ' ' . $validated['last_name'];
+            $user->first_name = $validated['first_name'];
+            $user->last_name  = $validated['last_name'];
+            $user->email      = $validated['email'];
             $user->phone      = $formattedPhone;
 
-            $profilePicture = $request->existing_profile_picture ?? $user->profile_picture;
+            $profilePicture = $validated['existing_profile_picture'] ?? $user->profile_picture;
 
             // Remove profile picture
             if ($request->boolean('remove_profile_picture') && $profilePicture) {
@@ -186,8 +180,7 @@ class ProfileController extends Controller
         } catch (\Throwable $e) {
 
             Log::error('Profile update failed', [
-                'user_id' => Auth::id(),
-                'request' => $request->except(['password', 'profile_picture']),
+                'user_id' => $user->id,
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
@@ -198,6 +191,7 @@ class ProfileController extends Controller
                 ->with('error', 'Something went wrong. Please try again.');
         }
     }
+
 
 
     /**

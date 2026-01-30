@@ -54,7 +54,7 @@
             <label>Phone Number <span style="color:red;">*</span></label>
         </div>
 
-        <input type="tel" id="phone" name="phone" class="form-control"
+        <input type="tel" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror"
             value="{{ old('phone', $nationalNumber) }}">
 
         <input type="hidden" name="country_codes" id="country_codes" value="{{ old('country_codes', $countryCode) }}">

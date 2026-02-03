@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\NumberParseException;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -25,44 +28,86 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        return view('auth.register');
+        $countryCode = '';
+        $nationalNumber = '';
+        $countryIso = '';
+        return view('auth.register', compact(
+            'countryCode',
+            'nationalNumber',
+            'countryIso'
+        ));
     }
 
     public function register(Request $request)
     {
-        $request->validate([
-            'first_name' => 'required|string|max:100',
-            'last_name'  => 'required|string|max:100',
-            'email'      => 'required|email|unique:users,email',
-            'phone' => 'required|numeric|digits_between:8,15',
-            'password'   => 'required|min:8|confirmed',
-            'terms'      => 'accepted',
+        $validated = $request->validate([
+            'first_name'     => 'required|string|max:100',
+            'last_name'      => 'required|string|max:100',
+            'email'          => 'required|email|unique:users,email',
+            'country_codes'  => 'required|string|min:2|max:6',
+            'phone'          => 'required|string|min:6|max:20',
+            'password'       => 'required|min:8|confirmed',
+            'terms'          => 'accepted',
         ], [
             'terms.accepted' => 'You must agree to the Terms & Conditions before continuing.',
         ]);
 
-
         $token = Str::random(64);
 
+        // ================= PHONE VALIDATION =================
+        $phoneUtil   = PhoneNumberUtil::getInstance();
+        $rawPhone    = trim($validated['phone']);
+        $countryCode = trim($validated['country_codes']);
+        $cleanPhone  = preg_replace('/\D+/', '', $rawPhone);
+
+        try {
+            if (str_starts_with($rawPhone, '+')) {
+                $number = $phoneUtil->parse($rawPhone, null);
+            } else {
+                $number = $phoneUtil->parse($countryCode . $cleanPhone, null);
+            }
+
+            if (! $phoneUtil->isValidNumber($number)) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'phone' => 'Invalid phone number for selected country.',
+                    ]);
+            }
+
+            // Store phone in E.164 format
+            $validated['phone'] = $phoneUtil->format(
+                $number,
+                PhoneNumberFormat::E164
+            );
+        } catch (NumberParseException $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'phone' => 'Invalid phone number format.',
+                ]);
+        }
+
         $user = User::create([
-            'first_name'    =>  $request->first_name,
-            'last_name'     =>  $request->first_name,
-            'name'          => $request->first_name . ' ' . $request->last_name,
-            'email'         => $request->email,
-            'phone'         => $request->phone,
-            'password'      => Hash::make($request->password),
-            'verification_token' => $token,
-            'role'  => 'user'
+            'first_name'          => $validated['first_name'],
+            'last_name'           => $validated['last_name'],
+            'name'                => $validated['first_name'] . ' ' . $validated['last_name'],
+            'email'               => $validated['email'],
+            'phone'               => $validated['phone'],
+            'password'            => Hash::make($validated['password']),
+            'verification_token'  => $token,
+            'role'                => 'user',
         ]);
 
         Mail::send('emails.verify', ['token' => $token], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Verify your email address');
+            $message->to($user->email)
+                ->subject('Verify your email address');
         });
 
         return redirect()->route('login')
             ->with('success', 'Account created successfully. Please check your email to verify.');
     }
+
 
     public function verifyEmail($token)
     {

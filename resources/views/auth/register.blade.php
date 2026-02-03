@@ -96,15 +96,27 @@
                                 <i class="fa-solid fa-phone"></i>
                             </span>
                             <input type="tel" id="phone" name="phone"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                class="form-control border-0 rounded-pill @error('phone') is-invalid @enderror"
-                                placeholder="Phone Number *" value="{{ old('phone') }}">
-                        </div>
+                                class="form-control border-0 rounded-pill  @error('phone') is-invalid @enderror"
+                                value="{{ old('phone', $nationalNumber) }}">
 
+                            <input type="hidden" name="country_codes" id="country_codes"
+                                value="{{ old('country_codes', $countryCode) }}">
+                            <input type="hidden" id="country_isos" value="{{ $countryIso }}">
+                        </div>
                         @error('phone')
                             <div class="text-danger small mb-2">{{ $message }}</div>
                         @enderror
                     </div>
+
+
+                    {{-- <div class="col-md-6 phone_number_div">
+                        <div>
+                            <label>Phone Number <span style="color:red;">*</span></label>
+                        </div>
+
+
+
+                    </div> --}}
 
                     <!-- PASSWORD -->
                     <div class="mb-3">

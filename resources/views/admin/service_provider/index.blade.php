@@ -33,6 +33,7 @@
                                     <th>Phone Number</th>
                                     <th>Address</th>
                                     <th>Coverage</th>
+                                    <th>Availability</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -40,13 +41,27 @@
                                 @forelse($serviceproviders as $serviceprovider)
                                     {{-- @php dd($serviceprovider->service_specialisation) @endphp --}}
                                     <tr>
-                                        <td>{{ $serviceprovider->company_name ?? 'N/A' }}</td>
-                                        <td>{{ $serviceprovider->first_name }} {{ $serviceprovider->last_name ?? 'N/A' }}</td>
+                                       <td>{{ $serviceprovider->company_name ? ucfirst($serviceprovider->company_name) : 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->first_name }}
+                                            {{ $serviceprovider->last_name ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->specialization?->specialization ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->email ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->phone ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->address ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->coverage ?? 'N/A' }}KM</td>
+                                        <td>
+                                            @if (!empty($serviceprovider->availability_preferences))
+                                                <strong>Days:</strong>
+                                                {{ implode(', ', $serviceprovider->availability_preferences['days'] ?? []) }}
+                                                <br>
+                                                <strong>Time:</strong>
+                                                {{ $serviceprovider->availability_preferences['time']['from'] ?? 'N/A' }}
+                                                -
+                                                {{ $serviceprovider->availability_preferences['time']['to'] ?? 'N/A' }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
 
                                         <td>
                                             <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}"

@@ -203,8 +203,9 @@ class IssueReportController extends Controller
 
     public function edit(string $id)
     {
+        $today = strtolower(now()->format('l')); // tuesday
+        $currentTime = now()->format('H:i');     // 14:35
         $issueReport = IssueReport::findOrFail($id);
-
         $phoneUtil = PhoneNumberUtil::getInstance();
         $countryCode = '';
         $nationalNumber = '';
@@ -241,6 +242,7 @@ class IssueReportController extends Controller
                     ->whereNotNull('longitude')
                     ->whereNotNull('coverage')
                     ->whereRaw("$distanceFormula <= coverage")
+                    ->whereJsonContains('availability_preferences->days', $today)
                     ->orderBy('distance')
                     ->get();
             }
@@ -407,6 +409,9 @@ class IssueReportController extends Controller
 
     public function getServiceProvidersByProperty(Request $request)
     {
+        $today = strtolower(now()->format('l')); // tuesday
+        $currentTime = now()->format('H:i');     // 14:35
+
         $property = Property::find($request->property_id);
 
         if (!$property || !$property->latitude || !$property->longitude) {
@@ -434,7 +439,8 @@ class IssueReportController extends Controller
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->whereNotNull('coverage')
-            ->whereRaw("$distanceFormula <= coverage") // ✅ FIX
+            ->whereRaw("$distanceFormula <= coverage")
+            ->whereJsonContains('availability_preferences->days', $today)
             ->orderBy('distance')
             ->get();
 

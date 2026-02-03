@@ -60,7 +60,7 @@
                                         <td>{{ $issueReport->assigned_to_service_provider === 'yes' ? 'Assigned' : 'Not Assigned' }}
                                         </td>
                                         <td>{{ $issueReport->customer_contact }}</td>
-                                        <td>{{ $issueReport->issue_status }}</td>
+                                        <td>{{ ucFirst($issueReport->issue_status) }}</td>
                                         <td>
                                             <a href="{{ route('admin.issue_report.edit', $issueReport->id) }}"
                                                 class="btn btn-sm btn-warning">

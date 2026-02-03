@@ -1368,9 +1368,26 @@ class HouseOwnerApiController extends Controller
             ->latest()
             ->get()
             ->map(function ($issue) {
-                $issue->image = $issue->image
-                    ? array_values((array) $issue->image)
-                    : [];
+
+                $images = [];
+
+                if (!empty($issue->image)) {
+
+                    // Decode JSON if stored as string
+                    $decodedImages = is_string($issue->image)
+                        ? json_decode($issue->image, true)
+                        : $issue->image;
+
+                    if (is_array($decodedImages)) {
+                        $images = array_map(function ($img) {
+                            return '/storage/' . ltrim($img, '/');
+                        }, $decodedImages);
+                    }
+                }
+
+                // Assign formatted images
+                $issue->image = array_values($images);
+
                 return $issue;
             });
 
@@ -1395,9 +1412,26 @@ class HouseOwnerApiController extends Controller
             ->latest()
             ->get()
             ->map(function ($issue) {
-                $issue->image = $issue->image
-                    ? array_values((array) $issue->image)
-                    : [];
+
+                $images = [];
+
+                if (!empty($issue->image)) {
+
+                    // Decode JSON if stored as string
+                    $decodedImages = is_string($issue->image)
+                        ? json_decode($issue->image, true)
+                        : $issue->image;
+
+                    if (is_array($decodedImages)) {
+                        $images = array_map(function ($img) {
+                            return '/storage/' . ltrim($img, '/');
+                        }, $decodedImages);
+                    }
+                }
+
+                // Assign formatted images
+                $issue->image = array_values($images);
+
                 return $issue;
             });
 

@@ -783,6 +783,11 @@ class HouseOwnerApiController extends Controller
             'company_name'        => 'nullable|string',
             'profile_picture'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
             'service_specialisation' => 'nullable|exists:specializations,id',
+
+            // ✅ NEW FIELDS
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'address'   => 'nullable|string',
         ]);
 
         // Update name fields
@@ -816,6 +821,18 @@ class HouseOwnerApiController extends Controller
 
             $path = $request->file('profile_picture')->store('profile', 'public');
             $profilePicture = '/storage/' . $path;
+        }
+
+        if ($request->filled('latitude')) {
+            $user->latitude = $request->latitude;
+        }
+
+        if ($request->filled('longitude')) {
+            $user->longitude = $request->longitude;
+        }
+
+        if ($request->filled('address')) {
+            $user->address = $request->address;
         }
 
 

@@ -184,7 +184,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
                                                     <img src="{{ $user->profile_picture
-                                                        ? asset('public/' . $user->profile_picture)
+                                                        ? asset($user->profile_picture)
                                                         : 'https://api.dicebear.com/7.x/notionists/svg?scale=200&seed=' . $user->id }}"
                                                         alt="Builder" class="w-10 h-10 rounded-full object-cover">
 

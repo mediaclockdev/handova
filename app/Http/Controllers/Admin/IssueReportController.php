@@ -27,7 +27,7 @@ class IssueReportController extends Controller
 
     public function index()
     {
-        $issueReports = IssueReport::with(['property', 'reporter'])
+        $issueReports = IssueReport::with(['property', 'reporter', 'assignedServiceProvider'])
             ->whereHas('property', function ($q) {
                 $q->where('user_id', Auth::id());   // Only properties owned by this user
             })

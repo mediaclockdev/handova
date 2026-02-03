@@ -783,8 +783,6 @@ class HouseOwnerApiController extends Controller
             'company_name'        => 'nullable|string',
             'profile_picture'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
             'service_specialisation' => 'nullable|exists:specializations,id',
-
-            // ✅ NEW FIELDS
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'address'   => 'nullable|string',

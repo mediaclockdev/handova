@@ -40,13 +40,13 @@
                                 @forelse($serviceproviders as $serviceprovider)
                                     {{-- @php dd($serviceprovider->service_specialisation) @endphp --}}
                                     <tr>
-                                        <td>{{ $serviceprovider->company_name }}</td>
-                                        <td>{{ $serviceprovider->first_name }} {{ $serviceprovider->last_name }}</td>
-                                        <td>{{ $serviceprovider->specialization->specialization }}</td>
-                                        <td>{{ $serviceprovider->email }}</td>
-                                        <td>{{ $serviceprovider->phone }}</td>
-                                        <td>{{ $serviceprovider->address }}</td>
-                                        <td>{{ $serviceprovider->coverage }}KM</td>
+                                        <td>{{ $serviceprovider->company_name ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->first_name }} {{ $serviceprovider->last_name ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->specialization?->specialization ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->email ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->phone ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->address ?? 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->coverage ?? 'N/A' }}KM</td>
 
                                         <td>
                                             <a href="{{ route('admin.service_provider.edit', $serviceprovider->id) }}"

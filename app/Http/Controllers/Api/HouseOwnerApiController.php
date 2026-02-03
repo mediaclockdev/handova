@@ -1361,6 +1361,37 @@ class HouseOwnerApiController extends Controller
             ->when($request->issue_status, function ($query) use ($request) {
                 $query->where('issue_status', $request->issue_status);
             })
+            // If issue_status is empty, exclude accepted & declined
+            ->when(!$request->filled('status'), function ($query) {
+                $query->whereNotIn('status', ['accepted', 'declined']);
+            })
+            ->latest()
+            ->get()
+            ->map(function ($issue) {
+                $issue->image = $issue->image
+                    ? array_values((array) $issue->image)
+                    : [];
+                return $issue;
+            });
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Issue reports fetched successfully',
+            'data'    => $issues
+        ], 200);
+    }
+
+    public function getIssuesAcceptedList(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'status'  => 'nullable|string'
+        ]);
+        $issues = IssueReport::with(['property', 'appliance', 'reporter'])
+            ->where('service_provider', $request->user_id)
+            ->when($request->status, function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
             ->latest()
             ->get()
             ->map(function ($issue) {

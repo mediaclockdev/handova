@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::get('/profile', [AuthApiController::class, 'getUserProfile']);
     Route::post('/issue-reports/by-user', [HouseOwnerApiController::class, 'getIssuesByUser']);
+    Route::post('/issue-reports/accepted-list', [HouseOwnerApiController::class, 'getIssuesAcceptedList']);
     Route::post('/update-issue-reports-by-serviceprovider', [HouseOwnerApiController::class, 'updateIssueReportByServiceProvider']);
     Route::post('/service-provider/availability', [HouseOwnerApiController::class, 'updateServiceProviderAvailabilityPreferences']);
     Route::post('/service-provider/coverage', [HouseOwnerApiController::class, 'updateServiceProvidersCoverage']);

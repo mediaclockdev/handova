@@ -42,19 +42,23 @@
                             <tbody>
                                 @forelse($issueReports as $report)
                                     <tr>
-                                        <td>{{ $report->property?->houseOwner?->first_name }}
-                                            {{ $report->property?->houseOwner?->last_name }}</td>
-                                        <td>{{ $report->property->address }}</td>
-                                        <td>{{ $report->issue_details }}</td>
-                                        <td>{{ $report->assignedServiceProvider->service_specialisation }}</td>
-                                        <td>{{ $report->issue_number }}</td>
+                                        <td>{{ $report->property?->houseOwner?->first_name ?? 'N/A' }}
+                                            {{ $report->property?->houseOwner?->last_name ?? 'N/A' }}</td>
+                                        <td>{{ $report->property->address ?? 'N/A' }}</td>
+                                        <td>{{ $report->issue_details ?? 'N/A' }}</td>
+                                        <td>{{ $report->assignedServiceProvider->service_specialisation ?? 'N/A' }}</td>
+                                        <td>{{ $report->issue_number ?? 'N/A' }}</td>
                                         <td>Ground Floor</td>
-                                        <td>{{ $report->issue_urgency_level }}</td>
-                                        <td>{{ $report->assignedServiceProvider->first_name }}
-                                            {{ $report->assignedServiceProvider->last_name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($report->reported_date)->format('M d, Y') }}</td>
+                                        <td>{{ $report->issue_urgency_level ?? 'N/A' }}</td>
+                                        <td>
+                                            {{ $report->assignedServiceProvider?->first_name ?? 'N/A' }}
+                                            {{ $report->assignedServiceProvider?->last_name ?? '' }}
+                                        </td>
+
+                                        <td>{{ \Carbon\Carbon::parse($report->reported_date)->format('M d, Y') ?? 'N/A' }}
+                                        </td>
                                         <td>29th May 2025</td>
-                                        <td>{{ $report->issue_status }}</td>
+                                        <td>{{ ucfirst($report->issue_status ?? 'N/A') }}</td>
                                     </tr>
                                 @empty
                                     <tr>

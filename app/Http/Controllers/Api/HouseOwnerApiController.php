@@ -1363,7 +1363,7 @@ class HouseOwnerApiController extends Controller
             })
             // If issue_status is empty, exclude accepted & declined
             ->when(!$request->filled('status'), function ($query) {
-                $query->whereNotIn('status', ['accepted', 'declined']);
+                $query->whereNotIn('status', ['accepted']);
             })
             ->latest()
             ->get()
@@ -1442,7 +1442,7 @@ class HouseOwnerApiController extends Controller
         ], 200);
     }
 
-    /* Update Issue Report By Service Provider */
+    /* Accept/Declined Issue Report By Service Provider */
     public function updateIssueReportByServiceProvider(Request $request)
     {
         // Validate request
@@ -1508,10 +1508,7 @@ class HouseOwnerApiController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Availability preferences updated successfully',
-            'data' => [
-                'user_id' => $user->id,
-                'availability_preferences' => $user->availability_preferences
-            ]
+            'data' => $user
         ]);
     }
 
@@ -1556,12 +1553,10 @@ class HouseOwnerApiController extends Controller
             $user->coverage = $request->coverage;
             $user->save();
             return response()->json([
-                'user_id' => $user->id,
-                'coverage' => $user->coverage,
-                'data' => [
-                    'status' => true,
-                    'message' => 'Coverage areas updated successfully',
-                ]
+                'status' => true,
+                'message' => 'Coverage areas updated successfully',
+                'data' => $user,
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -1575,5 +1570,66 @@ class HouseOwnerApiController extends Controller
                 'message' => 'Something went wrong. Please try again later.'
             ], 500);
         }
+    }
+
+    /* Update Issue Statue by Service Provider */
+    public function completeIssueReportByServiceProvider(Request $request)
+    {
+        $validated = $request->validate([
+            'issue_report_id' => 'required|exists:issue_reports,id',
+            'issue_status'    => 'required|string|max:255',
+        ]);
+
+        $issueReport = IssueReport::find($validated['issue_report_id']);
+        $issueReport->update([
+            'issue_status' => $validated['issue_status'],
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Issue status updated successfully.',
+            'data'    => [
+                'issue_report_id' => $issueReport->id,
+                'issue_status'    => $issueReport->issue_status,
+            ],
+        ], 200);
+    }
+
+    public function getServiceHistoryByUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $issues = IssueReport::with(['property', 'appliance', 'reporter'])
+            ->where('service_provider', $request->user_id) // fetch by user id
+            ->latest()
+            ->get()
+            ->map(function ($issue) {
+
+                $images = [];
+
+                if (!empty($issue->image)) {
+                    $decodedImages = is_string($issue->image)
+                        ? json_decode($issue->image, true)
+                        : $issue->image;
+
+                    if (is_array($decodedImages)) {
+                        $images = array_map(function ($img) {
+                            return asset('storage/' . ltrim($img, '/'));
+                        }, $decodedImages);
+                    }
+                }
+
+                $issue->image = $images;
+
+                return $issue;
+            });
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Service history fetched successfully',
+            'data'    => $issues,
+        ], 200);
     }
 }

@@ -239,17 +239,7 @@ class AuthApiController extends Controller
                 'status' => true,
                 'response_code' => 200,
                 'message' => 'User profile fetched successfully.',
-                'data' => [
-                    'id'            => $user->id,
-                    'name'          => $user->name,
-                    'first_name'    => $user->first_name,
-                    'last_name'     => $user->last_name,
-                    'email'         => $user->email,
-                    'phone'         => $user->phone,
-                    'role'          => $user->role,
-                    'profile_picture' => $user->profile_picture,
-                    'email_verified_at' => $user->email_verified_at,
-                ],
+                'data' => $user
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Something went wrong.', 'error' => $e->getMessage(),], 500);

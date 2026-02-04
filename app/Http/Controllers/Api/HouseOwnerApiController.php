@@ -1363,7 +1363,7 @@ class HouseOwnerApiController extends Controller
             })
             // If issue_status is empty, exclude accepted & declined
             ->when(!$request->filled('status'), function ($query) {
-                $query->whereNotIn('status', ['accepted']);
+                $query->whereNotIn('status', ['accepted', 'declined']);
             })
             ->latest()
             ->get()

@@ -961,6 +961,7 @@ class HouseOwnerApiController extends Controller
                         'reported_date' => $issue->reported_date,
                         'image' => $firstImage,
                         'property_title' => $issue->property->property_title ?? null,
+                        'service_provider' => $issue->assignedServiceProvider,
                     ]
                 ], 200);
             }

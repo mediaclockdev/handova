@@ -201,7 +201,14 @@ class AuthApiController extends Controller
     /* Logout API */
     public function logout(Request $request)
     {
+        $user = $request->user();
         $request->user()->currentAccessToken()->delete();
+        $user->update([
+            'fcm_token'     => null,
+            'device_type'   => null,
+            'token'         => null,
+            'device_id'     => null,
+        ]);
 
         return response()->json([
             'status'  => true,

@@ -415,7 +415,7 @@ class IssueReportController extends Controller
                         $pushResult = $this->sendPushToUser(
                             $user,
                             "Assign Service Request",
-                            "You have been assigned a new house by {$reportedByEmail}",
+                            "You have been assigned a new Service Reques by {$reportedByEmail}",
                             [
                                 "type" => "Assign Service Request",
                                 "house_owner_id" => (string)$user->id,

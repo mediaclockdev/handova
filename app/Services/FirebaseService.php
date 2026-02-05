@@ -44,7 +44,7 @@ class FirebaseService
                     "android" => [
                         "priority" => "high"
                     ],
-                    "data" => $data // Android data-only
+                    "data" => $data 
                 ]
             ];
 

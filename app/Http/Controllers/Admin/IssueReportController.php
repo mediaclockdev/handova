@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\IssueAssignedToServiceProvider;
 use App\Mail\IssueAssignedToBuilder;
+use App\Services\FirebaseService;
+use Illuminate\Support\Facades\Log;
 
 class IssueReportController extends Controller
 {
@@ -281,6 +283,45 @@ class IssueReportController extends Controller
         ));
     }
 
+    public function sendPushToUser($user, $title, $body, $extraData = [])
+    {
+        $fcm = new FirebaseService();
+
+        $token = $user->fcm_token;
+        $deviceType = strtolower($user->device_type ?? '');
+
+        if (!$token) {
+            Log::warning("Push notification not sent. User {$user->id} has no FCM token.");
+            return ['error' => 'User has no FCM token'];
+        }
+
+        if (!in_array($deviceType, ['android', 'ios'])) {
+            Log::warning("Push notification not sent. Unknown device type '{$user->device_type}' for user {$user->id}");
+            return ['error' => 'Unknown device type'];
+        }
+
+        if ($deviceType === 'android') {
+            $data = array_merge($extraData, [
+                'title' => $title,
+                'body'  => $body,
+                'channelId' => 'default'
+            ]);
+
+            // Convert all values to strings for FCM
+            $data = array_map(fn($value) => (string)$value, $data);
+
+            $result = $fcm->sendAndroidPush($token, $data, $title, $body);
+            Log::info("Android push notification sent to user {$user->id}{$token}", ['result' => $result]);
+            return $result;
+        }
+
+        if ($deviceType === 'ios') {
+            $result = $fcm->sendIosPush($token, $extraData, $title, $body);
+            Log::info("iOS push notification sent to user {$user->id}", ['result' => $result]);
+            return $result;
+        }
+    }
+
 
     public function update(Request $request, $id)
     {
@@ -350,7 +391,7 @@ class IssueReportController extends Controller
             $serviceProviderEmail = $serviceProviderUser?->email;
 
             // $reportedByEmail = "mediaclockdev@gmail.com";
-            // $serviceProviderEmail = "mediaclockaustralia@gmail.com";
+            //$serviceProviderEmail = "chhetrisaurav827@gmail.com";
 
 
             $property = Property::find($request->properties_id);
@@ -367,6 +408,32 @@ class IssueReportController extends Controller
                 if ($serviceProviderUser) {
                     Mail::to($serviceProviderEmail)
                         ->send(new IssueAssignedToServiceProvider($issueReport, $property));
+
+                    // Send push notification
+                    $user = User::where('email', $serviceProviderEmail)->first();
+                    if ($user) {
+                        $pushResult = $this->sendPushToUser(
+                            $user,
+                            "Assign Service Request",
+                            "You have been assigned a new house by {$reportedByEmail}",
+                            [
+                                "type" => "Assign Service Request",
+                                "house_owner_id" => (string)$user->id,
+                                "builder_id" => $reportedByEmail
+                            ],
+                            "high"
+                        );
+
+                        Log::info("Push notification result for Service {$user->id}", ['pushResult' => $pushResult]);
+
+                        // NotificationList::create([
+                        //     'properties_id'   => $validated['properties_id'],
+                        //     'house_owner_id'  => $user->id,
+                        //     'title'           => "New Assignment",
+                        //     'body'            => "You have been assigned a new house by {$builderId}",
+                        //     'is_read'         => false,
+                        // ]);
+                    }
                 }
             }
         } catch (NumberParseException $e) {
@@ -431,7 +498,9 @@ class IssueReportController extends Controller
 
         $providers = User::select(
             'id',
+            'name',
             'company_name',
+            'email',
             'coverage',
             DB::raw("$distanceFormula AS distance")
         )

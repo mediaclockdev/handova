@@ -829,7 +829,7 @@ function loadServiceProviders(propertyId, serviceProviderSelect = null) {
                         provider.id == selectedProvider ? "selected" : "";
 
                     options += `<option value="${provider.id}" ${selected}>
-                        ${provider.company_name} (${provider.distance.toFixed(2)} KM)
+                        ${provider.name} (${provider.email}) (${provider.distance.toFixed(2)} KM)
                     </option>`;
                 });
 

@@ -41,7 +41,8 @@
                                 @forelse($serviceproviders as $serviceprovider)
                                     {{-- @php dd($serviceprovider->service_specialisation) @endphp --}}
                                     <tr>
-                                       <td>{{ $serviceprovider->company_name ? ucfirst($serviceprovider->company_name) : 'N/A' }}</td>
+                                        <td>{{ $serviceprovider->company_name ? ucfirst($serviceprovider->company_name) : 'N/A' }}
+                                        </td>
                                         <td>{{ $serviceprovider->first_name }}
                                             {{ $serviceprovider->last_name ?? 'N/A' }}</td>
                                         <td>{{ $serviceprovider->specialization?->specialization ?? 'N/A' }}</td>
@@ -84,6 +85,15 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pagination_div">
+                    <div class="pagination_showing">
+                        Showing {{ $serviceproviders->firstItem() }} to {{ $serviceproviders->lastItem() }}
+                        of {{ $serviceproviders->total() }} entries
+                    </div>
+                    <div class="pagination_count">
+                        {{ $serviceproviders->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
 

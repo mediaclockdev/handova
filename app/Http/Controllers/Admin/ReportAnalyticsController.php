@@ -18,7 +18,7 @@ class ReportAnalyticsController extends Controller
      */
     public function index()
     {
-        $issueReports = IssueReport::with(['property.houseOwner', 'assignedServiceProvider'])->get();
+        $issueReports = IssueReport::with(['property.houseOwner', 'assignedServiceProvider'])->latest()->paginate(10);
         return view('admin.report_analytics.index', compact('issueReports'));
     }
 

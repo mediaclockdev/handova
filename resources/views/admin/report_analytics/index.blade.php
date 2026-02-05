@@ -70,6 +70,15 @@
                         </table>
                     </div>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pagination_div">
+                    <div class="pagination_showing">
+                        Showing {{ $issueReports->firstItem() }} to {{ $issueReports->lastItem() }}
+                        of {{ $issueReports->total() }} entries
+                    </div>
+                    <div class="pagination_count">
+                        {{ $issueReports->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
 
                 <!-- <div class="row g-4">
                     <div class="col-12 col-lg-12">

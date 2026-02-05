@@ -1106,58 +1106,33 @@ class HouseOwnerApiController extends Controller
     /* Notification Listing */
     public function notificationListing(Request $request)
     {
-        // Check for bearer token
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json(['response_code' => 401, 'status'  => false, 'message' => 'Token is required.'], 401);
+        $user = $request->user(); // 🔐 FROM SANCTUM TOKEN
+
+        if (!$user) {
+            return response()->json([
+                'response_code' => 401,
+                'status' => false,
+                'message' => 'Unauthorized.',
+            ], 401);
         }
 
-        // Validate user from token
-        if (!$request->user()) {
-            return response()->json(['response_code' => 401, 'status'  => false, 'message' => 'Invalid or expired token.'], 401);
-        }
-
-        // Validation
-        $request->validate([
-            'house_owner_id' => 'required|integer',
-            'properties_id' => 'required|integer',
-        ]);
-
-        $houseOwnerId = $request->house_owner_id;
-        $propertyId   = $request->properties_id;
-
-        // Fetch notifications (filter by house_owner_id + property_id)
-        $notifications = NotificationList::where('house_owner_id', $houseOwnerId)
-            ->where('properties_id', $propertyId)
+        $notifications = NotificationList::where('user_id', $user->id)
             ->orderBy('id', 'desc')
             ->get();
 
-        // Count unread notifications
-        $unreadCount = NotificationList::where('house_owner_id', $houseOwnerId)
-            ->where('properties_id', $propertyId)
-            ->where('is_read', 0)
+        $unreadCount = NotificationList::where('user_id', $user->id)
+            ->where('is_read', false)
             ->count();
 
-        // If no notifications found
-        if ($notifications->isEmpty()) {
-            return response()->json([
-                'response_code' => 200,
-                'status' => true,
-                'message' => 'No notifications found.',
-                'unread_count' => 0,
-                'data' => []
-            ], 200);
-        }
-
-        // Success
         return response()->json([
             'response_code' => 200,
             'status' => true,
             'message' => 'Notifications fetched successfully.',
             'unread_count' => $unreadCount,
-            'data' => $notifications
+            'data' => $notifications,
         ], 200);
     }
+
 
     /* Notification Read */
     public function markNotificationsAsRead(Request $request)

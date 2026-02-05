@@ -469,6 +469,7 @@ class HouseOwnerController extends Controller
 
 
             NotificationList::create([
+                'user_id'         => $user->id,
                 'properties_id'   => $validated['properties_id'],
                 'house_owner_id'  => $user->id,
                 'title'           => "New Assignment",

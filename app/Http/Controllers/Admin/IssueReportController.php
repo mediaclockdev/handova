@@ -19,6 +19,7 @@ use App\Mail\IssueAssignedToServiceProvider;
 use App\Mail\IssueAssignedToBuilder;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Log;
+use App\Models\NotificationList;
 
 class IssueReportController extends Controller
 {
@@ -414,7 +415,7 @@ class IssueReportController extends Controller
                     if ($user) {
                         $pushResult = $this->sendPushToUser(
                             $user,
-                            "Assign Service Request",
+                            "Assign New Service Request",
                             "You have been assigned a new Service Reques by {$reportedByEmail}",
                             [
                                 "type" => "Assign Service Request",
@@ -426,13 +427,14 @@ class IssueReportController extends Controller
 
                         Log::info("Push notification result for Service {$user->id}", ['pushResult' => $pushResult]);
 
-                        // NotificationList::create([
-                        //     'properties_id'   => $validated['properties_id'],
-                        //     'house_owner_id'  => $user->id,
-                        //     'title'           => "New Assignment",
-                        //     'body'            => "You have been assigned a new house by {$builderId}",
-                        //     'is_read'         => false,
-                        // ]);
+                        NotificationList::create([
+                            'user_id'         => $user->id,
+                            'properties_id'   => $request->properties_id,
+                            'house_owner_id'  => $request->reported_by,
+                            'title'           => "Assign New Service Request",
+                            'body'            => "You have been assigned a new Service Request by {$reportedByEmail}",
+                            'is_read'         => false,
+                        ]);
                     }
                 }
             }

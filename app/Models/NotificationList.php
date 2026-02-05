@@ -13,6 +13,7 @@ class NotificationList extends Model
     protected $fillable = [
         'properties_id',
         'house_owner_id',
+        'user_id',
         'title',
         'body',
         'is_read'

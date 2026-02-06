@@ -197,13 +197,13 @@ class HouseOwnerApiController extends Controller
                         is_array($appliance->manuals)
                             ? $appliance->manuals
                             : (json_decode($appliance->manuals, true) ?? [])
-                    )->map(fn($m) => '/storage/' . ltrim($m, '/'))->values(),
+                    )->map(fn($m) => 'storage/' . ltrim($m, '/'))->values(),
 
                     'appliances_images' => collect(
                         is_array($appliance->appliances_images)
                             ? $appliance->appliances_images
                             : (json_decode($appliance->appliances_images, true) ?? [])
-                    )->map(fn($i) => '/storage/' . ltrim($i, '/'))->values(),
+                    )->map(fn($i) => 'storage/' . ltrim($i, '/'))->values(),
                     'created_at' => $appliance->created_at,
                     'updated_at' => $appliance->updated_at,
                 ];
@@ -228,7 +228,7 @@ class HouseOwnerApiController extends Controller
                             is_array($report->image)
                                 ? $report->image
                                 : (json_decode($report->image, true) ?? [])
-                        )->map(fn($i) => '/storage/' . ltrim($i, '/'))->values(),
+                        )->map(fn($i) => 'storage/' . ltrim($i, '/'))->values(),
                         'property_title' => $report->property->property_title ?? null,
                     ];
                 });
@@ -282,7 +282,7 @@ class HouseOwnerApiController extends Controller
             $manuals = collect($manualsData)->map(function ($manual) {
                 return [
                     'format' => pathinfo($manual, PATHINFO_EXTENSION),
-                    'url'    => '/storage/' . $manual,
+                    'url'    => 'storage/' . $manual,
                 ];
             })->values();
 
@@ -300,7 +300,7 @@ class HouseOwnerApiController extends Controller
             }
 
             $applianceImages = collect($imagesRaw)->map(function ($img) {
-                return '/storage/' . ltrim($img, '/');
+                return 'storage/' . ltrim($img, '/');
             })->values();
 
             $applianceData = [
@@ -509,7 +509,7 @@ class HouseOwnerApiController extends Controller
                                 if (is_array($decodedImages)) {
                                     $images = array_map(
                                         fn($img) =>
-                                        '/storage/appliances_images/' . basename($img),
+                                        'storage/appliances_images/' . basename($img),
                                         $decodedImages
                                     );
                                 }
@@ -522,7 +522,7 @@ class HouseOwnerApiController extends Controller
                                 if (is_array($decodedManuals)) {
                                     $manuals = array_map(
                                         fn($file) =>
-                                        '/storage/manuals/' . basename($file),
+                                        'storage/manuals/' . basename($file),
                                         $decodedManuals
                                     );
                                 }
@@ -547,7 +547,7 @@ class HouseOwnerApiController extends Controller
             */
                 if (isset($floorData['floor_plan']) && is_array($floorData['floor_plan'])) {
                     $floorData['floor_plan'] = array_map(
-                        fn($img) => '/storage/' . ltrim($img, '/'),
+                        fn($img) => 'storage/' . ltrim($img, '/'),
                         $floorData['floor_plan']
                     );
                 }
@@ -585,7 +585,7 @@ class HouseOwnerApiController extends Controller
                 if (is_array($decodedImages)) {
                     $images = array_map(
                         fn($img) =>
-                        '/storage/appliances_images/' . basename($img),
+                        'storage/appliances_images/' . basename($img),
                         $decodedImages
                     );
                 }
@@ -597,7 +597,7 @@ class HouseOwnerApiController extends Controller
                 if (is_array($decodedManuals)) {
                     $manuals = array_map(
                         fn($file) =>
-                        '/storage/manuals/' . basename($file),
+                        'storage/manuals/' . basename($file),
                         $decodedManuals
                     );
                 }
@@ -818,7 +818,7 @@ class HouseOwnerApiController extends Controller
             }
 
             $path = $request->file('profile_picture')->store('profile', 'public');
-            $profilePicture = '/storage/' . $path;
+            $profilePicture = 'storage/' . $path;
         }
 
         if ($request->filled('latitude')) {
@@ -1356,7 +1356,7 @@ class HouseOwnerApiController extends Controller
 
                     if (is_array($decodedImages)) {
                         $images = array_map(function ($img) {
-                            return '/storage/' . ltrim($img, '/');
+                            return 'storage/' . ltrim($img, '/');
                         }, $decodedImages);
                     }
                 }
@@ -1400,7 +1400,7 @@ class HouseOwnerApiController extends Controller
 
                     if (is_array($decodedImages)) {
                         $images = array_map(function ($img) {
-                            return '/storage/' . ltrim($img, '/');
+                            return 'storage/' . ltrim($img, '/');
                         }, $decodedImages);
                     }
                 }

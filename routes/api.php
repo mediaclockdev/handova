@@ -41,9 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/issue-reports/accepted-list', [HouseOwnerApiController::class, 'getIssuesAcceptedList']);
     Route::post('/update-issue-reports-by-serviceprovider', [HouseOwnerApiController::class, 'updateIssueReportByServiceProvider']);
     Route::post('/service-provider/availability', [HouseOwnerApiController::class, 'updateServiceProviderAvailabilityPreferences']);
-    Route::post('/issue-reports/update-issue-status', [HouseOwnerApiController::class, 'completeIssueReportByServiceProvider']);
     Route::post('/service-provider/coverage', [HouseOwnerApiController::class, 'updateServiceProvidersCoverage']);
     Route::get('/issue-reports/service-history', [HouseOwnerApiController::class, 'getServiceHistoryByUser']);
+
+    Route::post('/issue-report/otp-verify', [HouseOwnerApiController::class, 'requestIssueCompletion']);
+    Route::post('/issue-reports/update-issue-status', [HouseOwnerApiController::class, 'completeIssueReportByServiceProvider']);
 });
 Route::get('/service-specializations', [HouseOwnerApiController::class, 'fetchServiceSpecialization']);
 

@@ -22,6 +22,9 @@ use App\Mail\ServiceTicketMail;
 use Illuminate\Support\Facades\Log;
 use App\Models\Specialization;
 use Illuminate\Support\Facades\Storage;
+use App\Models\IssueOtp;
+use App\Mail\IssueCompletionOtpMail;
+use App\Mail\IssueCompletedMail;
 
 class HouseOwnerApiController extends Controller
 {
@@ -1549,17 +1552,86 @@ class HouseOwnerApiController extends Controller
     }
 
     /* Update Issue Statue by Service Provider */
-    public function completeIssueReportByServiceProvider(Request $request)
+
+    public function requestIssueCompletion(Request $request)
     {
         $validated = $request->validate([
             'issue_report_id' => 'required|exists:issue_reports,id',
             'issue_status'    => 'required|string|max:255',
         ]);
 
-        $issueReport = IssueReport::find($validated['issue_report_id']);
-        $issueReport->update([
-            'issue_status' => $validated['issue_status'],
+        $issueReport = IssueReport::findOrFail($validated['issue_report_id']);
+
+        // Generate OTP
+        $otp = rand(100000, 999999);
+
+        IssueOtp::create([
+            'issue_report_id' => $issueReport->id,
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(5), // ✅ REQUIRED
         ]);
+
+
+        // Get house owners
+        $houseOwners = User::where('id', $issueReport->reported_by)->get();
+
+        foreach ($houseOwners as $owner) {
+            Mail::to($owner->email)->send(
+                new IssueCompletionOtpMail($otp, $issueReport)
+            );
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'OTP sent to house owner email for verification.',
+        ]);
+    }
+
+
+    public function completeIssueReportByServiceProvider(Request $request)
+    {
+        $issueReportId = $request->input('issue_report_id');
+        $issueStatus   = $request->input('issue_status');
+        $otp           = $request->input('otp');
+
+        if (!$issueReportId || !$issueStatus || !$otp) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Required fields are missing.',
+            ], 422);
+        }
+
+        $otpRecord = IssueOtp::where('issue_report_id', $issueReportId)
+            ->where('otp', $otp)
+            ->where('expires_at', '>=', now())
+            ->first();
+
+        if (!$otpRecord) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid or expired OTP.',
+            ], 422);
+        }
+
+        $issueReport = IssueReport::find($issueReportId);
+
+        if (!$issueReport) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Issue report not found.',
+            ], 404);
+        }
+
+        $issueReport->update([
+            'issue_status' => $issueStatus,
+        ]);
+        $otpRecord->delete();
+        $houseOwners = User::where('id', $issueReport->reported_by)->get();
+        foreach ($houseOwners as $owner) {
+            Mail::to($owner->email)->send(
+                new IssueCompletedMail($issueReport)
+            );
+        }
 
         return response()->json([
             'status'  => true,
@@ -1571,13 +1643,13 @@ class HouseOwnerApiController extends Controller
         ], 200);
     }
 
+
+
     public function getServiceHistoryByUser(Request $request)
     {
-        // Get authenticated user from token
         $user = $request->user();
-
         $issues = IssueReport::with(['property', 'appliance', 'reporter'])
-            ->where('service_provider', $user->id) // use token user id
+            ->where('service_provider', $user->id)
             ->latest()
             ->get()
             ->map(function ($issue) {
@@ -1601,10 +1673,21 @@ class HouseOwnerApiController extends Controller
                 return $issue;
             });
 
+        $groupedIssues = $issues->groupBy(function ($item) {
+            return strtolower($item->issue_status);
+        });
+
         return response()->json([
-            'status'  => true,
-            'message' => 'Service history fetched successfully',
-            'data'    => $issues,
+            'status' => true,
+            'response_code' => 200,
+            'data' => [
+                'service_history' => [
+                    'inprogress' => $groupedIssues->get('inprogress', []),
+                    'pending'   => $groupedIssues->get('pending', []),
+                    'completed' => $groupedIssues->get('completed', []),
+                    'cancelled' => $groupedIssues->get('cancelled', []),
+                ]
+            ]
         ], 200);
     }
 }

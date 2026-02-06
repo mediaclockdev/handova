@@ -1573,12 +1573,11 @@ class HouseOwnerApiController extends Controller
 
     public function getServiceHistoryByUser(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        // Get authenticated user from token
+        $user = $request->user();
 
         $issues = IssueReport::with(['property', 'appliance', 'reporter'])
-            ->where('service_provider', $request->user_id) // fetch by user id
+            ->where('service_provider', $user->id) // use token user id
             ->latest()
             ->get()
             ->map(function ($issue) {

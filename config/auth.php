@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'sanctum',
         'passwords' => 'users',
     ],
 
@@ -41,6 +41,10 @@ return [
             'provider' => 'users',
         ],
         'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+        'sanctum' => [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],

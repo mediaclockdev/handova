@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\HouseOwnerApiController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,6 +17,9 @@ use App\Http\Controllers\Api\HouseOwnerApiController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('aws.auth')->get('/me', function () {
+    return auth()->user();
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/request-a-service', [HouseOwnerApiController::class, 'requestApplianceService']);

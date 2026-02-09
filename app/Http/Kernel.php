@@ -24,6 +24,7 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
+        'aws.auth' => \App\Http\Middleware\AwsTokenAuth::class,
         'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         'superadmin.guest' => \App\Http\Middleware\RedirectIfSuperAdminAuthenticated::class,
     ];

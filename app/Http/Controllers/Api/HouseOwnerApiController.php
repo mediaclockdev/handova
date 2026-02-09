@@ -752,7 +752,7 @@ class HouseOwnerApiController extends Controller
     }
 
     /* Profile Update */
-    public function profileUpdateNew(Request $request)
+    public function profileUpdate(Request $request)
     {
         dd("Hello");
         $user = auth()->user();

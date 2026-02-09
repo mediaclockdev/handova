@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/appliance', [HouseOwnerApiController::class, 'getApplianceById']);
     Route::post('/house-plans', [HouseOwnerApiController::class, 'getHousePlanByProperty']);
     Route::post('/appliance-feedback', [HouseOwnerApiController::class, 'applianceFeedbackForm']);
-    Route::post('/profile-update-new', [HouseOwnerApiController::class, 'profileUpdateNew']);
+    Route::post('/profile-update', [HouseOwnerApiController::class, 'profileUpdate']);
     Route::post('/service-history', [HouseOwnerApiController::class, 'appliancesServiceHistory']);
     Route::post('/id-service-history', [HouseOwnerApiController::class, 'getAppliancesServiceHistoryId']);
     Route::post('/house-plan-amenities', [HouseOwnerApiController::class, 'housePlanAmenities']);

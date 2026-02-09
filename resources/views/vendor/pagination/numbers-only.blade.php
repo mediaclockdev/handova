@@ -5,15 +5,14 @@
             {{-- Previous Button --}}
             @if ($paginator->onFirstPage())
                 <li>
-                    <span
-                        class="px-3 py-2 text-sm text-gray-400 bg-gray-100 border rounded cursor-not-allowed">
+                    <span class="px-3 py-2 text-sm text-gray-400 bg-gray-100 border rounded cursor-not-allowed">
                         Prev
                     </span>
                 </li>
             @else
                 <li>
                     <a href="{{ $paginator->previousPageUrl() }}"
-                       class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-100 no-underline">
+                        class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-100 no-underline">
                         Prev
                     </a>
                 </li>
@@ -43,7 +42,7 @@
                         @else
                             <li>
                                 <a href="{{ $url }}"
-                                   class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-indigo-50 hover:text-indigo-600 no-underline">
+                                    class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-indigo-50 hover:text-indigo-600 no-underline">
                                     {{ $page }}
                                 </a>
                             </li>
@@ -56,7 +55,7 @@
             @if ($paginator->hasMorePages())
                 <li>
                     <a href="{{ $paginator->nextPageUrl() }}"
-                       class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-100 no-underline">
+                        class="px-3 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-100 no-underline">
                         Next
                     </a>
                 </li>

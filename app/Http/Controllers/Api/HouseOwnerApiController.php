@@ -775,16 +775,16 @@ class HouseOwnerApiController extends Controller
         ], 201);
     }
 
-    /* Profile Update */
+    /* Profile Update 123 */
     public function profileUpdate(Request $request)
     {
         $user = auth()->user();
 
         $request->validate([
-            'first_name'       => 'nullable|string|max:50',
-            'last_name'        => 'nullable|string|max:50',
-            'company_name'        => 'nullable|string',
-            'profile_picture'  => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
+            'first_name'        => 'nullable|string|max:50',
+            'last_name'         => 'nullable|string|max:50',
+            'company_name'      => 'nullable|string',
+            'profile_picture'   => 'nullable|image|mimes:jpg,png,jpeg,webp|max:2048',
             'service_specialisation' => 'nullable|exists:specializations,id',
             'latitude'  => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',

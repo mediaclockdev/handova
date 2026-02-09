@@ -52,6 +52,10 @@ Route::get('/service-specializations', [HouseOwnerApiController::class, 'fetchSe
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return auth()->user();
 });
+Route::get('/final-debug', function () {
+    return ['token'=>request()->bearerToken(),
+    'user'=>auth('sanctum')->user()];
+});
 
 Route::post('/register', [AuthApiController::class, 'register']);
 Route::get('/verify-email/{token}', [AuthApiController::class, 'verifyEmail']);

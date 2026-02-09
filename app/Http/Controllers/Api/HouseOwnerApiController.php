@@ -779,6 +779,7 @@ class HouseOwnerApiController extends Controller
     public function profileUpdate(Request $request)
     {
         $user = auth()->user();
+        dd($user);
 
         $request->validate([
             'first_name'        => 'nullable|string|max:50',

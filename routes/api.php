@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/service-specializations', [HouseOwnerApiController::class, 'fetchServiceSpecialization']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return auth()->user();
 });
 
 Route::post('/register', [AuthApiController::class, 'register']);

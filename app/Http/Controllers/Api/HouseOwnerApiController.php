@@ -778,8 +778,8 @@ class HouseOwnerApiController extends Controller
     /* Profile Update 123 */
     public function profileUpdate(Request $request)
     {
+        dd("Hello");
         $user = auth()->user();
-        dd($user);
 
         $request->validate([
             'first_name'        => 'nullable|string|max:50',

@@ -1332,6 +1332,14 @@ textarea {
     justify-content: space-between;
 }
 
+.list-style-none {
+    list-style: none;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
 @media (min-width: 768px) {
     .md\:grid-cols-5 {
         grid-template-columns: repeat(5, minmax(0, 1fr));

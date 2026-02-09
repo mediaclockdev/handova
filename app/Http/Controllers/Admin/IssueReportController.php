@@ -418,7 +418,7 @@ class IssueReportController extends Controller
                             "Assign New Service Request",
                             "You have been assigned a new Service Reques by {$reportedByEmail}",
                             [
-                                "type" => "Assign Service Request",
+                                "type" => "new_request",
                                 "house_owner_id" => (string)$user->id,
                                 "builder_id" => $reportedByEmail
                             ],

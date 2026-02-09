@@ -466,18 +466,10 @@ class HouseOwnerApiController extends Controller
             ], 404);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Fetch ALL appliances once & key by ID (for floor mapping)
-    |--------------------------------------------------------------------------
-    */
+
         $allAppliances = Appliance::all()->keyBy('id');
 
-        /*
-    |--------------------------------------------------------------------------
-    | Transform house plans & floor details
-    |--------------------------------------------------------------------------
-    */
+
         $housePlans->transform(function ($plan) use ($allAppliances) {
 
             $floors = $plan->floor_details;
@@ -493,11 +485,7 @@ class HouseOwnerApiController extends Controller
 
             foreach ($floors as $floorName => $floorData) {
 
-                /*
-            |--------------------------------------------------
-            | Replace appliance IDs with appliance details
-            |--------------------------------------------------
-            */
+
                 $floorAppliances = [];
 
                 if (!empty($floorData['appliances']) && is_array($floorData['appliances'])) {
@@ -543,11 +531,7 @@ class HouseOwnerApiController extends Controller
 
                 $floorData['appliances'] = $floorAppliances;
 
-                /*
-            |--------------------------------------------------
-            | Floor plan images
-            |--------------------------------------------------
-            */
+
                 if (isset($floorData['floor_plan']) && is_array($floorData['floor_plan'])) {
                     $floorData['floor_plan'] = array_map(
                         fn($img) => 'storage/' . ltrim($img, '/'),
@@ -564,11 +548,7 @@ class HouseOwnerApiController extends Controller
             return $plan;
         });
 
-        /*
-    |--------------------------------------------------------------------------
-    | Property-level appliances (existing logic untouched)
-    |--------------------------------------------------------------------------
-    */
+
         $applianceIds = $property->appliance_id;
 
         if (is_null($applianceIds)) {
@@ -612,11 +592,7 @@ class HouseOwnerApiController extends Controller
             return $appliance;
         });
 
-        /*
-    |--------------------------------------------------------------------------
-    | Final Response
-    |--------------------------------------------------------------------------
-    */
+
         return response()->json([
             'success' => true,
             'response_code' => 200,
@@ -776,8 +752,9 @@ class HouseOwnerApiController extends Controller
     }
 
     /* Profile Update */
-    public function profileUpdate(Request $request)
+    public function profileUpdateNew(Request $request)
     {
+        dd("Hello");
         $user = auth()->user();
 
         $request->validate([

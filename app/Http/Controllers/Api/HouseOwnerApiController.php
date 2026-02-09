@@ -775,7 +775,7 @@ class HouseOwnerApiController extends Controller
         ], 201);
     }
 
-    /* Profile Update */
+    /* Profile Update 123 */
     public function profileUpdate(Request $request)
     {
         $user = auth()->user();

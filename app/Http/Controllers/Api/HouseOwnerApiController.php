@@ -779,7 +779,7 @@ class HouseOwnerApiController extends Controller
     public function profileUpdate(Request $request)
     {
 
-        $user = $request->user();
+        $user = auth('sanctum')->user();
 
         $request->validate([
             'first_name'        => 'nullable|string|max:50',

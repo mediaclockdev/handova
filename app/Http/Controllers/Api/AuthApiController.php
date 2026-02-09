@@ -180,7 +180,7 @@ class AuthApiController extends Controller
 
         // Create API token
         $user->tokens()->delete();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
             'status'  => true,

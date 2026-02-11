@@ -954,7 +954,7 @@ class HouseOwnerApiController extends Controller
                     'data' => [
                         'id' => $issue->id,
                         'appliance_name' => $issue->appliance->appliance_name ?? null,
-                        'appliance_image' => $applianceFirstImage,
+                        'appliance_image' => 'storage/' . $applianceFirstImage,
                         'issue_number' => $issue->issue_number,
                         'issue_title' => $issue->issue_title,
                         'issue_category' => $issue->issue_category,

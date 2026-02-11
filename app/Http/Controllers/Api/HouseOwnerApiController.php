@@ -882,14 +882,18 @@ class HouseOwnerApiController extends Controller
                 return [
                     'id' => $report->id,
                     'appliance_name' => $applianceName,
-                    'appliance_image' => $applianceFirstImage,
+                    'appliance_image' => $applianceFirstImage
+                        ? Storage::url($applianceFirstImage)
+                        : null,
                     'issue_number' => $report->issue_number,
                     'issue_title' => $report->issue_title,
                     'issue_category' => $report->issue_category,
                     'issue_status' => $report->issue_status,
                     'issue_urgency_level' => $report->issue_urgency_level,
                     'reported_date' => $report->reported_date,
-                    'image' => $firstImage,
+                    'image' => $firstImage
+                        ? Storage::url($firstImage)
+                        : null,
                     'property_title' => $report->property->property_title ?? null,
                 ];
             })->groupBy('issue_status');

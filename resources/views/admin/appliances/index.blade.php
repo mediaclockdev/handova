@@ -32,6 +32,8 @@
                                     <th>Model</th>
                                     <th>Warranty Information</th>
                                     <th>Manuals</th>
+                                    <th>Category</th>
+                                    <th>Place of Location</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -57,7 +59,8 @@
                                                 No File
                                             @endif
                                         </td>
-
+                                        <td>{{ $appliance->category }}</td>
+                                        <td>{{ $appliance->place_of_location }}</td>
                                         <td>
                                             <a href="{{ route('admin.appliances.edit', $appliance->id) }}"
                                                 class="btn btn-sm btn-warning"><i

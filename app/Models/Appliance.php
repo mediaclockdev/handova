@@ -14,6 +14,8 @@ class Appliance extends Model
         'appliance_name',
         'product_details',
         'appliance_id',
+        'category',             
+        'place_of_location', 
         'brand_name',
         'model',
         'warranty_information',

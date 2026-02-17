@@ -112,7 +112,7 @@ class PropertiesController extends Controller
     public function edit(Property $property)
     {
         $floorPlans = $property->floor_plan_upload;
-        $appliances = Appliance::all();
+        $appliances =Appliance::where('user_id', Auth::id())->get();
         $formTitle = 'Edit Properties';
         $smallHeading = 'Basic property details';
         $housePlans = HousePlan::where('user_id', Auth::id())->get();

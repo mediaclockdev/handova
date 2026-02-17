@@ -49,6 +49,10 @@ class AppliancesController extends Controller
             'appliance_name'      => 'required|string',
             'product_details'     => 'nullable|string',
             'brand_name'          => 'required|string',
+
+            'category'          => 'required|string',
+            'place_of_location'          => 'required|string',
+
             'model'               => 'nullable|string',
             'warranty_information' => 'nullable|string',
 
@@ -129,7 +133,8 @@ class AppliancesController extends Controller
                 'brand_name'            => 'required|string',
                 'model'                 => 'nullable|string',
                 'warranty_information'  => 'nullable|string',
-
+                'category'              => 'required|string',
+                'place_of_location'     => 'required|string',
                 'manuals'               => 'nullable|array',
                 'manuals.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,csv,xls,xlsx|max:10240',
 

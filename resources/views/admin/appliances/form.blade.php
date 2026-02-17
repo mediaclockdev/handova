@@ -36,6 +36,85 @@
     </div>
 </div>
 
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <label class="form-label">
+            Category <span class="text-danger">*</span>
+        </label>
+
+        <select name="category" class="form-select @error('category') is-invalid @enderror">
+            <option value="">Select Category</option>
+
+            <option value="Hydrological"
+                {{ old('category', $appliances->category ?? '') == 'Hydrological' ? 'selected' : '' }}>
+                Hydrological
+            </option>
+
+            <option value="Electrical"
+                {{ old('category', $appliances->category ?? '') == 'Electrical' ? 'selected' : '' }}>
+                Electrical
+            </option>
+
+            <option value="Mechanical"
+                {{ old('category', $appliances->category ?? '') == 'Mechanical' ? 'selected' : '' }}>
+                Mechanical
+            </option>
+        </select>
+
+        @error('category')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">
+            Place of Location <span class="text-danger">*</span>
+        </label>
+
+        <select name="place_of_location" class="form-select @error('place_of_location') is-invalid @enderror">
+            <option value="">Select Location</option>
+
+            <option value="Bedroom"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Bedroom' ? 'selected' : '' }}>
+                Bedroom</option>
+            <option value="Master Bedroom" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Master Bedroom' ? 'selected' : '' }}>Master
+                Bedroom
+            </option>
+            <option value="Living Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Living Room' ? 'selected' : '' }}>Living Room
+            </option>
+            <option value="Kitchen" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Kitchen' ? 'selected' : '' }}>Kitchen</option>
+            <option value="Dining Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Dining Room' ? 'selected' : '' }}>Dining Room
+            </option>
+            <option value="Bathroom" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Bathroom' ? 'selected' : '' }}>Bathroom</option>
+            <option value="Ensuite" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Ensuite' ? 'selected' : '' }}>Ensuite</option>
+            <option value="Laundry" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Laundry' ? 'selected' : '' }}>Laundry</option>
+            <option value="Garage" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Garage' ? 'selected' : '' }}>Garage</option>
+            <option value="Carport" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Carport' ? 'selected' : '' }}>Carport</option>
+            <option value="Study Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Study Room' ? 'selected' : '' }}>Study Room
+            </option>
+            <option value="Home Office" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Home Office' ? 'selected' : '' }}>Home Office
+            </option>
+            <option value="Balcony" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Balcony' ? 'selected' : '' }}>Balcony</option>
+            <option value="Patio" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Patio' ? 'selected' : '' }}>Patio</option>
+            <option value="Backyard" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Backyard' ? 'selected' : '' }}>Backyard</option>
+            <option value="Front Yard" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Front Yard' ? 'selected' : '' }}>Front Yard
+            </option>
+            <option value="Storage Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Storage Room' ? 'selected' : '' }}>Storage
+                Room</option>
+            <option value="Hallway" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Hallway' ? 'selected' : '' }}>Hallway</option>
+            <option value="Staircase" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Staircase' ? 'selected' : '' }}>Staircase
+            </option>
+            <option value="Roof Space" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Roof Space' ? 'selected' : '' }}>Roof Space
+            </option>
+
+        </select>
+
+        @error('place_of_location')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
 
 <div class="row g-4 mb-4">
     <div class="col-md-6">
@@ -92,20 +171,23 @@
                             @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                 <img src="{{ asset('storage/' . $a1) }}" height="80" class="me-2 border rounded">
                             @elseif ($extension === 'pdf')
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('storage/' . $a1) }}" target="_blank"
+                                    class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark-pdf" style="font-size: 40px; color: red;"></i>
                                     </div>
                                 </a>
                             @elseif (in_array($extension, ['csv', 'xls', 'xlsx']))
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('storage/' . $a1) }}" target="_blank"
+                                    class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark-spreadsheet"
                                             style="font-size: 40px; color: green;"></i>
                                     </div>
                                 </a>
                             @else
-                                <a href="{{ asset('storage/' . $a1) }}" target="_blank" class="text-decoration-none">
+                                <a href="{{ asset('storage/' . $a1) }}" target="_blank"
+                                    class="text-decoration-none">
                                     <div class="border rounded p-2 bg-light" style="width: 80px; height: 80px;">
                                         <i class="bi bi-file-earmark" style="font-size: 40px; color: gray;"></i>
                                     </div>

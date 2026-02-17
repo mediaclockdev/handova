@@ -151,7 +151,7 @@ class HousePlansController extends Controller
             ->where('user_id', Auth::id())
             ->get();
 
-        $appliances = Appliance::select('id', 'brand_name', 'model')->get();
+        $appliances = Appliance::select('id', 'brand_name', 'model')->where('user_id', Auth::id())->get();
 
         $formTitle = 'Edit House Plan';
 

@@ -107,7 +107,7 @@
         <h4 class="mb-3">{{ $label }} Details</h4>
 
         <div class="row">
-            <div class="col-md-6 mb-2">
+            {{-- <div class="col-md-6 mb-2">
                 <label class="form-label">No. of Bedrooms</label>
                 <input type="number" name="floor[{{ $key }}][bedrooms]" class="form-control"
                     placeholder="Bedrooms" value="{{ $floorData[$key]['bedrooms'] ?? '' }}">
@@ -117,12 +117,12 @@
                 <label class="form-label">No. of Bathrooms</label>
                 <input type="number" name="floor[{{ $key }}][bathrooms]" class="form-control"
                     placeholder="Bathrooms" value="{{ $floorData[$key]['bathrooms'] ?? '' }}">
-            </div>
+            </div> --}}
 
             <div class="col-md-6 mb-2">
-                <label class="form-label">Parking</label>
+                <label class="form-label">Garage</label>
                 <select name="floor[{{ $key }}][parking]" class="form-control">
-                    <option value="">Select Parking</option>
+                    <option value="">Select</option>
 
                     @for ($i = 0; $i <= 9; $i++)
                         <option value="{{ $i }}"
@@ -135,9 +135,9 @@
 
 
             <div class="col-md-6 mb-2">
-                <label class="form-label">Swimming Pool</label>
+                <label class="form-label">Pool</label>
                 <select name="floor[{{ $key }}][swimming_pool]" class="form-control">
-                    <option value="">Swimming Pool</option>
+                    <option value="">Pool</option>
                     <option value="yes" {{ ($floorData[$key]['swimming_pool'] ?? '') == 'yes' ? 'selected' : '' }}>
                         Yes
                     </option>

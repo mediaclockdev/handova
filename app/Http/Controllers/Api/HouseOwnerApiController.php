@@ -472,18 +472,10 @@ class HouseOwnerApiController extends Controller
             ], 404);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Fetch ALL appliances once & key by ID (for floor mapping)
-    |--------------------------------------------------------------------------
-    */
+
         $allAppliances = Appliance::all()->keyBy('id');
 
-        /*
-    |--------------------------------------------------------------------------
-    | Transform house plans & floor details
-    |--------------------------------------------------------------------------
-    */
+
         $housePlans->transform(function ($plan) use ($allAppliances) {
 
             $floors = $plan->floor_details;
@@ -499,11 +491,7 @@ class HouseOwnerApiController extends Controller
 
             foreach ($floors as $floorName => $floorData) {
 
-                /*
-            |--------------------------------------------------
-            | Replace appliance IDs with appliance details
-            |--------------------------------------------------
-            */
+
                 $floorAppliances = [];
 
                 if (!empty($floorData['appliances']) && is_array($floorData['appliances'])) {
@@ -542,6 +530,12 @@ class HouseOwnerApiController extends Controller
                                 'name' => $appliance->appliance_name ?? null,
                                 'appliances_images' => $images,
                                 'manuals' => $manuals,
+                                'product_details' => $appliance->product_details,
+                                'category' => $appliance->category,
+                                'place_of_location' => $appliance->place_of_location,
+                                'brand_name' => $appliance->brand_name,
+                                'model' => $appliance->model,
+                                'warranty_information' => $appliance->warranty_information,
                             ];
                         }
                     }
@@ -549,11 +543,7 @@ class HouseOwnerApiController extends Controller
 
                 $floorData['appliances'] = $floorAppliances;
 
-                /*
-            |--------------------------------------------------
-            | Floor plan images
-            |--------------------------------------------------
-            */
+
                 if (isset($floorData['floor_plan']) && is_array($floorData['floor_plan'])) {
                     $floorData['floor_plan'] = array_map(
                         fn($img) => 'storage/' . ltrim($img, '/'),
@@ -569,12 +559,6 @@ class HouseOwnerApiController extends Controller
 
             return $plan;
         });
-
-        /*
-    |--------------------------------------------------------------------------
-    | Property-level appliances (existing logic untouched)
-    |--------------------------------------------------------------------------
-    */
         $applianceIds = $property->appliance_id;
 
         if (is_null($applianceIds)) {
@@ -618,11 +602,6 @@ class HouseOwnerApiController extends Controller
             return $appliance;
         });
 
-        /*
-    |--------------------------------------------------------------------------
-    | Final Response
-    |--------------------------------------------------------------------------
-    */
         return response()->json([
             'success' => true,
             'response_code' => 200,
@@ -1695,5 +1674,130 @@ class HouseOwnerApiController extends Controller
                 ]
             ]
         ], 200);
+    }
+
+
+
+    public function categoryWiseAppliances(Request $request)
+    {
+        $validated = $request->validate([
+            'property_id'   => 'required|integer|exists:properties,id',
+            'house_plan_id' => 'required|integer|exists:house_plans,id',
+            'floor_name'    => 'required|string',
+            'category'      => 'nullable|string'
+        ]);
+
+        $propertyId   = $validated['property_id'];
+        $housePlanId  = $validated['house_plan_id'];
+        $floorName    = $validated['floor_name'];
+
+        // Get property
+        $property = Property::where('id', $propertyId)
+            ->where('house_plan_id', $housePlanId)
+            ->first();
+
+        if (!$property) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Property not found with this house plan.',
+            ], 404);
+        }
+
+        // Get house plan
+        $housePlan = HousePlan::find($housePlanId);
+
+        if (!$housePlan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'House plan not found.',
+            ], 404);
+        }
+
+        $floors = $housePlan->floor_details;
+
+        if (is_string($floors)) {
+            $floors = json_decode($floors, true);
+        } elseif (is_object($floors)) {
+            $floors = json_decode(json_encode($floors), true);
+        }
+
+        $floors = $floors ?? [];
+
+        if (!isset($floors[$floorName])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Floor not found.',
+            ], 404);
+        }
+
+        $floorData = $floors[$floorName];
+
+        $applianceIds = $floorData['appliances'] ?? [];
+
+        if (!is_array($applianceIds)) {
+            $applianceIds = [$applianceIds];
+        }
+
+        $appliancesQuery = Appliance::whereIn('id', $applianceIds);
+
+        if (!empty($validated['category'])) {
+            $appliancesQuery->where('category', $validated['category']);
+        }
+
+        $appliances = $appliancesQuery->get();
+
+
+        $appliances->transform(function ($appliance) {
+
+            $images = [];
+            if (!empty($appliance->appliances_images)) {
+                $decodedImages = json_decode($appliance->appliances_images, true);
+                if (is_array($decodedImages)) {
+                    $images = array_map(
+                        fn($img) => 'storage/appliances_images/' . basename($img),
+                        $decodedImages
+                    );
+                }
+            }
+
+            $manuals = [];
+            if (!empty($appliance->manuals)) {
+                $decodedManuals = json_decode($appliance->manuals, true);
+                if (is_array($decodedManuals)) {
+                    $manuals = array_map(
+                        fn($file) => 'storage/manuals/' . basename($file),
+                        $decodedManuals
+                    );
+                }
+            }
+
+            return [
+                'id' => $appliance->id,
+                'name' => $appliance->appliance_name,
+                'appliances_images' => $images ?: [],
+                'manuals' => $manuals ?: [],
+                'appliance_id' => $appliance->appliance_id,
+                'appliance_name' => $appliance->appliance_name,
+                'product_details' => $appliance->product_details,
+                'category' => $appliance->category,
+                'place_of_location' => $appliance->place_of_location,
+                'brand_name' => $appliance->brand_name,
+                'model' => $appliance->model,
+                'warranty_information' => $appliance->warranty_information,
+                'created_at' => $appliance->created_at,
+                'updated_at' => $appliance->updated_at,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Floor appliances fetched successfully.',
+            'data' => [
+                // 'property_id' => $propertyId,
+                // 'house_plan_id' => $housePlanId,
+                // 'floor_name' => $floorName,
+                'appliances' => $appliances,
+            ]
+        ]);
     }
 }

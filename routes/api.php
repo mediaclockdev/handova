@@ -50,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/issue-report/otp-verify', [HouseOwnerApiController::class, 'requestIssueCompletion']);
     Route::post('/issue-reports/update-issue-status', [HouseOwnerApiController::class, 'completeIssueReportByServiceProvider']);
+
+     Route::post('/category-wise-appliances', [HouseOwnerApiController::class, 'categoryWiseAppliances']);
 });
 Route::get('/service-specializations', [HouseOwnerApiController::class, 'fetchServiceSpecialization']);
 

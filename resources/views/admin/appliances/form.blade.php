@@ -45,9 +45,9 @@
         <select name="category" class="form-select @error('category') is-invalid @enderror">
             <option value="">Select Category</option>
 
-            <option value="Hydrological"
-                {{ old('category', $appliances->category ?? '') == 'Hydrological' ? 'selected' : '' }}>
-                Hydrological
+            <option value="Hydraulic"
+                {{ old('category', $appliances->category ?? '') == 'Hydraulic' ? 'selected' : '' }}>
+                Hydraulic
             </option>
 
             <option value="Electrical"
@@ -58,6 +58,11 @@
             <option value="Mechanical"
                 {{ old('category', $appliances->category ?? '') == 'Mechanical' ? 'selected' : '' }}>
                 Mechanical
+            </option>
+
+            <option value="Finishes"
+                {{ old('category', $appliances->category ?? '') == 'Finishes' ? 'selected' : '' }}>
+                Finishes
             </option>
         </select>
 
@@ -77,34 +82,72 @@
             <option value="Bedroom"
                 {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Bedroom' ? 'selected' : '' }}>
                 Bedroom</option>
-            <option value="Master Bedroom" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Master Bedroom' ? 'selected' : '' }}>Master
+            <option value="Master Bedroom"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Master Bedroom' ? 'selected' : '' }}>
+                Master
                 Bedroom
             </option>
-            <option value="Living Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Living Room' ? 'selected' : '' }}>Living Room
+            <option value="Living Room"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Living Room' ? 'selected' : '' }}>
+                Living Room
             </option>
-            <option value="Kitchen" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Kitchen' ? 'selected' : '' }}>Kitchen</option>
-            <option value="Dining Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Dining Room' ? 'selected' : '' }}>Dining Room
+            <option value="Kitchen"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Kitchen' ? 'selected' : '' }}>
+                Kitchen</option>
+            <option value="Dining Room"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Dining Room' ? 'selected' : '' }}>
+                Dining Room
             </option>
-            <option value="Bathroom" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Bathroom' ? 'selected' : '' }}>Bathroom</option>
-            <option value="Ensuite" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Ensuite' ? 'selected' : '' }}>Ensuite</option>
-            <option value="Laundry" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Laundry' ? 'selected' : '' }}>Laundry</option>
-            <option value="Garage" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Garage' ? 'selected' : '' }}>Garage</option>
-            <option value="Carport" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Carport' ? 'selected' : '' }}>Carport</option>
-            <option value="Study Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Study Room' ? 'selected' : '' }}>Study Room
+            <option value="Bathroom"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Bathroom' ? 'selected' : '' }}>
+                Bathroom</option>
+            <option value="Ensuite"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Ensuite' ? 'selected' : '' }}>
+                Ensuite</option>
+            <option value="Laundry"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Laundry' ? 'selected' : '' }}>
+                Laundry</option>
+            <option value="Garage"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Garage' ? 'selected' : '' }}>
+                Garage</option>
+            <option value="Carport"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Carport' ? 'selected' : '' }}>
+                Carport</option>
+            <option value="Study Room"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Study Room' ? 'selected' : '' }}>
+                Study Room
             </option>
-            <option value="Home Office" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Home Office' ? 'selected' : '' }}>Home Office
+            <option value="Home Office"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Home Office' ? 'selected' : '' }}>
+                Home Office
             </option>
-            <option value="Balcony" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Balcony' ? 'selected' : '' }}>Balcony</option>
-            <option value="Patio" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Patio' ? 'selected' : '' }}>Patio</option>
-            <option value="Backyard" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Backyard' ? 'selected' : '' }}>Backyard</option>
-            <option value="Front Yard" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Front Yard' ? 'selected' : '' }}>Front Yard
+            <option value="Balcony"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Balcony' ? 'selected' : '' }}>
+                Balcony</option>
+            <option value="Patio"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Patio' ? 'selected' : '' }}>Patio
             </option>
-            <option value="Storage Room" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Storage Room' ? 'selected' : '' }}>Storage
+            <option value="Backyard"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Backyard' ? 'selected' : '' }}>
+                Backyard</option>
+            <option value="Front Yard"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Front Yard' ? 'selected' : '' }}>
+                Front Yard
+            </option>
+            <option value="Storage Room"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Storage Room' ? 'selected' : '' }}>
+                Storage
                 Room</option>
-            <option value="Hallway" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Hallway' ? 'selected' : '' }}>Hallway</option>
-            <option value="Staircase" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Staircase' ? 'selected' : '' }}>Staircase
+            <option value="Hallway"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Hallway' ? 'selected' : '' }}>
+                Hallway</option>
+            <option value="Staircase"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Staircase' ? 'selected' : '' }}>
+                Staircase
             </option>
-            <option value="Roof Space" {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Roof Space' ? 'selected' : '' }}>Roof Space
+            <option value="Roof Space"
+                {{ old('place_of_location', $appliances->place_of_location ?? '') == 'Roof Space' ? 'selected' : '' }}>
+                Roof Space
             </option>
 
         </select>

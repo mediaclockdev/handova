@@ -1250,7 +1250,9 @@ class HouseOwnerApiController extends Controller
         // Map appliances to include images (same as getApplianceById format)
         $appliancesData = $appliances->map(function ($appliance) {
             $images = collect(json_decode($appliance->appliances_images, true) ?? [])
-                ->map(fn($img) => $img)
+                ->map(function ($img) {
+                    return ('storage/appliances_images/' . basename($img));
+                })
                 ->values();
 
             $manuals = [];
@@ -1258,10 +1260,10 @@ class HouseOwnerApiController extends Controller
                 $decodedManuals = json_decode($appliance->manuals, true);
                 if (is_array($decodedManuals)) {
                     $manuals = array_map(function ($file) {
-                        return 'uploads/manuals/' . basename($file);
+                        return 'storage/manuals/' . basename($file);
                     }, $decodedManuals);
                 } else {
-                    $manuals[] = 'uploads/manuals/' . basename($appliance->manuals);
+                    $manuals[] = 'storage/manuals/' . basename($appliance->manuals);
                 }
             }
 
@@ -1272,6 +1274,8 @@ class HouseOwnerApiController extends Controller
                 'model' => $appliance->model,
                 'warranty_information' => $appliance->warranty_information,
                 'appliances_images' => $images,
+                'category' => $appliance->category,
+                'place_of_location' => $appliance->place_of_location,
                 'manuals' => $manuals,
             ];
         });

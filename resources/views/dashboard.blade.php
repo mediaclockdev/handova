@@ -137,7 +137,7 @@
                     <div class="col-12 col-lg-6">
                         <div class="card">
                             <div class="card-header card-header-orange">
-                                <h5 class="card-title text-white mb-0">Recent Issues111</h5>
+                                <h5 class="card-title text-white mb-0">Recent Issues</h5>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">

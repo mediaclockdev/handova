@@ -324,8 +324,10 @@
                                 @endif
                             </tbody>
                         </table>
-                        <div class="mt-6">
-                            {{ $properties->links() }}
+
+
+                        <div class="mt-6 flex justify-center">
+                            {{ $properties->links('vendor.pagination.numbers-only') }}
                         </div>
 
                     </div>

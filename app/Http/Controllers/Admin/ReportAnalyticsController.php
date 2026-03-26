@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\IssueReport;
+use \Illuminate\Support\Facades\Auth;
 
 class ReportAnalyticsController extends Controller
 {
@@ -18,7 +19,13 @@ class ReportAnalyticsController extends Controller
      */
     public function index()
     {
-        $issueReports = IssueReport::with(['property.houseOwner', 'assignedServiceProvider'])->latest()->paginate(10);
+        $issueReports = IssueReport::with(['property.houseOwner', 'assignedServiceProvider'])
+            ->whereHas('property', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->latest()
+            ->paginate(10);
+
         return view('admin.report_analytics.index', compact('issueReports'));
     }
 

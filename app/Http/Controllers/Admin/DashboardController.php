@@ -28,7 +28,9 @@ class DashboardController extends Controller
     {
         $totalPropertiesCount = Property::count();
         $totalProperties = Property::where('user_id', Auth::id())->count();
-        $totalIssuesCount = IssueReport::count();
+        $totalIssuesCount = IssueReport::join('properties', 'issue_reports.properties_id', '=', 'properties.id')
+            ->where('properties.user_id', Auth::id())
+            ->count();
         $totalActiveUsersCount = User::count();
         $totalIssues = IssueReport::count();
         $totalActiveUsers = User::count();
@@ -60,7 +62,10 @@ class DashboardController extends Controller
                     : 0
             ];
         }
-        $recentIssues = IssueReport::latest()
+        $recentIssues = IssueReport::join('properties', 'issue_reports.properties_id', '=', 'properties.id')
+            ->where('properties.user_id', Auth::id())
+            ->latest('issue_reports.created_at')
+            ->select('issue_reports.*')
             ->limit(5)
             ->get();
 

@@ -137,7 +137,7 @@
                     <div class="col-12 col-lg-6">
                         <div class="card">
                             <div class="card-header card-header-orange">
-                                <h5 class="card-title text-white mb-0">Recent Issues</h5>
+                                <h5 class="card-title text-white mb-0">Recent Issues111</h5>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
@@ -218,10 +218,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title mb-3">Action Shortcuts</h5>
-                                <a href="{{ route('admin.properties.create') }}"><button class="btn action-shortcut-btn">Add Property</button></a>
-                                <a href="{{ route('admin.issue_report.index') }}"> <button class="btn action-shortcut-btn">View All issues</button></a>
-                                <a href="{{ route('admin.appliances.create') }}"> <button class="btn action-shortcut-btn">Manage appliances</button></a>
-                                <a href="{{ route('admin.compliance_certificates.create') }}"><button class="btn action-shortcut-btn">Upload certification</button></a>
+                                <a href="{{ route('admin.properties.create') }}"><button
+                                        class="btn action-shortcut-btn">Add Property</button></a>
+                                <a href="{{ route('admin.issue_report.index') }}"> <button
+                                        class="btn action-shortcut-btn">View All issues</button></a>
+                                <a href="{{ route('admin.appliances.create') }}"> <button
+                                        class="btn action-shortcut-btn">Manage appliances</button></a>
+                                <a href="{{ route('admin.compliance_certificates.create') }}"><button
+                                        class="btn action-shortcut-btn">Upload certification</button></a>
                             </div>
                         </div>
                     </div>

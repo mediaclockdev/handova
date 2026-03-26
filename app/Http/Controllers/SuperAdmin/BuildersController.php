@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BuildersController extends Controller
 {
@@ -155,7 +156,7 @@ class BuildersController extends Controller
         $phoneUtil   = PhoneNumberUtil::getInstance();
         $rawPhone    = trim($validated['phone']);
         $countryCode = trim($validated['country_codes']);
-
+        $token = Str::random(64);
         try {
             if (str_starts_with($rawPhone, '+')) {
                 $number = $phoneUtil->parse($rawPhone, null);
@@ -180,14 +181,20 @@ class BuildersController extends Controller
                 ->with('error', 'Invalid phone number format.');
         }
 
-        User::create([
+        $user = User::create([
             "name"     => $request->name,
             "email"    => $request->email,
             "phone"    => $formattedPhone,
             "role"     => "user",
             "password" => bcrypt($request->password),
+            'verification_token'  => $token,
             "status" => $request->status,
         ]);
+
+        Mail::send('emails.verify', ['token' => $token], function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Verify your email address');
+        });
 
         return redirect()->route("superadmin.builders.index")->with("success", "Builder created successfully.");
     }

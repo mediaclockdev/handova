@@ -26,6 +26,7 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>House Type</th>
@@ -37,6 +38,7 @@
 
                                 @forelse($properties as $property)
                                 <tr>
+                                    <td>{{ $loop->index + $properties->firstItem() }}</td>
                                     <td>{{ $property->property_title }}</td>
                                     <td>{{ $property->address }}</td>
                                     <td>{{ $property->property_type }}</td>
@@ -46,17 +48,16 @@
                                             class="btn btn-sm btn-warning"><i
                                                 class="bi bi-pencil-square action-icon"></i></a>
                                         <form action="{{ route('admin.properties.destroy', $property) }}"
-                                            method="POST" style="display:inline-block">
+                                            method="POST" style="display:inline-block" class="delete-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Delete this property?')"><i
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn"><i
                                                     class="bi bi-trash3 action-icon"></i></button>
                                         </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4">No properties found.</td>
+                                    <td colspan="6">No properties found.</td>
                                 </tr>
                                 @endforelse
 

@@ -15,15 +15,15 @@
                 </option>
             @endforeach
         </select>
-        <div class="mb-2 mt-2">
+        {{-- <div class="mb-2 mt-2">
             <a href="{{ route('admin.properties.create') }}" class="btn btn-add-property">
                 Add
             </a>
-        </div>
+        </div> --}}
         {{-- </div> --}}
     </div>
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Certification Title</label>
         <input type="text" name="certification_title"
             class="form-control @error('certification_title') is-invalid @enderror"
@@ -31,16 +31,16 @@
         @error('certification_title')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Type of Compliance</label>
         <input type="text" name="compliance_type" class="form-control @error('compliance_type') is-invalid @enderror"
             value="{{ old('compliance_type', $certificate->compliance_type ?? '') }}">
         @error('compliance_type')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
     <div class="col-md-6">
         <label class="form-label">Certificate Number/ID</label>
@@ -71,23 +71,23 @@
         @enderror
     </div>
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Expiry Date</label>
         <input type="date" name="expiry_date" class="form-control @error('expiry_date') is-invalid @enderror"
             value="{{ old('expiry_date', isset($certificate->expiry_date) ? $certificate->expiry_date->format('Y-m-d') : '') }}">
         @error('expiry_date')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Property Area / Scope</label>
         <input type="text" name="property_area" class="form-control @error('property_area') is-invalid @enderror"
             value="{{ old('property_area', $certificate->property_area ?? '') }}">
         @error('property_area')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
 </div>
 
@@ -155,7 +155,7 @@
     </div>
 </div>
 
-<div class="row g-4 mb-4">
+{{-- <div class="row g-4 mb-4">
     <div class="col-12">
         <label class="form-label">Notes / Additional Information</label>
         <textarea name="notes" class="form-control @error('notes') is-invalid @enderror" rows="4">{{ old('notes', $certificate->notes ?? '') }}</textarea>
@@ -163,7 +163,7 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-</div>
+</div> --}}
 
 
 <script>

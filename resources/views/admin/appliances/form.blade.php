@@ -3,7 +3,7 @@
 
 </div>
 
-<div class="row g-4 mb-4">
+{{-- <div class="row g-4 mb-4">
     <div class="col-md-12">
         <label class="form-label">Appliance ID</label>
         <input type="text" name="appliance_id" class="form-control @error('appliance_id') is-invalid @enderror"
@@ -12,20 +12,31 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-</div>
+</div> --}}
 
 <div class="row g-4 mb-4">
     <div class="col-md-12">
         <label class="form-label">Appliance Name <span style="color:red;">*</span></label>
-        <input type="text" name="appliance_name" class="form-control @error('appliance_name') is-invalid @enderror"
-            value="{{ old('appliance_name', $appliances->appliance_name ?? '') }}">
+
+        <select name="appliance_name" class="form-select @error('appliance_name') is-invalid @enderror">
+            <option value="">Select Appliance</option>
+            <option value="cooktop" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'cooktop' ? 'selected' : '' }}>Cooktop</option>
+            <option value="gas" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'gas' ? 'selected' : '' }}>Gas</option>
+            <option value="exhaust" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'exhaust' ? 'selected' : '' }}>Exhaust</option>
+            <option value="dishwasher" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'dishwasher' ? 'selected' : '' }}>Dishwasher</option>
+            <option value="exhaust_canopy" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'exhaust_canopy' ? 'selected' : '' }}>Exhaust Canopy</option>
+            <option value="outdoor_barbeque" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'outdoor_barbeque' ? 'selected' : '' }}>Outdoor Barbeque</option>
+            <option value="oven" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'oven' ? 'selected' : '' }}>Oven</option>
+            <option value="others" {{ old('appliance_name', $appliances->appliance_name ?? '') == 'others' ? 'selected' : '' }}>Others</option>
+        </select>
+
         @error('appliance_name')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 </div>
 
-<div class="row g-4 mb-4">
+{{-- <div class="row g-4 mb-4">
     <div class="col-md-12">
         <label class="form-label">Product Details</label>
         <input type="text" name="product_details" class="form-control @error('product_details') is-invalid @enderror"
@@ -34,7 +45,7 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-</div>
+</div> --}}
 
 <div class="row g-4 mb-4">
     <div class="col-md-6">

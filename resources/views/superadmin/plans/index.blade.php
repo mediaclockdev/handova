@@ -74,9 +74,9 @@
                                             Edit
                                         </a>
                                         <button class="flex-1 px-3 py-1 bg-neutral-900 text-white rounded text-sm hover:bg-neutral-800">View</button>
-                                        <form action="{{ route('superadmin.plans.destroy', $plan->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('superadmin.plans.destroy', $plan->id) }}" method="POST" style="display:inline;" class="delete-form">
                                             @csrf @method('DELETE')
-                                            <button class="flex-1 px-3 py-1 border border-neutral-300 rounded text-sm hover:bg-neutral-50 plan_edit_button" onclick="return confirm('Delete this plan?')">Delete</button>
+                                            <button type="button" class="flex-1 px-3 py-1 border border-neutral-300 rounded text-sm hover:bg-neutral-50 plan_edit_button delete-btn">Delete</button>
                                         </form>
                                     </div>
                                 </div>

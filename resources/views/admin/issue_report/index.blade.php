@@ -39,6 +39,7 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Issue Number</th>
                                     <th>Issue Details</th>
                                     <th>Issue Reported By</th>
@@ -54,6 +55,7 @@
                             <tbody id="issuesTableBody">
                                 @forelse($issueReports as $issueReport)
                                     <tr>
+                                        <td>{{ $loop->index + $issueReports->firstItem() }}</td>
                                         <td>{{ $issueReport->issue_number }}</td>
                                         <td>{{ $issueReport->issue_details }}</td>
                                         <td>{{ $issueReport->reporter->name }}</td>
@@ -74,10 +76,9 @@
                                             </a>
 
                                             <form action="{{ route('admin.issue_report.destroy', $issueReport->id) }}"
-                                                method="POST" style="display:inline-block">
+                                                method="POST" style="display:inline-block" class="delete-form">
                                                 @csrf @method('DELETE')
-                                                <button class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Delete this Report Issue?')">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                     <i class="bi bi-trash3 action-icon"></i>
                                                 </button>
                                             </form>
@@ -85,7 +86,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">No issue reports found.</td>
+                                        <td colspan="10" class="text-center">No issue reports found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -139,7 +140,7 @@
                         </tr>
                     `;
                     } else {
-                        data.forEach(issue => {
+                        data.forEach((issue, index) => {
 
                             const assigned = issue.assigned_to_service_provider === "yes" ?
                                 "Assigned" :
@@ -147,6 +148,7 @@
 
                             html += `
                         <tr>
+                            <td>${index + 1}</td>
                             <td>${issue.issue_number}</td>
                             <td>${issue.issue_details}</td>
                             <td>${issue.reporter_name}</td>
@@ -160,13 +162,12 @@
                                 </a>
 
                                 <form action="/admin/issue_report/${issue.id}" 
-                                      method="POST" style="display:inline-block">
+                                      method="POST" style="display:inline-block" class="delete-form">
                                     
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="_method" value="DELETE">
 
-                                    <button class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Delete this Report Issue?')">
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn">
                                         <i class="bi bi-trash3 action-icon"></i>
                                     </button>
                                 </form>

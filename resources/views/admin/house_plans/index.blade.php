@@ -26,9 +26,10 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Plan Name</th>
                                     <th>Storey</th>
-                                    <th>Pricing</th>
+                                    {{-- <th>Pricing</th> --}}
                                     <th>House Area</th>
                                     <th>Created At</th>
                                     <th>Actions</th>
@@ -37,9 +38,10 @@
                             <tbody id="housePlansTableBody">
                                 @forelse($houseplans as $plan)
                                     <tr>
+                                        <td>{{ $loop->index + $houseplans->firstItem() }}</td>
                                         <td>{{ $plan->plan_name }}</td>
                                         <td>{{ $plan->display_location }}</td>
-                                        <td>${{ $plan->pricing }}</td>
+                                        {{-- <td>${{ $plan->pricing }}</td> --}}
                                         <td>{{ $plan->house_area }} SQ FT</td>
                                         <td>{{ $plan->created_at }}</td>
 
@@ -49,10 +51,9 @@
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <form action="{{ route('admin.house_plans.destroy', $plan->id) }}"
-                                                method="POST" style="display:inline-block">
+                                                method="POST" style="display:inline-block" class="delete-form">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Are you sure you want to delete this plan ?')">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
                                             </form>
@@ -60,7 +61,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">No house plans found.</td>
+                                        <td colspan="8" class="text-center">No house plans found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

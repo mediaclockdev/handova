@@ -55,7 +55,7 @@ class HousePlansController extends Controller
         $request->validate([
             'plan_name'          => 'required|string|max:255',
             'storey'             => 'required|string',
-            'pricing'            => 'required|string',
+            'pricing'            => 'nullable|string',
             'house_area'         => 'nullable|string',
             'suburbs'            => 'nullable|string',
             'display_location'   => 'required|string',
@@ -109,15 +109,15 @@ class HousePlansController extends Controller
             }
         }
 
-        if ($request->pricing <= 0) {
-            return back()->withInput()->with('error', 'Pricing must be greater than zero.');
-        }
+        // if ($request->pricing <= 0) {
+        //     return back()->withInput()->with('error', 'Pricing must be greater than zero.');
+        // }
 
-        if ($request->pricing > 500000000) {
-            return back()->withInput()->with('error', 'Pricing exceeds allowed limit.');
-        }
+        // if ($request->pricing > 500000000) {
+        //     return back()->withInput()->with('error', 'Pricing exceeds allowed limit.');
+        // }
 
-        HousePlan::create([
+        $housePlan = HousePlan::create([
             'plan_name'        => $request->plan_name,
             'pricing'          => $request->pricing,
             'house_area'       => $request->house_area,
@@ -130,6 +130,17 @@ class HousePlansController extends Controller
 
             'user_id'          => auth()->id(),
         ]);
+
+        if ($request->ajax() || $request->wantsJson() || $request->has('is_ajax')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'House Plan created successfully',
+                'house_plan' => [
+                    'id' => $housePlan->id,
+                    'plan_name' => $housePlan->plan_name,
+                ]
+            ]);
+        }
 
         return redirect()
             ->route('admin.house_plans.index')
@@ -172,7 +183,7 @@ class HousePlansController extends Controller
         $request->validate([
             'plan_name'        => 'required|string|max:255',
             'storey'           => 'required|string',
-            'pricing'          => 'required|string',
+            'pricing'          => 'nullable|string',
             'house_area'       => 'nullable|string',
             'suburbs'          => 'nullable|string',
             'display_location' => 'required|string',

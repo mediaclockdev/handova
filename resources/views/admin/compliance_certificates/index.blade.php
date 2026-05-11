@@ -40,12 +40,10 @@
                         <table class="table table-borderless mb-0" id="certificatesTable">
                             <thead>
                                 <tr>
-                                    <th>Certification Title</th>
-                                    <th>Compliance Type</th>
+                                    <th>Sr.No</th>
                                     <th>Certificate No</th>
                                     <th>Issuing Authority</th>
                                     <th>Date of Issue</th>
-                                    <th>Expiry Date</th>
                                     <th>Property</th>
                                     <th>Actions</th>
                                 </tr>
@@ -53,12 +51,10 @@
                             <tbody id="certificatesTableBody">
                                 @forelse($certificates as $c)
                                 <tr>
-                                    <td>{{ $c->certification_title }}</td>
-                                    <td>{{ $c->compliance_type }}</td>
+                                    <td>{{ $loop->index + $certificates->firstItem() }}</td>
                                     <td>{{ $c->certificate_number }}</td>
                                     <td>{{ $c->issuing_authority }}</td>
                                     <td>{{ $c->date_of_issue?->format('Y-m-d') }}</td>
-                                    <td>{{ $c->expiry_date?->format('Y-m-d') }}</td>
                                     <td>{{ $c->property?->property_title }}</td>
                                     <td>
                                         <a href="{{ route('admin.compliance_certificates.edit', $c->id) }}"
@@ -66,10 +62,9 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <form action="{{ route('admin.compliance_certificates.destroy', $c->id) }}"
-                                            method="POST" style="display:inline-block">
+                                            method="POST" style="display:inline-block" class="delete-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Delete this certificate?')">
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                 <i class="bi bi-trash3"></i>
                                             </button>
                                         </form>
@@ -77,7 +72,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">No compliance certificates found.</td>
+                                    <td colspan="9" class="text-center">No compliance certificates found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -125,15 +120,13 @@
                             </td>
                         </tr>`;
                     } else {
-                        data.forEach(c => {
+                        data.forEach((c, index) => {
                             tableHTML += `
                         <tr>
-                            <td>${c.certification_title}</td>
-                            <td>${c.compliance_type}</td>
+                            <td>${index + 1}</td>
                             <td>${c.certificate_number}</td>
                             <td>${c.issuing_authority}</td>
                             <td>${c.date_of_issue ?? ''}</td>
-                            <td>${c.expiry_date ?? ''}</td>
                             <td>${c.property_title ?? ''}</td>
                             <td>
                                 <a href="/admin/compliance_certificates/${c.id}/edit"
@@ -142,11 +135,10 @@
                                 </a>
                                 <form action="/admin/compliance_certificates/${c.id}"
                                       method="POST"
-                                      style="display:inline-block">
+                                      style="display:inline-block" class="delete-form">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Delete this certificate?')">
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>

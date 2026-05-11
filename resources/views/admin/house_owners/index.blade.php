@@ -26,6 +26,7 @@
                         <table class="table table-borderless mb-0">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Property</th>
                                     <th>Name</th>
                                     <th>Address</th>
@@ -37,6 +38,7 @@
                             <tbody id="ownersTableBody">
                                 @forelse($houseOwners as $owner)
                                 <tr>
+                                    <td>{{ $loop->index + $houseOwners->firstItem() }}</td>
                                     <td>{{ $owner->property?->property_title }}</td>
                                     <td>{{ $owner->house_owner_id }}</td>
                                     <td>{{ $owner->first_name }}</td>
@@ -47,17 +49,16 @@
                                             class="btn btn-sm btn-warning"><i
                                                 class="bi bi-pencil-square action-icon"></i></a>
                                         <form action="{{ route('admin.house_owners.destroy', $owner->id) }}"
-                                            method="POST" style="display:inline-block">
+                                            method="POST" style="display:inline-block" class="delete-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Delete this property?')"><i
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn"><i
                                                     class="bi bi-trash3 action-icon"></i></button>
                                         </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4">No house owner found.</td>
+                                    <td colspan="7">No house owner found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -175,10 +176,11 @@
     //                         <td colspan="6">No house owner found for selected property.</td>
     //                     </tr>`;
     //                 } else {
-    //                     data.forEach(owner => {
-    //                         tableHTML += `
-    //                     <tr>
-    //                         <td>${owner.property_title ?? ""}</td>
+                         data.forEach((owner, index) => {
+                            tableHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${owner.property_title ?? ""}</td>
     //                         <td>${owner.house_owner_id}</td>
     //                         <td>${owner.first_name}</td>
     //                         <td>${owner.email_address}</td>

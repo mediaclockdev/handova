@@ -26,6 +26,7 @@
                         <table class="table table-borderless mb-0" id="certificatesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>ID</th>
                                     <th>Title</th>
                                     <th>Type</th>
@@ -36,6 +37,7 @@
                             <tbody>
                                 @forelse($pages as $page)
                                 <tr>
+                                    <td>{{ $loop->index + $pages->firstItem() }}</td>
                                     <td>{{ $page->id }}</td>
                                     <td>{{ $page->title }}</td>
                                     <td>
@@ -52,10 +54,9 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <form action="{{ route('admin.page_content.destroy', $page->id) }}"
-                                            method="POST" style="display:inline-block">
+                                            method="POST" style="display:inline-block" class="delete-form">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Delete this certificate?')">
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                 <i class="bi bi-trash3"></i>
                                             </button>
                                         </form>
@@ -63,7 +64,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">No compliance certificates found.</td>
+                                    <td colspan="6" class="text-center">No compliance certificates found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

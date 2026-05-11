@@ -69,6 +69,8 @@ class HouseOwnerController extends Controller
         $countryCode = '';
         $nationalNumber = '';
         $countryIso = '';
+        $appliances = \App\Models\Appliance::where('user_id', auth()->id())->get();
+        $housePlans = \App\Models\HousePlan::where('user_id', auth()->id())->get();
 
         return view('admin.house_owners.create', compact(
             'properties',
@@ -76,7 +78,9 @@ class HouseOwnerController extends Controller
             'houseOwnerId',
             'countryCode',
             'nationalNumber',
-            'countryIso'
+            'countryIso',
+            'appliances',
+            'housePlans'
         ));
     }
 
@@ -213,9 +217,7 @@ class HouseOwnerController extends Controller
                     ]);
             }
 
-            HouseOwner::create($data);
-
-            $houseOwner = HouseOwner::create($validated);
+            $houseOwner = HouseOwner::create($data);
 
             // Send email to owner
             $builderId = 'Handova-' . Auth::id();
@@ -299,6 +301,8 @@ class HouseOwnerController extends Controller
         $properties = Property::select('id', 'property_title')->get();
         $formTitle = 'Update House Owner';
         $houseOwnerId = $owner->house_owner_id;
+        $appliances = \App\Models\Appliance::where('user_id', auth()->id())->get();
+        $housePlans = \App\Models\HousePlan::where('user_id', auth()->id())->get();
 
         return view('admin.house_owners.edit', compact(
             'owner',
@@ -307,7 +311,9 @@ class HouseOwnerController extends Controller
             'houseOwnerId',
             'countryCode',
             'nationalNumber',
-            'countryIso'
+            'countryIso',
+            'appliances',
+            'housePlans'
         ));
     }
 

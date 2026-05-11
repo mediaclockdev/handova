@@ -376,11 +376,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const form = this.closest(".delete-form");
 
             Swal.fire({
-                title: "Delete Record?",
+                title: "Are you sure want to remove?",
                 text: "This action cannot be undone.",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Yes, delete",
+                confirmButtonText: "Yes, remove",
                 cancelButtonText: "Cancel",
                 confirmButtonColor: "#dc3545",
                 cancelButtonColor: "#6c757d",

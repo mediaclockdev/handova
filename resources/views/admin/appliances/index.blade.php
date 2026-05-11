@@ -26,32 +26,38 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Appliance Name</th>
-                                    <th>Product Details</th>
+                                    {{-- <th>Product Details</th> --}}
                                     <th>Brand Name</th>
                                     <th>Model</th>
                                     <th>Warranty Information</th>
-                                    <th>Manuals</th>
                                     <th>Category</th>
                                     <th>Place of Location</th>
+                                    <th>Manuals</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($appliances as $appliance)
                                     <tr>
+                                        <td>{{ $loop->index + $appliances->firstItem() }}</td>
                                         <td>{{ $appliance->appliance_name }}</td>
-                                        <td>{{ $appliance->product_details }}</td>
+                                        {{-- <td>{{ $appliance->product_details }}</td> --}}
                                         <td>{{ $appliance->brand_name }}</td>
                                         <td>{{ $appliance->model }}</td>
                                         <td>{{ $appliance->warranty_information }}</td>
+
+                                        <td>{{ $appliance->category }}</td>
+                                        <td>{{ $appliance->place_of_location }}</td>
                                         @php
                                             $manuals = json_decode($appliance->manuals, true);
                                         @endphp
                                         <td>
                                             @if (!empty($manuals) && count($manuals))
                                                 @foreach ($manuals as $file)
-                                                    <a class="view_file" href="{{ asset('storage/' . $file) }}" target="_blank">
+                                                    <a class="view_file" href="{{ asset('storage/' . $file) }}"
+                                                        target="_blank">
                                                         View File
                                                     </a><br>
                                                 @endforeach
@@ -59,24 +65,21 @@
                                                 No File
                                             @endif
                                         </td>
-                                        <td>{{ $appliance->category }}</td>
-                                        <td>{{ $appliance->place_of_location }}</td>
                                         <td>
                                             <a href="{{ route('admin.appliances.edit', $appliance->id) }}"
                                                 class="btn btn-sm btn-warning"><i
                                                     class="bi bi-pencil-square action-icon"></i></a>
                                             <form action="{{ route('admin.appliances.destroy', $appliance->id) }}"
-                                                method="POST" style="display:inline-block">
+                                                method="POST" style="display:inline-block" class="delete-form">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Delete this property?')"><i
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn"><i
                                                         class="bi bi-trash3 action-icon"></i></button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4">No Appliances found.</td>
+                                        <td colspan="10">No Appliances found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

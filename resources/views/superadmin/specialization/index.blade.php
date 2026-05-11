@@ -149,6 +149,8 @@
                                         <input type="checkbox" id="select-all" class="rounded border-neutral-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Sr.No</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Service Specialization</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Status</th>
@@ -164,6 +166,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <input type="checkbox" class="row-checkbox rounded border-neutral-300"
                                                 value="{{ $specialization->id }}">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm text-neutral-900">{{ $loop->index + $specializations->firstItem() }}</span>
                                         </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap">

@@ -160,6 +160,8 @@
                                         <input type="checkbox" id="select-all" class="rounded border-neutral-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Sr.No</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Builder</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Phone Number</th>
@@ -180,6 +182,9 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <input type="checkbox" class="row-checkbox rounded border-neutral-300"
                                                     value="{{ $user->id }}" data-email="{{ $user->email }}">
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-neutral-900">{{ $loop->index + $users->firstItem() }}</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
@@ -296,7 +301,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="9" class="px-6 py-6 text-center text-neutral-500">
+                                        <td colspan="8" class="px-6 py-6 text-center text-neutral-500">
                                             🚫 No records found
                                         </td>
                                     </tr>

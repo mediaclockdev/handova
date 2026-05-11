@@ -45,7 +45,7 @@ class AppliancesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'appliance_id'        => 'required|unique:appliances,appliance_id',
+            'appliance_id'        => 'nullable|unique:appliances,appliance_id',
             'appliance_name'      => 'required|string',
             'product_details'     => 'nullable|string',
             'brand_name'          => 'required|string',
@@ -89,7 +89,19 @@ class AppliancesController extends Controller
 
         $data['user_id'] = auth()->id();
 
-        Appliance::create($data);
+        $appliance = Appliance::create($data);
+
+        if ($request->ajax() || $request->wantsJson() || $request->has('is_ajax')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Appliance created successfully',
+                'appliance' => [
+                    'id' => $appliance->id,
+                    'brand_name' => $appliance->brand_name,
+                    'model' => $appliance->model,
+                ]
+            ]);
+        }
 
         return redirect()
             ->route('admin.appliances.index')
@@ -127,7 +139,7 @@ class AppliancesController extends Controller
             $appliance = Appliance::findOrFail($id);
 
             $request->validate([
-                'appliance_id'          => 'required|max:255|unique:appliances,appliance_id,' . $id,
+                'appliance_id'          => 'nullable|max:255|unique:appliances,appliance_id,' . $id,
                 'appliance_name'        => 'required|string',
                 'product_details'       => 'nullable|string',
                 'brand_name'            => 'required|string',

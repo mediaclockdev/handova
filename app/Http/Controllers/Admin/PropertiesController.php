@@ -90,7 +90,18 @@ class PropertiesController extends Controller
 
         $data['user_id'] = Auth::id();
 
-        Property::create($data);
+        $property = Property::create($data);
+
+        if ($request->ajax() || $request->wantsJson() || $request->has('is_ajax')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Property created successfully',
+                'property' => [
+                    'id' => $property->id,
+                    'property_title' => $property->property_title,
+                ]
+            ]);
+        }
 
         return redirect()
             ->route('admin.properties.index')

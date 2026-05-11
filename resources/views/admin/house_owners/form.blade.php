@@ -41,11 +41,11 @@
                       @error('properties_id')
                           <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
-                      <div class="mb-2 mt-2">
-                          <a href="{{ route('admin.properties.create') }}" class="btn btn-add-property">
+                      {{-- <div class="mb-2 mt-2">
+                          <button type="button" class="btn btn-add-property" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
                               Add
-                          </a>
-                      </div>
+                          </button>
+                      </div> --}}
                       {{-- </div> --}}
 
                   </div>

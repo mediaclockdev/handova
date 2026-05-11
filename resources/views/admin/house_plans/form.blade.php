@@ -43,7 +43,7 @@
         @enderror
     </div>
 
-    <div class="col-md-6">
+    {{-- <div class="col-md-6">
         <label class="form-label">Pricing <span style="color:red;">*</span></label>
         <div class="input-group">
             <span class="input-group-text">$</span>
@@ -53,7 +53,7 @@
         @error('pricing')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
     <div class="col-md-6">
         <label class="form-label">House Area</label>
@@ -63,7 +63,7 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-
+{{-- 
     <div class="col-md-6">
         <label class="form-label">Suburbs</label>
         <input type="text" name="suburbs" class="form-control @error('suburbs') is-invalid @enderror"
@@ -71,7 +71,7 @@
         @error('suburbs')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-    </div>
+    </div> --}}
 
 
     <div class="col-md-6">
@@ -153,8 +153,13 @@
 
         {{-- APPLIANCES --}}
         <div class="mb-3">
-            <label class="form-label">Appliances</label>
-            <select name="floor[{{ $key }}][appliances][]" class="form-control select2" multiple>
+            <label class="form-label d-flex justify-content-between align-items-center">
+                Appliances
+                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" data-bs-toggle="modal" data-bs-target="#addApplianceModal">
+                    + Add New
+                </button>
+            </label>
+            <select name="floor[{{ $key }}][appliances][]" class="form-control select2 appliance-select" multiple>
                 @foreach ($appliances as $appliance)
                     <option value="{{ $appliance->id }}"
                         {{ in_array($appliance->id, $floorData[$key]['appliances'] ?? []) ? 'selected' : '' }}>
@@ -221,8 +226,12 @@
 </script>
 <script>
     jQuery(document).ready(function() {
-        jQuery('.select2').select2({
-            width: '100%'
+        jQuery('.select2').each(function() {
+            const dropdownParent = jQuery(this).closest('.modal').length ? jQuery(this).closest('.modal') : jQuery(document.body);
+            jQuery(this).select2({
+                width: '100%',
+                dropdownParent: dropdownParent
+            });
         });
     });
 
@@ -254,8 +263,10 @@
                             if ($(this).hasClass("select2-hidden-accessible")) {
                                 $(this).select2('destroy');
                             }
+                            const dropdownParent = $(this).closest('.modal').length ? $(this).closest('.modal') : $(document.body);
                             $(this).select2({
-                                width: '100%'
+                                width: '100%',
+                                dropdownParent: dropdownParent
                             });
                         });
                     }

@@ -26,6 +26,7 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>Company Name</th>
                                     <th>Contact Person</th>
                                     <th>Services</th>
@@ -41,6 +42,7 @@
                                 @forelse($serviceproviders as $serviceprovider)
                                     {{-- @php dd($serviceprovider->service_specialisation) @endphp --}}
                                     <tr>
+                                        <td>{{ $loop->index + $serviceproviders->firstItem() }}</td>
                                         <td>{{ $serviceprovider->company_name ? ucfirst($serviceprovider->company_name) : 'N/A' }}
                                         </td>
                                         <td>{{ $serviceprovider->first_name }}
@@ -70,17 +72,16 @@
                                                     class="bi bi-pencil-square action-icon"></i></a>
                                             <form
                                                 action="{{ route('admin.service_provider.destroy', $serviceprovider->id) }}"
-                                                method="POST" style="display:inline-block">
+                                                method="POST" style="display:inline-block" class="delete-form">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Delete this property?')"><i
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn"><i
                                                         class="bi bi-trash3 action-icon"></i></button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="12" class="text-center">No service providers found.</td>
+                                        <td colspan="10" class="text-center">No service providers found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

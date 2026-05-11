@@ -26,6 +26,7 @@
                         <table class="table table-borderless mb-0" id="propertiesTable">
                             <thead>
                                 <tr>
+                                    <th>Sr.No</th>
                                     <th>House Owner</th>
                                     <th>House Address</th>
                                     <th>Issue details</th>
@@ -42,6 +43,7 @@
                             <tbody>
                                 @forelse($issueReports as $report)
                                     <tr>
+                                        <td>{{ $loop->index + $issueReports->firstItem() }}</td>
                                         <td>{{ $report->property?->houseOwner?->first_name ?? 'N/A' }}
                                             {{ $report->property?->houseOwner?->last_name ?? 'N/A' }}</td>
                                         <td>{{ $report->property->address ?? 'N/A' }}</td>

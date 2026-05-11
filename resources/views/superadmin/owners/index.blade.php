@@ -155,6 +155,8 @@
                                         <input type="checkbox" id="select-all" class="rounded border-neutral-300">
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        Sr.No</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         House Owner Id</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         First Name</th>
@@ -185,7 +187,9 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <input type="checkbox" class="property-checkbox"
                                                     value="{{ $houseowner->id }}">
-
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-neutral-900">{{ $loop->index + $houseowners->firstItem() }}</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span
@@ -320,7 +324,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="9" class="px-6 py-6 text-center text-neutral-500">
+                                        <td colspan="13" class="px-6 py-6 text-center text-neutral-500">
                                             🚫 No House Owners found
                                         </td>
                                     </tr>

@@ -144,6 +144,7 @@
                                     <table class="table table-hover mb-0">
                                         <thead class="text-white">
                                             <tr>
+                                                <th>Sr.No</th>
                                                 <th>Issue</th>
                                                 <th>Location</th>
                                                 <th>Status</th>
@@ -152,6 +153,7 @@
                                         <tbody>
                                             @forelse ($recentIssues as $issue)
                                                 <tr>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $issue->issue_title ?? 'N/A' }}</td>
 
                                                     <td>{{ $issue->issue_details ?? 'N/A' }}</td>
@@ -169,7 +171,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="3" class="text-center text-muted">
+                                                    <td colspan="4" class="text-center text-muted">
                                                         No issue reports found
                                                     </td>
                                                 </tr>

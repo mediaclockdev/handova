@@ -40,12 +40,9 @@ class ComplianceCertificatesController extends Controller
             ->map(function ($c) {
                 return [
                     'id' => $c->id,
-                    'certification_title' => $c->certification_title,
-                    'compliance_type' => $c->compliance_type,
                     'certificate_number' => $c->certificate_number,
                     'issuing_authority' => $c->issuing_authority,
                     'date_of_issue' => $c->date_of_issue?->format('Y-m-d'),
-                    'expiry_date' => $c->expiry_date?->format('Y-m-d'),
                     'property_title' => $c->property?->property_title,
                 ];
             });
@@ -65,7 +62,7 @@ class ComplianceCertificatesController extends Controller
     {
         $request->validate([
             'property_id'         => 'required|exists:properties,id',
-            'certification_title' => 'required|string|max:255',
+            //'certification_title' => 'nullable|string|max:255',
             'compliance_type'     => 'nullable|string|max:255',
             'certificate_number'  => 'nullable|string|max:255',
             'issuing_authority'   => 'nullable|string|max:255',
@@ -118,18 +115,13 @@ class ComplianceCertificatesController extends Controller
 
         $request->validate([
             'property_id'         => 'required|exists:properties,id',
-            'certification_title' => 'required|string|max:255',
-            'compliance_type'     => 'nullable|string|max:255',
             'certificate_number'  => 'nullable|string|max:255',
             'issuing_authority'   => 'nullable|string|max:255',
             'date_of_issue'       => 'nullable|date',
-            'expiry_date'         => 'nullable|date|after_or_equal:date_of_issue',
-            'property_area'       => 'nullable|string|max:255',
 
             'attachments'         => 'nullable|array',
             'attachments.*'       => 'file|mimes:pdf,csv,xlsx,xls,jpg,jpeg,png|max:5120',
 
-            'notes'               => 'nullable|string',
         ]);
 
         // Remove attachments from request data

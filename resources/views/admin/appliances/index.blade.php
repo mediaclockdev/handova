@@ -1,8 +1,8 @@
+@php $title = 'Appliances'; @endphp
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 

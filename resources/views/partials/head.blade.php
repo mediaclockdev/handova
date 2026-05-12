@@ -1,3 +1,4 @@
+<title>@if(isset($title)){{ $title }}@elseif(isset($formTitle)){{ $formTitle }}@elseif(isset($smallHeading)){{ $smallHeading }}@else Dashboard @endif | Handova</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="{{ asset('images/handova.svg') }}">

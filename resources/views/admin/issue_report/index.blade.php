@@ -1,8 +1,8 @@
+@php $title = 'Issue Reports'; @endphp
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Issue Report</title>
     @include('partials.head')
 </head>
 

@@ -1,3 +1,4 @@
+@php $title = 'Superadmin Dashboard'; @endphp
 <!DOCTYPE html>
 <html lang="en" class="superadminlogin">
 

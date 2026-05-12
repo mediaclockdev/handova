@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 
@@ -30,5 +29,4 @@
     </div>
     @include('partials.scripts')
 </body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </html>

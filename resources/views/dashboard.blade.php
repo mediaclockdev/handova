@@ -2,7 +2,6 @@
 <html>
 
 <head>
-    <title>Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @include('partials.head')
 </head>

@@ -1,93 +1,77 @@
-$(document).ready(function () {
-    if (document.getElementById("appliance_id")) {
-        $("#appliance_id").select2({
-            placeholder: "Select Appliances",
-            allowClear: true,
-            width: "100%",
-            theme: "bootstrap-5",
-        });
-    }
-    // $("#propertiesTable").DataTable({
-    //   pageLength: 5,
-    //   lengthMenu: [5, 10, 25, 50],
-    //   ordering: true,
-    //   searching: false,
-    //   responsive: true,
-    //   language: {
-    //     search: "🔍 Search:",
-    //     lengthMenu: "Show _MENU_ entries",
-    //     info: "Showing _START_ to _END_ of _TOTAL_ properties",
-    //   },
-    // });
-    if (document.getElementById("fileUpload")) {
-        document
-            .getElementById("fileUpload")
-            .addEventListener("change", function (event) {
-                const previewContainer =
-                    document.getElementById("preview-container");
+(function($) {
+    $(document).ready(function () {
+        // Redundant Select2 initialization removed as it's now handled globally in partials.scripts
+        
+        if (document.getElementById("fileUpload")) {
+            document
+                .getElementById("fileUpload")
+                .addEventListener("change", function (event) {
+                    const previewContainer =
+                        document.getElementById("preview-container");
 
-                const newFiles = Array.from(event.target.files).filter((f) =>
-                    f.type.startsWith("image/"),
-                );
+                    const newFiles = Array.from(event.target.files).filter((f) =>
+                        f.type.startsWith("image/"),
+                    );
 
-                newFiles.forEach((file) => {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const previewBox = document.createElement("div");
-                        previewBox.classList.add("mb-2", "preview-image");
+                    newFiles.forEach((file) => {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const previewBox = document.createElement("div");
+                            previewBox.classList.add("mb-2", "preview-image");
 
-                        const wrapper = document.createElement("div");
-                        wrapper.classList.add(
-                            "position-relative",
-                            "m-2",
-                            "img-thumbnail",
-                        );
+                            const wrapper = document.createElement("div");
+                            wrapper.classList.add(
+                                "position-relative",
+                                "m-2",
+                                "img-thumbnail",
+                            );
 
-                        const img = document.createElement("img");
-                        img.src = e.target.result;
-                        img.className = "img-fluid img-thumbnail";
-                        img.style.height = "80px";
-                        //img.style.objectFit = "cover";
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.className = "img-fluid img-thumbnail";
+                            img.style.height = "80px";
+                            //img.style.objectFit = "cover";
 
-                        const closeBtn = document.createElement("button");
-                        closeBtn.type = "button";
-                        closeBtn.className = "close-btn";
-                        closeBtn.innerHTML = "&times;";
-                        closeBtn.title = "Remove";
+                            const closeBtn = document.createElement("button");
+                            closeBtn.type = "button";
+                            closeBtn.className = "close-btn";
+                            closeBtn.innerHTML = "&times;";
+                            closeBtn.title = "Remove";
 
-                        closeBtn.addEventListener("click", () => {
-                            previewBox.remove();
+                            closeBtn.addEventListener("click", () => {
+                                previewBox.remove();
 
-                            const dt = new DataTransfer();
-                            const currentFiles = Array.from(event.target.files);
+                                const dt = new DataTransfer();
+                                const currentFiles = Array.from(event.target.files);
 
-                            currentFiles.forEach((f) => {
-                                if (f.name !== file.name) dt.items.add(f);
+                                currentFiles.forEach((f) => {
+                                    if (f.name !== file.name) dt.items.add(f);
+                                });
+
+                                event.target.files = dt.files;
+
+                                document.getElementById("floorPlanUpload").value =
+                                    Array.from(dt.files)
+                                        .map((f) => f.name)
+                                        .join(", ");
                             });
 
-                            event.target.files = dt.files;
+                            wrapper.appendChild(img);
+                            wrapper.appendChild(closeBtn);
+                            previewBox.appendChild(wrapper);
+                            previewContainer.appendChild(previewBox);
+                        };
 
-                            document.getElementById("floorPlanUpload").value =
-                                Array.from(dt.files)
-                                    .map((f) => f.name)
-                                    .join(", ");
-                        });
+                        reader.readAsDataURL(file);
+                    });
 
-                        wrapper.appendChild(img);
-                        wrapper.appendChild(closeBtn);
-                        previewBox.appendChild(wrapper);
-                        previewContainer.appendChild(previewBox);
-                    };
-
-                    reader.readAsDataURL(file);
+                    document.getElementById("floorPlanUpload").value = newFiles
+                        .map((f) => f.name)
+                        .join(", ");
                 });
-
-                document.getElementById("floorPlanUpload").value = newFiles
-                    .map((f) => f.name)
-                    .join(", ");
-            });
-    }
-});
+        }
+    });
+})(jQuery);
 
 document.querySelectorAll(".remove-image-btn").forEach((btn) => {
     btn.addEventListener("click", function () {

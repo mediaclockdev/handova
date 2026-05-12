@@ -1,3 +1,4 @@
+@php $title = 'Owners Management'; @endphp
 <!DOCTYPE html>
 <html lang="en" class="superadminlogin">
 

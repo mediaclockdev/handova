@@ -26,6 +26,7 @@ class PropertiesListController extends Controller
             ->when($request->filled('property_status'), function ($query) use ($request) {
                 $query->where('property_status', $request->property_status);
             })
+            ->with('housePlan')
             ->latest()
             ->paginate(10)
             ->withQueryString(); // keeps search text during pagination
@@ -57,6 +58,7 @@ class PropertiesListController extends Controller
             ->when($request->filled('property_type'), function ($q) use ($request) {
                 $q->where('property_type', $request->property_type);
             })
+            ->with('housePlan')
             ->orderByDesc('id')
             ->get();
 
@@ -93,7 +95,7 @@ class PropertiesListController extends Controller
                     $property->property_title,
                     ucfirst($property->property_type),
                     $property->address,
-                    $property->house_plan_name,
+                    $property->house_plan_name ?? $property->housePlan->plan_name ?? 'N/A',
                     $property->build_completion_date,
                     ucfirst($property->property_status),
                     $property->number_of_bathrooms,

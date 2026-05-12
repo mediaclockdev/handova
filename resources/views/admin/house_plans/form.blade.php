@@ -200,7 +200,6 @@
 @endforeach
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("click", function(e) {
 
@@ -224,16 +223,6 @@
         wrapper.remove();
     });
 </script>
-<script>
-    jQuery(document).ready(function() {
-        jQuery('.select2').each(function() {
-            const dropdownParent = jQuery(this).closest('.modal').length ? jQuery(this).closest('.modal') : jQuery(document.body);
-            jQuery(this).select2({
-                width: '100%',
-                dropdownParent: dropdownParent
-            });
-        });
-    });
 
     document.addEventListener("DOMContentLoaded", function() {
 

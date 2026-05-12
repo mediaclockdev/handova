@@ -1,8 +1,8 @@
+@php $title = 'Properties'; @endphp
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 
@@ -42,7 +42,7 @@
                                     <td>{{ $property->property_title }}</td>
                                     <td>{{ $property->address }}</td>
                                     <td>{{ $property->property_type }}</td>
-                                    <td>{{ $property->house_plan_name }}</td>
+                                    <td>{{ $property->house_plan_name ?? $property->housePlan->plan_name ?? 'N/A' }}</td>
                                     <td>
                                         <a href="{{ route('admin.properties.edit', $property) }}"
                                             class="btn btn-sm btn-warning"><i

@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 
@@ -33,18 +32,6 @@
         </div>
     </div>
     @include('partials/scripts')
-    <script>
-        jQuery(document).ready(function() {
-            jQuery('.select2').each(function() {
-                const dropdownParent = jQuery(this).closest('.modal').length ? jQuery(this).closest('.modal') : jQuery(document.body);
-                jQuery(this).select2({
-                    width: '100%',
-                    dropdownParent: dropdownParent,
-                    theme: 'bootstrap-5'
-                });
-            });
-        });
-    </script>
 </body>
 
 <script>

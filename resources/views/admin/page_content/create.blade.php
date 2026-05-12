@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 <body>
@@ -29,7 +28,4 @@
 
     
 </body>
-{{-- include jQuery for select2/preview ease if required --}}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </html>

@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 
@@ -289,21 +288,5 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 </body>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
-    rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    jQuery(document).ready(function() {
-        jQuery('.select2').each(function() {
-            const dropdownParent = jQuery(this).closest('.modal').length ? jQuery(this).closest('.modal') : jQuery(document.body);
-            jQuery(this).select2({
-                width: '100%',
-                dropdownParent: dropdownParent,
-                theme: 'bootstrap-5'
-            });
-        });
-    });
-</script>
 </html>
 

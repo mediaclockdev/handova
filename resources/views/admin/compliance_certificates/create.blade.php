@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
     @include('partials.head')
 </head>
 
@@ -32,8 +31,6 @@
 
 
 </body>
-{{-- include jQuery for select2/preview ease if required --}}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.getElementById("attachmentsInput").addEventListener("change", function(event) {
         let preview = document.getElementById("attachmentsPreview");

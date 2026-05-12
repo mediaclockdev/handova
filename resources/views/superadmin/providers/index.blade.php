@@ -1,3 +1,4 @@
+@php $title = 'Service Providers'; @endphp
 <!DOCTYPE html>
 <html lang="en" class="superadminlogin">
 

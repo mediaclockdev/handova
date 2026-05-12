@@ -1,3 +1,4 @@
+@php $title = 'Properties Management'; @endphp
 <!DOCTYPE html>
 <html lang="en" class="superadminlogin">
 
@@ -174,6 +175,8 @@
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         Address</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
+                                        House Plan Name</th>
+                                    <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         No. Of Bedroom</th>
                                     <th class="px-6 py-3 text-left text-xs text-neutral-500 uppercase tracking-wider">
                                         No. Of Bathroom</th>
@@ -207,6 +210,10 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span
                                                     class="text-sm text-neutral-900">{{ $propertie->address }}</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span
+                                                    class="text-sm text-neutral-900">{{ $propertie->house_plan_name ?? $propertie->housePlan->plan_name ?? 'N/A' }}</span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span

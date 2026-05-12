@@ -222,7 +222,6 @@
         // Remove image preview
         wrapper.remove();
     });
-</script>
 
     document.addEventListener("DOMContentLoaded", function() {
 
